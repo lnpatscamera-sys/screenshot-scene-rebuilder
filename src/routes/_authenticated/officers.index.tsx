@@ -15,7 +15,7 @@ import { useAuth } from "@/lib/auth";
 import { exportCsv } from "@/lib/export";
 
 export const Route = createFileRoute("/_authenticated/officers/")({
-  head: () => ({ meta: [{ title: "Officers — LNPATS ERP" }] }),
+  head: () => ({ meta: [{ title: "Officers — LNPATS ERP" }, { name: "description", content: "Manage LNPATS officer profiles, service numbers, and assignments." }, { property: "og:title", content: "Officers — LNPATS ERP" }, { property: "og:description", content: "Manage LNPATS officer profiles, service numbers, and assignments." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
   component: Officers,
 });
 

@@ -10,5 +10,6 @@
 - [x] Audit log
 
 ## Later phases
+- [x] Extend ERP schema from supplied SQL without replacing existing workflows; match the supplied offices and sections.
 - [ ] Training, Finance, Procurement, Transport, HR, ICT helpdesk, Documents
 - [ ] Notifications (email), PDF/Excel reports, role-specific dashboards

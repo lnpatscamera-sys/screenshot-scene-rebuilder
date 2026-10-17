@@ -18,7 +18,7 @@ import { LEAVE_ENTITLEMENT, LEAVE_STAGES, LEAVE_STAGE_ROLES, leaveDays } from "@
 import { exportCsv } from "@/lib/export";
 
 export const Route = createFileRoute("/_authenticated/leave")({
-  head: () => ({ meta: [{ title: "Leave Management — LNPATS ERP" }] }),
+  head: () => ({ meta: [{ title: "Leave Management — LNPATS ERP" }, { name: "description", content: "Review LNPATS leave applications, approval stages, and leave balances." }, { property: "og:title", content: "Leave Management — LNPATS ERP" }, { property: "og:description", content: "Review LNPATS leave applications, approval stages, and leave balances." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
   component: Leave,
 });
 

@@ -10,7 +10,7 @@ import { PageHeader } from "@/components/AppShell";
 import { exportCsv } from "@/lib/export";
 
 export const Route = createFileRoute("/_authenticated/audit")({
-  head: () => ({ meta: [{ title: "Audit Log — LNPATS ERP" }] }),
+  head: () => ({ meta: [{ title: "Audit Log — LNPATS ERP" }, { name: "description", content: "Review recorded changes to LNPATS personnel, requests, and stores." }, { property: "og:title", content: "Audit Log — LNPATS ERP" }, { property: "og:description", content: "Review recorded changes to LNPATS personnel, requests, and stores." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
   component: Audit,
 });
 

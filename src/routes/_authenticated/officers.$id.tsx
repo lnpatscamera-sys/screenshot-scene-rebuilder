@@ -15,7 +15,7 @@ import { Logo } from "@/components/Logo";
 import { useAuth } from "@/lib/auth";
 
 export const Route = createFileRoute("/_authenticated/officers/$id")({
-  head: () => ({ meta: [{ title: "Officer Profile — LNPATS ERP" }] }),
+  head: () => ({ meta: [{ title: "Officer Profile — LNPATS ERP" }, { name: "description", content: "View an LNPATS officer profile, service details, and identification card." }, { property: "og:title", content: "Officer Profile — LNPATS ERP" }, { property: "og:description", content: "View an LNPATS officer profile, service details, and identification card." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
   component: OfficerPage,
 });
 
