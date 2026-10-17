@@ -479,6 +479,64 @@ export type Database = {
         }
         Relationships: []
       }
+      leave_balances: {
+        Row: {
+          annual_leave_allocated: number | null
+          annual_leave_balance: number | null
+          annual_leave_used: number | null
+          emergency_leave_used: number | null
+          id: string
+          officer_id: string | null
+          sick_leave_used: number | null
+          updated_at: string | null
+          year: number | null
+        }
+        Insert: {
+          annual_leave_allocated?: number | null
+          annual_leave_balance?: number | null
+          annual_leave_used?: number | null
+          emergency_leave_used?: number | null
+          id?: string
+          officer_id?: string | null
+          sick_leave_used?: number | null
+          updated_at?: string | null
+          year?: number | null
+        }
+        Update: {
+          annual_leave_allocated?: number | null
+          annual_leave_balance?: number | null
+          annual_leave_used?: number | null
+          emergency_leave_used?: number | null
+          id?: string
+          officer_id?: string | null
+          sick_leave_used?: number | null
+          updated_at?: string | null
+          year?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "leave_balances_officer_id_fkey"
+            columns: ["officer_id"]
+            isOneToOne: false
+            referencedRelation: "approvals"
+            referencedColumns: ["approver_id"]
+          },
+          {
+            foreignKeyName: "leave_balances_officer_id_fkey"
+            columns: ["officer_id"]
+            isOneToOne: false
+            referencedRelation: "equipment_requests"
+            referencedColumns: ["requested_by"]
+          },
+          {
+            foreignKeyName: "leave_balances_officer_id_fkey"
+            columns: ["officer_id"]
+            isOneToOne: false
+            referencedRelation: "officers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       leave_requests: {
         Row: {
           approval_status: string | null
