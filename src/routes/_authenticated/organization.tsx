@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PageHeader } from "@/components/AppShell";
 
 export const Route = createFileRoute("/_authenticated/organization")({
-  head: () => ({ meta: [{ title: "Organization — LNPATS ERP" }] }),
+  head: () => ({ meta: [{ title: "Organization — LNPATS ERP" }, { name: "description", content: "View the LNPATS command hierarchy, offices, and sections." }, { property: "og:title", content: "Organization — LNPATS ERP" }, { property: "og:description", content: "View the LNPATS command hierarchy, offices, and sections." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
   component: Org,
 });
 
@@ -37,7 +37,7 @@ function Org() {
         <Card>
           <CardHeader><CardTitle className="text-base">Sections ({data?.sections.length ?? 0})</CardTitle></CardHeader>
           <CardContent className="grid grid-cols-2 gap-2">
-            {data?.sections.map((s) => <div key={s.id} className="rounded-md border px-3 py-2 text-sm">{s.name} Section</div>)}
+            {data?.sections.map((s) => <div key={s.id} className="rounded-md border px-3 py-2 text-sm">{s.name}</div>)}
           </CardContent>
         </Card>
       </div>

@@ -13,7 +13,11 @@ const INFO: Record<string, { title: string; features: string[] }> = {
 };
 
 export const Route = createFileRoute("/_authenticated/modules/$module")({
-  head: () => ({ meta: [{ title: "Module — LNPATS ERP" }] }),
+  head: ({ params }) => {
+    const title = `${INFO[params.module]?.title ?? "Module"} — LNPATS ERP`;
+    const description = `${INFO[params.module]?.title ?? "Academy module"} planning for LNPATS.`;
+    return { meta: [{ title }, { name: "description", content: description }, { property: "og:title", content: title }, { property: "og:description", content: description }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] };
+  },
   component: ModulePage,
 });
 

@@ -8,7 +8,7 @@ import { PageHeader } from "@/components/AppShell";
 import { ROLE_LABELS, useAuth, type AppRole } from "@/lib/auth";
 
 export const Route = createFileRoute("/_authenticated/admin/users")({
-  head: () => ({ meta: [{ title: "Users & Roles — LNPATS ERP" }] }),
+  head: () => ({ meta: [{ title: "Users & Roles — LNPATS ERP" }, { name: "description", content: "Manage authorized LNPATS staff roles and approval responsibilities." }, { property: "og:title", content: "Users & Roles — LNPATS ERP" }, { property: "og:description", content: "Manage authorized LNPATS staff roles and approval responsibilities." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
   component: Users,
 });
 

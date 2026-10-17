@@ -17,7 +17,7 @@ import { useAuth } from "@/lib/auth";
 import { exportCsv } from "@/lib/export";
 
 export const Route = createFileRoute("/_authenticated/inventory")({
-  head: () => ({ meta: [{ title: "Inventory & Assets — LNPATS ERP" }] }),
+  head: () => ({ meta: [{ title: "Inventory & Assets — LNPATS ERP" }, { name: "description", content: "Track LNPATS stock levels, assets, storage locations, and collection." }, { property: "og:title", content: "Inventory & Assets — LNPATS ERP" }, { property: "og:description", content: "Track LNPATS stock levels, assets, storage locations, and collection." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
   component: Inventory,
 });
 

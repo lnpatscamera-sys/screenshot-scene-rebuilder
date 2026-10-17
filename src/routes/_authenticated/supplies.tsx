@@ -16,7 +16,7 @@ import { SUPPLY_ACTION_LABEL, SUPPLY_STAGES, SUPPLY_STAGE_ROLES } from "@/lib/wo
 import { exportCsv } from "@/lib/export";
 
 export const Route = createFileRoute("/_authenticated/supplies")({
-  head: () => ({ meta: [{ title: "Supply Requests — LNPATS ERP" }] }),
+  head: () => ({ meta: [{ title: "Supply Requests — LNPATS ERP" }, { name: "description", content: "Track LNPATS equipment requests from approval through collection." }, { property: "og:title", content: "Supply Requests — LNPATS ERP" }, { property: "og:description", content: "Track LNPATS equipment requests from approval through collection." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
   component: Supplies,
 });
 
@@ -117,7 +117,7 @@ function Supplies() {
                   <div>
                     <div className="flex items-center gap-2"><span className="font-mono text-xs text-muted-foreground">{r.request_number}</span><StatusBadge value={r.priority} /></div>
                     <div className="font-medium mt-1">{r.quantity} {r.unit} · {r.item_name}</div>
-                    <div className="text-xs text-muted-foreground">{r.sections?.name} Section · {r.requested_by_name} · {r.request_date}</div>
+                    <div className="text-xs text-muted-foreground">{r.sections?.name} · {r.requested_by_name} · {r.request_date}</div>
                     {r.justification && <div className="text-xs mt-1">{r.justification}</div>}
                   </div>
                   <div className="flex flex-col items-end gap-2">
