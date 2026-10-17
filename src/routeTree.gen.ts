@@ -10,33 +10,181 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedAuditRouteImport } from './routes/_authenticated/audit'
+import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedInventoryRouteImport } from './routes/_authenticated/inventory'
+import { Route as AuthenticatedLeaveRouteImport } from './routes/_authenticated/leave'
+import { Route as AuthenticatedOrganizationRouteImport } from './routes/_authenticated/organization'
+import { Route as AuthenticatedSuppliesRouteImport } from './routes/_authenticated/supplies'
+import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated/admin.users'
+import { Route as AuthenticatedModulesModuleRouteImport } from './routes/_authenticated/modules.$module'
+import { Route as AuthenticatedOfficersIndexRouteImport } from './routes/_authenticated/officers.index'
+import { Route as AuthenticatedOfficersIdRouteImport } from './routes/_authenticated/officers.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedAuditRoute = AuthenticatedAuditRouteImport.update({
+  id: '/audit',
+  path: '/audit',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedInventoryRoute = AuthenticatedInventoryRouteImport.update({
+  id: '/inventory',
+  path: '/inventory',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedLeaveRoute = AuthenticatedLeaveRouteImport.update({
+  id: '/leave',
+  path: '/leave',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedOrganizationRoute =
+  AuthenticatedOrganizationRouteImport.update({
+    id: '/organization',
+    path: '/organization',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedSuppliesRoute = AuthenticatedSuppliesRouteImport.update({
+  id: '/supplies',
+  path: '/supplies',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAdminUsersRoute = AuthenticatedAdminUsersRouteImport.update({
+  id: '/admin/users',
+  path: '/admin/users',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedModulesModuleRoute =
+  AuthenticatedModulesModuleRouteImport.update({
+    id: '/modules/$module',
+    path: '/modules/$module',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedOfficersIndexRoute =
+  AuthenticatedOfficersIndexRouteImport.update({
+    id: '/officers/',
+    path: '/officers/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedOfficersIdRoute = AuthenticatedOfficersIdRouteImport.update({
+  id: '/officers/$id',
+  path: '/officers/$id',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/audit': typeof AuthenticatedAuditRoute
+  '/dashboard': typeof AuthenticatedDashboardRoute
+  '/inventory': typeof AuthenticatedInventoryRoute
+  '/leave': typeof AuthenticatedLeaveRoute
+  '/organization': typeof AuthenticatedOrganizationRoute
+  '/supplies': typeof AuthenticatedSuppliesRoute
+  '/admin/users': typeof AuthenticatedAdminUsersRoute
+  '/modules/$module': typeof AuthenticatedModulesModuleRoute
+  '/officers/$id': typeof AuthenticatedOfficersIdRoute
+  '/officers/': typeof AuthenticatedOfficersIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/audit': typeof AuthenticatedAuditRoute
+  '/dashboard': typeof AuthenticatedDashboardRoute
+  '/inventory': typeof AuthenticatedInventoryRoute
+  '/leave': typeof AuthenticatedLeaveRoute
+  '/organization': typeof AuthenticatedOrganizationRoute
+  '/supplies': typeof AuthenticatedSuppliesRoute
+  '/admin/users': typeof AuthenticatedAdminUsersRoute
+  '/modules/$module': typeof AuthenticatedModulesModuleRoute
+  '/officers/$id': typeof AuthenticatedOfficersIdRoute
+  '/officers': typeof AuthenticatedOfficersIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/auth': typeof AuthRoute
+  '/_authenticated/audit': typeof AuthenticatedAuditRoute
+  '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/inventory': typeof AuthenticatedInventoryRoute
+  '/_authenticated/leave': typeof AuthenticatedLeaveRoute
+  '/_authenticated/organization': typeof AuthenticatedOrganizationRoute
+  '/_authenticated/supplies': typeof AuthenticatedSuppliesRoute
+  '/_authenticated/admin/users': typeof AuthenticatedAdminUsersRoute
+  '/_authenticated/modules/$module': typeof AuthenticatedModulesModuleRoute
+  '/_authenticated/officers/$id': typeof AuthenticatedOfficersIdRoute
+  '/_authenticated/officers/': typeof AuthenticatedOfficersIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/audit'
+    | '/dashboard'
+    | '/inventory'
+    | '/leave'
+    | '/organization'
+    | '/supplies'
+    | '/admin/users'
+    | '/modules/$module'
+    | '/officers/$id'
+    | '/officers/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/auth'
+    | '/audit'
+    | '/dashboard'
+    | '/inventory'
+    | '/leave'
+    | '/organization'
+    | '/supplies'
+    | '/admin/users'
+    | '/modules/$module'
+    | '/officers/$id'
+    | '/officers'
+  id:
+    | '__root__'
+    | '/'
+    | '/_authenticated'
+    | '/auth'
+    | '/_authenticated/audit'
+    | '/_authenticated/dashboard'
+    | '/_authenticated/inventory'
+    | '/_authenticated/leave'
+    | '/_authenticated/organization'
+    | '/_authenticated/supplies'
+    | '/_authenticated/admin/users'
+    | '/_authenticated/modules/$module'
+    | '/_authenticated/officers/$id'
+    | '/_authenticated/officers/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AuthRoute: typeof AuthRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +196,126 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/audit': {
+      id: '/_authenticated/audit'
+      path: '/audit'
+      fullPath: '/audit'
+      preLoaderRoute: typeof AuthenticatedAuditRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/dashboard': {
+      id: '/_authenticated/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof AuthenticatedDashboardRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/inventory': {
+      id: '/_authenticated/inventory'
+      path: '/inventory'
+      fullPath: '/inventory'
+      preLoaderRoute: typeof AuthenticatedInventoryRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/leave': {
+      id: '/_authenticated/leave'
+      path: '/leave'
+      fullPath: '/leave'
+      preLoaderRoute: typeof AuthenticatedLeaveRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/organization': {
+      id: '/_authenticated/organization'
+      path: '/organization'
+      fullPath: '/organization'
+      preLoaderRoute: typeof AuthenticatedOrganizationRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/supplies': {
+      id: '/_authenticated/supplies'
+      path: '/supplies'
+      fullPath: '/supplies'
+      preLoaderRoute: typeof AuthenticatedSuppliesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/users': {
+      id: '/_authenticated/admin/users'
+      path: '/admin/users'
+      fullPath: '/admin/users'
+      preLoaderRoute: typeof AuthenticatedAdminUsersRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/modules/$module': {
+      id: '/_authenticated/modules/$module'
+      path: '/modules/$module'
+      fullPath: '/modules/$module'
+      preLoaderRoute: typeof AuthenticatedModulesModuleRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/officers/': {
+      id: '/_authenticated/officers/'
+      path: '/officers'
+      fullPath: '/officers/'
+      preLoaderRoute: typeof AuthenticatedOfficersIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/officers/$id': {
+      id: '/_authenticated/officers/$id'
+      path: '/officers/$id'
+      fullPath: '/officers/$id'
+      preLoaderRoute: typeof AuthenticatedOfficersIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAuditRoute: typeof AuthenticatedAuditRoute
+  AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedInventoryRoute: typeof AuthenticatedInventoryRoute
+  AuthenticatedLeaveRoute: typeof AuthenticatedLeaveRoute
+  AuthenticatedOrganizationRoute: typeof AuthenticatedOrganizationRoute
+  AuthenticatedSuppliesRoute: typeof AuthenticatedSuppliesRoute
+  AuthenticatedAdminUsersRoute: typeof AuthenticatedAdminUsersRoute
+  AuthenticatedModulesModuleRoute: typeof AuthenticatedModulesModuleRoute
+  AuthenticatedOfficersIdRoute: typeof AuthenticatedOfficersIdRoute
+  AuthenticatedOfficersIndexRoute: typeof AuthenticatedOfficersIndexRoute
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAuditRoute: AuthenticatedAuditRoute,
+  AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedInventoryRoute: AuthenticatedInventoryRoute,
+  AuthenticatedLeaveRoute: AuthenticatedLeaveRoute,
+  AuthenticatedOrganizationRoute: AuthenticatedOrganizationRoute,
+  AuthenticatedSuppliesRoute: AuthenticatedSuppliesRoute,
+  AuthenticatedAdminUsersRoute: AuthenticatedAdminUsersRoute,
+  AuthenticatedModulesModuleRoute: AuthenticatedModulesModuleRoute,
+  AuthenticatedOfficersIdRoute: AuthenticatedOfficersIdRoute,
+  AuthenticatedOfficersIndexRoute: AuthenticatedOfficersIndexRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AuthRoute: AuthRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
