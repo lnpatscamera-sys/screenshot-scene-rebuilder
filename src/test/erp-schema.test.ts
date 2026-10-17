@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
-const sql = readFileSync(new URL("../../drizzle/migrations/0002_extend_lnpats_erp_records.sql", import.meta.url), "utf8");
+const sql = readFileSync("drizzle/migrations/0002_extend_lnpats_erp_records.sql", "utf8");
 const tables = [...sql.matchAll(/CREATE TABLE public\.(\w+)/g)].map((match) => match[1]);
 
 describe("staged ERP schema security", () => {
