@@ -1,0 +1,185 @@
+import { Link, Outlet, useNavigate } from "@tanstack/react-router";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
+import {
+  LayoutDashboard, Users, CalendarDays, PackageSearch, Boxes, GraduationCap, Wallet, ShoppingCart,
+  Truck, Briefcase, LifeBuoy, FileText, ShieldCheck, ScrollText, Bell, Moon, Sun, LogOut, Menu, Building2,
+} from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth, ROLE_LABELS } from "@/lib/auth";
+import { Logo } from "./Logo";
+import { Button } from "./ui/button";
+import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
+import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
+
+type NavItem = { to: string; label: string; icon: typeof Users; params?: Record<string, string> };
+const NAV: { group: string; items: NavItem[] }[] = [
+  { group: "Overview", items: [{ to: "/dashboard", label: "Dashboard", icon: LayoutDashboard }, { to: "/organization", label: "Organization", icon: Building2 }] },
+  {
+    group: "Operations",
+    items: [
+      { to: "/officers", label: "Officers", icon: Users },
+      { to: "/leave", label: "Leave", icon: CalendarDays },
+      { to: "/supplies", label: "Supply Requests", icon: PackageSearch },
+      { to: "/inventory", label: "Inventory & Assets", icon: Boxes },
+    ],
+  },
+  {
+    group: "Coming next",
+    items: [
+      { to: "/modules/$module", params: { module: "training" }, label: "Training", icon: GraduationCap },
+      { to: "/modules/$module", params: { module: "finance" }, label: "Finance", icon: Wallet },
+      { to: "/modules/$module", params: { module: "procurement" }, label: "Procurement", icon: ShoppingCart },
+      { to: "/modules/$module", params: { module: "transport" }, label: "Transport", icon: Truck },
+      { to: "/modules/$module", params: { module: "hr" }, label: "HR", icon: Briefcase },
+      { to: "/modules/$module", params: { module: "ict" }, label: "ICT Helpdesk", icon: LifeBuoy },
+      { to: "/modules/$module", params: { module: "documents" }, label: "Documents", icon: FileText },
+    ],
+  },
+  { group: "Administration", items: [{ to: "/audit", label: "Audit Log", icon: ScrollText }, { to: "/admin/users", label: "Users & Roles", icon: ShieldCheck }] },
+];
+
+function SideNav({ onNav }: { onNav?: () => void }) {
+  return (
+    <nav className="flex flex-col gap-6 p-4 text-sm">
+      <div className="flex items-center gap-3 px-2">
+        <Logo className="h-11 w-11 ring-2 ring-sidebar-primary" />
+        <div className="leading-tight">
+          <div className="font-display font-bold text-sidebar-accent-foreground">LNPATS ERP</div>
+          <div className="text-[11px] text-sidebar-foreground/60">Police Academy & Training</div>
+        </div>
+      </div>
+      {NAV.map((g) => (
+        <div key={g.group}>
+          <div className="px-2 mb-1 text-[10px] uppercase tracking-widest text-sidebar-foreground/50">{g.group}</div>
+          {g.items.map((i) => (
+            <Link
+              key={i.label}
+              to={i.to as "/dashboard"}
+              params={i.params as never}
+              onClick={onNav}
+              className="flex items-center gap-3 rounded-md px-2 py-2 text-sidebar-foreground/85 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+              activeProps={{ className: "bg-sidebar-accent text-sidebar-primary font-medium" }}
+            >
+              <i.icon className="h-4 w-4" /> {i.label}
+            </Link>
+          ))}
+        </div>
+      ))}
+    </nav>
+  );
+}
+
+function Notifications() {
+  const qc = useQueryClient();
+  const { data } = useQuery({
+    queryKey: ["notifications"],
+    queryFn: async () => (await supabase.from("notifications").select("*").order("created_at", { ascending: false }).limit(20)).data ?? [],
+    refetchInterval: 30000,
+  });
+  const unread = (data ?? []).filter((n) => !n.read);
+  const markAll = async () => {
+    if (!unread.length) return;
+    await supabase.from("notifications").update({ read: true }).in("id", unread.map((n) => n.id));
+    qc.invalidateQueries({ queryKey: ["notifications"] });
+  };
+  return (
+    <Popover onOpenChange={(o) => !o && markAll()}>
+      <PopoverTrigger asChild>
+        <Button variant="ghost" size="icon" className="relative" aria-label="Notifications">
+          <Bell className="h-5 w-5" />
+          {unread.length > 0 && <span className="absolute -top-0.5 -right-0.5 rounded-full bg-destructive text-destructive-foreground text-[10px] px-1.5">{unread.length}</span>}
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent align="end" className="w-80 p-0">
+        <div className="px-4 py-2 border-b font-medium text-sm">Notifications</div>
+        <div className="max-h-80 overflow-auto">
+          {(data ?? []).length === 0 && <p className="p-4 text-sm text-muted-foreground">No notifications yet.</p>}
+          {(data ?? []).map((n) => (
+            <div key={n.id} className={`px-4 py-2 border-b text-sm ${n.read ? "" : "bg-accent/40"}`}>
+              <div className="font-medium">{n.title}</div>
+              <div className="text-muted-foreground text-xs">{n.body}</div>
+            </div>
+          ))}
+        </div>
+      </PopoverContent>
+    </Popover>
+  );
+}
+
+export function AppShell() {
+  const { session, roles } = useAuth();
+  const nav = useNavigate();
+  const qc = useQueryClient();
+  const [open, setOpen] = useState(false);
+  const [dark, setDark] = useState(() => typeof document !== "undefined" && document.documentElement.classList.contains("dark"));
+  const toggle = () => {
+    const d = !dark;
+    setDark(d);
+    document.documentElement.classList.toggle("dark", d);
+    localStorage.setItem("theme", d ? "dark" : "light");
+  };
+  const signOut = async () => {
+    await qc.cancelQueries();
+    qc.clear();
+    await supabase.auth.signOut();
+    nav({ to: "/auth", replace: true });
+  };
+  const topRole = roles.find((r) => r !== "officer") ?? "officer";
+
+  return (
+    <div className="min-h-screen flex">
+      <aside className="no-print hidden lg:block w-64 shrink-0 bg-sidebar border-r border-sidebar-border sticky top-0 h-screen overflow-y-auto">
+        <SideNav />
+      </aside>
+      <div className="flex-1 min-w-0 flex flex-col">
+        <div className="stripe-band no-print" />
+        <header className="no-print h-14 border-b bg-card flex items-center gap-2 px-4 sticky top-0 z-20">
+          <Sheet open={open} onOpenChange={setOpen}>
+            <SheetTrigger asChild>
+              <Button variant="ghost" size="icon" className="lg:hidden" aria-label="Menu"><Menu className="h-5 w-5" /></Button>
+            </SheetTrigger>
+            <SheetContent side="left" className="p-0 w-64 bg-sidebar border-sidebar-border overflow-y-auto">
+              <SideNav onNav={() => setOpen(false)} />
+            </SheetContent>
+          </Sheet>
+          <div className="flex-1" />
+          <div className="hidden sm:block text-right text-xs leading-tight mr-2">
+            <div className="font-medium">{session?.user.email}</div>
+            <div className="text-muted-foreground">{ROLE_LABELS[topRole]}</div>
+          </div>
+          <Notifications />
+          <Button variant="ghost" size="icon" onClick={toggle} aria-label="Toggle theme">{dark ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}</Button>
+          <Button variant="ghost" size="icon" onClick={signOut} aria-label="Sign out"><LogOut className="h-5 w-5" /></Button>
+        </header>
+        <main className="flex-1 p-4 md:p-6 lg:p-8 max-w-[1400px] w-full mx-auto">
+          <Outlet />
+        </main>
+      </div>
+    </div>
+  );
+}
+
+export function PageHeader({ title, subtitle, actions }: { title: string; subtitle?: string; actions?: React.ReactNode }) {
+  return (
+    <div className="flex flex-wrap items-end justify-between gap-4 mb-6">
+      <div>
+        <h1 className="text-2xl md:text-3xl font-bold">{title}</h1>
+        {subtitle && <p className="text-muted-foreground text-sm mt-1">{subtitle}</p>}
+      </div>
+      <div className="flex gap-2 no-print">{actions}</div>
+    </div>
+  );
+}
+
+export function StatusBadge({ value }: { value: string }) {
+  const tone =
+    value === "Approved" || value === "Collected" || value === "Active"
+      ? "bg-success/15 text-success"
+      : value === "Rejected"
+        ? "bg-destructive/15 text-destructive"
+        : value === "Ready for Collection" || value === "Urgent" || value === "High"
+          ? "bg-gold/20 text-accent-foreground"
+          : "bg-secondary text-secondary-foreground";
+  return <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${tone}`}>{value}</span>;
+}
