@@ -22,6 +22,13 @@
       "when": 1792279340358,
       "tag": "0002_extend_lnpats_erp_records",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1792280353962,
+      "tag": "0003_add_leave_balances",
+      "breakpoints": true
     }
   ]
 }
