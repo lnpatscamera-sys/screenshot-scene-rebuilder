@@ -1,3 +1,4 @@
+import { formValues } from "@/lib/export";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
@@ -39,12 +40,12 @@ function Leave() {
 
   const submit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const f = Object.fromEntries(new FormData(e.currentTarget)) as Record<string, string>;
-    if (f.end_date < f.start_date) return toast.error("End date must be after start date");
+    const f = formValues(e.currentTarget);
+    if (f.end_date < f.start_date) { toast.error("End date must be after start date"); return; }
     const { error } = await supabase.from("leave_requests").insert({
       officer_id: f.officer_id, leave_type: f.leave_type, start_date: f.start_date, end_date: f.end_date, reason: f.reason, requested_by: session!.user.id,
     });
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     toast.success("Leave request submitted to Section Head");
     setOpen(false);
     qc.invalidateQueries({ queryKey: ["leave"] });
@@ -53,7 +54,7 @@ function Leave() {
   const act = async (id: string, approve: boolean) => {
     const note = approve ? null : prompt("Reason for rejection?") ?? null;
     const { error } = await supabase.rpc("act_on_leave", { _id: id, _approve: approve, _note: note ?? undefined });
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     toast.success(approve ? "Approved and forwarded" : "Rejected");
     qc.invalidateQueries({ queryKey: ["leave"] });
   };

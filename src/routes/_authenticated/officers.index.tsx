@@ -1,3 +1,4 @@
+import { formValues } from "@/lib/export";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
@@ -41,14 +42,14 @@ function Officers() {
 
   const create = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const f = Object.fromEntries(new FormData(e.currentTarget)) as Record<string, string>;
+    const f = formValues(e.currentTarget);
     const { error } = await supabase.from("officers").insert({
       service_number: f.service_number, full_name: f.full_name, rank: f.rank, gender: f.gender || null,
       phone: f.phone || null, email: f.email || null, county: f.county || null, position: f.position || null,
       date_joined: f.date_joined || null, date_of_birth: f.date_of_birth || null,
       section_id: f.section_id || null, office_id: f.office_id || null,
     });
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     toast.success("Officer added");
     setOpen(false);
     qc.invalidateQueries({ queryKey: ["officers"] });

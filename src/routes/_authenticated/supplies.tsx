@@ -1,3 +1,4 @@
+import { formValues } from "@/lib/export";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
@@ -39,14 +40,14 @@ function Supplies() {
 
   const submit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const f = Object.fromEntries(new FormData(e.currentTarget)) as Record<string, string>;
+    const f = formValues(e.currentTarget);
     const item = data?.items.find((i) => i.id === f.item_id);
     const { error } = await supabase.from("supply_requests").insert({
       section_id: f.section_id, item_id: item?.id ?? null, item_name: item?.name ?? f.item_name, description: f.description,
       quantity: Number(f.quantity), unit: item?.unit ?? "pcs", priority: f.priority, justification: f.justification,
       requested_by: session!.user.id, requested_by_name: f.requested_by_name,
     });
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     toast.success("Request submitted to Assistant Commissioner");
     setOpen(false);
     qc.invalidateQueries({ queryKey: ["supplies"] });
@@ -55,7 +56,7 @@ function Supplies() {
   const act = async (id: string, approve: boolean) => {
     const note = approve ? null : prompt("Reason for rejection?");
     const { error } = await supabase.rpc("act_on_supply", { _id: id, _approve: approve, _note: note ?? undefined });
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     toast.success("Request updated");
     qc.invalidateQueries({ queryKey: ["supplies"] });
   };

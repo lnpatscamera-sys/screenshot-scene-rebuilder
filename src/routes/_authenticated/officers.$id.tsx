@@ -1,3 +1,4 @@
+import { formValues } from "@/lib/export";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
@@ -38,9 +39,9 @@ function OfficerPage() {
 
   const save = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const f = Object.fromEntries(new FormData(e.currentTarget)) as Record<string, string>;
+    const f = formValues(e.currentTarget);
     const { error } = await supabase.from("officers").update({ ...f, updated_at: new Date().toISOString() }).eq("id", id);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     toast.success("Profile updated");
     setEdit(false);
     qc.invalidateQueries({ queryKey: ["officer", id] });
@@ -49,7 +50,7 @@ function OfficerPage() {
   const uploadPhoto = async (file: File) => {
     const path = `${id}/${Date.now()}-${file.name}`;
     const up = await supabase.storage.from("officer-files").upload(path, file);
-    if (up.error) return toast.error(up.error.message);
+    if (up.error) { toast.error(up.error.message); return; }
     const { data } = supabase.storage.from("officer-files").getPublicUrl(path);
     await supabase.from("officers").update({ photo_url: data.publicUrl }).eq("id", id);
     qc.invalidateQueries({ queryKey: ["officer", id] });

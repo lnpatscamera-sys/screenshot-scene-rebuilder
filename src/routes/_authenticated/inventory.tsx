@@ -1,3 +1,4 @@
+import { formValues } from "@/lib/export";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
@@ -38,12 +39,12 @@ function Inventory() {
 
   const add = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const f = Object.fromEntries(new FormData(e.currentTarget)) as Record<string, string>;
+    const f = formValues(e.currentTarget);
     const { error } = await supabase.from("inventory_items").insert({
       code: f.code, name: f.name, category: f.category, unit: f.unit, quantity: Number(f.quantity), reorder_level: Number(f.reorder_level),
       location: f.location, is_asset: f.category === "Equipment" && f.is_asset === "on", assigned_to: f.assigned_to || null,
     });
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     setOpen(false);
     qc.invalidateQueries({ queryKey: ["inventory"] });
   };
