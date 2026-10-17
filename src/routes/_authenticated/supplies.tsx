@@ -55,7 +55,7 @@ function Supplies() {
 
   const act = async (id: string, approve: boolean) => {
     const note = approve ? null : prompt("Reason for rejection?");
-    const { error } = await supabase.rpc("act_on_supply", { _id: id, _approve: approve, _note: note ?? undefined });
+    const { error } = await supabase.rpc("act_on_supply", { _id: id, _approve: approve, _note: note ?? "" });
     if (error) { toast.error(error.message); return; }
     toast.success("Request updated");
     qc.invalidateQueries({ queryKey: ["supplies"] });

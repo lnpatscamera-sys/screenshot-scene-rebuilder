@@ -53,7 +53,7 @@ function Leave() {
 
   const act = async (id: string, approve: boolean) => {
     const note = approve ? null : prompt("Reason for rejection?") ?? null;
-    const { error } = await supabase.rpc("act_on_leave", { _id: id, _approve: approve, _note: note ?? undefined });
+    const { error } = await supabase.rpc("act_on_leave", { _id: id, _approve: approve, _note: note ?? "" });
     if (error) { toast.error(error.message); return; }
     toast.success(approve ? "Approved and forwarded" : "Rejected");
     qc.invalidateQueries({ queryKey: ["leave"] });

@@ -34,8 +34,14 @@ function OfficerPage() {
     queryKey: ["officer", id],
     queryFn: async () => (await supabase.from("officers").select("*, sections(name), offices(name)").eq("id", id).single()).data,
   });
+  const { data: photoUrl } = useQuery({
+    queryKey: ["officer-photo", o?.photo_url],
+    enabled: !!o?.photo_url,
+    queryFn: async () => (await supabase.storage.from("officer-files").createSignedUrl(o!.photo_url!, 3600)).data?.signedUrl ?? null,
+  });
   if (!o) return <p className="text-muted-foreground">Loading…</p>;
   const canEdit = hasAny(["hr_officer", "commandant"]);
+  const photo = photoUrl;
 
   const save = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -51,8 +57,7 @@ function OfficerPage() {
     const path = `${id}/${Date.now()}-${file.name}`;
     const up = await supabase.storage.from("officer-files").upload(path, file);
     if (up.error) { toast.error(up.error.message); return; }
-    const { data } = supabase.storage.from("officer-files").getPublicUrl(path);
-    await supabase.from("officers").update({ photo_url: data.publicUrl }).eq("id", id);
+    await supabase.from("officers").update({ photo_url: path }).eq("id", id);
     qc.invalidateQueries({ queryKey: ["officer", id] });
   };
 
@@ -83,7 +88,7 @@ function OfficerPage() {
             <div className="stripe-band" />
             <div className="p-4 flex gap-4">
               <div className="h-28 w-24 bg-muted rounded-md overflow-hidden grid place-items-center text-xs text-muted-foreground">
-                {o.photo_url ? <img src={o.photo_url} alt={o.full_name} className="h-full w-full object-cover" /> : "Photo"}
+                {photo ? <img src={photo} alt={o.full_name} className="h-full w-full object-cover" /> : "Photo"}
               </div>
               <div className="text-xs space-y-1 flex-1">
                 <div className="font-bold text-sm">{o.full_name}</div>
