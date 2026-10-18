@@ -71,6 +71,13 @@
       "when": 1792317171740,
       "tag": "0009_automatic_inventory_posting",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1792317224719,
+      "tag": "0010_stock_movement_reconciliation_details",
+      "breakpoints": true
     }
   ]
 }
