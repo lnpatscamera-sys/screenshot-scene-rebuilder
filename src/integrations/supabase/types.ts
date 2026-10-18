@@ -222,6 +222,92 @@ export type Database = {
         }
         Relationships: []
       }
+      correspondence: {
+        Row: {
+          action_taken: string | null
+          attachments: Json
+          created_at: string
+          created_by: string
+          direction: string
+          history: Json
+          id: string
+          keywords: string | null
+          office_id: string | null
+          officer_id: string | null
+          party: string
+          record_date: string
+          reference_number: string
+          stage: number
+          status: string
+          subject: string
+        }
+        Insert: {
+          action_taken?: string | null
+          attachments?: Json
+          created_at?: string
+          created_by: string
+          direction: string
+          history?: Json
+          id?: string
+          keywords?: string | null
+          office_id?: string | null
+          officer_id?: string | null
+          party: string
+          record_date?: string
+          reference_number: string
+          stage?: number
+          status?: string
+          subject: string
+        }
+        Update: {
+          action_taken?: string | null
+          attachments?: Json
+          created_at?: string
+          created_by?: string
+          direction?: string
+          history?: Json
+          id?: string
+          keywords?: string | null
+          office_id?: string | null
+          officer_id?: string | null
+          party?: string
+          record_date?: string
+          reference_number?: string
+          stage?: number
+          status?: string
+          subject?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "correspondence_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "offices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "correspondence_officer_id_fkey"
+            columns: ["officer_id"]
+            isOneToOne: false
+            referencedRelation: "approvals"
+            referencedColumns: ["approver_id"]
+          },
+          {
+            foreignKeyName: "correspondence_officer_id_fkey"
+            columns: ["officer_id"]
+            isOneToOne: false
+            referencedRelation: "equipment_requests"
+            referencedColumns: ["requested_by"]
+          },
+          {
+            foreignKeyName: "correspondence_officer_id_fkey"
+            columns: ["officer_id"]
+            isOneToOne: false
+            referencedRelation: "officers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       courses: {
         Row: {
           course_name: string | null
@@ -323,6 +409,106 @@ export type Database = {
             columns: ["recorded_by"]
             isOneToOne: false
             referencedRelation: "officers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      document_versions: {
+        Row: {
+          change_log: string
+          created_at: string
+          created_by: string
+          document_id: string
+          file_name: string
+          file_path: string
+          id: string
+          signature: string | null
+          version: number
+        }
+        Insert: {
+          change_log: string
+          created_at?: string
+          created_by: string
+          document_id: string
+          file_name: string
+          file_path: string
+          id?: string
+          signature?: string | null
+          version: number
+        }
+        Update: {
+          change_log?: string
+          created_at?: string
+          created_by?: string
+          document_id?: string
+          file_name?: string
+          file_path?: string
+          id?: string
+          signature?: string | null
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "document_versions_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "erp_documents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      erp_documents: {
+        Row: {
+          author_id: string
+          category: string
+          created_at: string
+          current_version: number
+          document_number: string
+          history: Json
+          id: string
+          keywords: string | null
+          published_at: string | null
+          section_id: string | null
+          stage: number
+          status: string
+          title: string
+        }
+        Insert: {
+          author_id: string
+          category: string
+          created_at?: string
+          current_version?: number
+          document_number: string
+          history?: Json
+          id?: string
+          keywords?: string | null
+          published_at?: string | null
+          section_id?: string | null
+          stage?: number
+          status?: string
+          title: string
+        }
+        Update: {
+          author_id?: string
+          category?: string
+          created_at?: string
+          current_version?: number
+          document_number?: string
+          history?: Json
+          id?: string
+          keywords?: string | null
+          published_at?: string | null
+          section_id?: string | null
+          stage?: number
+          status?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "erp_documents_section_id_fkey"
+            columns: ["section_id"]
+            isOneToOne: false
+            referencedRelation: "sections"
             referencedColumns: ["id"]
           },
         ]
@@ -540,11 +726,15 @@ export type Database = {
       leave_requests: {
         Row: {
           approval_status: string | null
+          attachments: Json
           created_at: string
           current_step: string | null
+          delegate_officer_id: string | null
           end_date: string
           history: Json
+          hr_processed_at: string | null
           id: string
+          leave_number: string | null
           leave_type: string
           officer_id: string | null
           reason: string | null
@@ -556,11 +746,15 @@ export type Database = {
         }
         Insert: {
           approval_status?: string | null
+          attachments?: Json
           created_at?: string
           current_step?: string | null
+          delegate_officer_id?: string | null
           end_date: string
           history?: Json
+          hr_processed_at?: string | null
           id?: string
+          leave_number?: string | null
           leave_type: string
           officer_id?: string | null
           reason?: string | null
@@ -572,11 +766,15 @@ export type Database = {
         }
         Update: {
           approval_status?: string | null
+          attachments?: Json
           created_at?: string
           current_step?: string | null
+          delegate_officer_id?: string | null
           end_date?: string
           history?: Json
+          hr_processed_at?: string | null
           id?: string
+          leave_number?: string | null
           leave_type?: string
           officer_id?: string | null
           reason?: string | null
@@ -587,6 +785,27 @@ export type Database = {
           total_days?: number | null
         }
         Relationships: [
+          {
+            foreignKeyName: "leave_requests_delegate_officer_id_fkey"
+            columns: ["delegate_officer_id"]
+            isOneToOne: false
+            referencedRelation: "approvals"
+            referencedColumns: ["approver_id"]
+          },
+          {
+            foreignKeyName: "leave_requests_delegate_officer_id_fkey"
+            columns: ["delegate_officer_id"]
+            isOneToOne: false
+            referencedRelation: "equipment_requests"
+            referencedColumns: ["requested_by"]
+          },
+          {
+            foreignKeyName: "leave_requests_delegate_officer_id_fkey"
+            columns: ["delegate_officer_id"]
+            isOneToOne: false
+            referencedRelation: "officers"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "leave_requests_officer_id_fkey"
             columns: ["officer_id"]
@@ -1088,6 +1307,24 @@ export type Database = {
           },
         ]
       }
+      registry_counters: {
+        Row: {
+          direction: string
+          last_number: number
+          year: number
+        }
+        Insert: {
+          direction: string
+          last_number?: number
+          year: number
+        }
+        Update: {
+          direction?: string
+          last_number?: number
+          year?: number
+        }
+        Relationships: []
+      }
       sections: {
         Row: {
           created_at: string | null
@@ -1513,6 +1750,7 @@ export type Database = {
         }
         Returns: undefined
       }
+      can_read_document: { Args: { _id: string }; Returns: boolean }
       has_any_role: {
         Args: {
           _roles: Database["public"]["Enums"]["app_role"][]
@@ -1539,6 +1777,16 @@ export type Database = {
           id: string
           roles: Database["public"]["Enums"]["app_role"][]
         }[]
+      }
+      next_registry_reference: { Args: { _direction: string }; Returns: string }
+      phase2_admin: { Args: never; Returns: boolean }
+      phase2_workflow: {
+        Args: { _action: string; _id: string; _module: string; _payload?: Json }
+        Returns: string
+      }
+      record_activity: {
+        Args: { _action: string; _id: string; _module: string }
+        Returns: undefined
       }
       supply_stage_role: {
         Args: { _stage: number }

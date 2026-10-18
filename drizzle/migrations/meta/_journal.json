@@ -36,6 +36,13 @@
       "when": 1792314370100,
       "tag": "0004_phase2_registry_role",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1792314459039,
+      "tag": "0005_phase2_workflows",
+      "breakpoints": true
     }
   ]
 }
