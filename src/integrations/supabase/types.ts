@@ -1061,6 +1061,9 @@ export type Database = {
       }
       inventory_movements: {
         Row: {
+          actor_id: string | null
+          balance_after: number | null
+          balance_before: number | null
           created_at: string
           id: string
           issue_id: string | null
@@ -1069,11 +1072,15 @@ export type Database = {
           movement_type: string | null
           quantity: number | null
           receipt_id: string | null
+          reconciliation_id: string | null
           recorded_by: string | null
           remarks: string | null
           request_id: string | null
         }
         Insert: {
+          actor_id?: string | null
+          balance_after?: number | null
+          balance_before?: number | null
           created_at?: string
           id?: string
           issue_id?: string | null
@@ -1082,11 +1089,15 @@ export type Database = {
           movement_type?: string | null
           quantity?: number | null
           receipt_id?: string | null
+          reconciliation_id?: string | null
           recorded_by?: string | null
           remarks?: string | null
           request_id?: string | null
         }
         Update: {
+          actor_id?: string | null
+          balance_after?: number | null
+          balance_before?: number | null
           created_at?: string
           id?: string
           issue_id?: string | null
@@ -1095,11 +1106,19 @@ export type Database = {
           movement_type?: string | null
           quantity?: number | null
           receipt_id?: string | null
+          reconciliation_id?: string | null
           recorded_by?: string | null
           remarks?: string | null
           request_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "inventory_movements_actor_id_fkey"
+            columns: ["actor_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "inventory_movements_issue_id_fkey"
             columns: ["issue_id"]
@@ -1119,6 +1138,13 @@ export type Database = {
             columns: ["receipt_id"]
             isOneToOne: false
             referencedRelation: "store_receipts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "inventory_movements_reconciliation_id_fkey"
+            columns: ["reconciliation_id"]
+            isOneToOne: false
+            referencedRelation: "stock_reconciliation"
             referencedColumns: ["id"]
           },
           {
@@ -1989,11 +2015,15 @@ export type Database = {
       }
       stock_reconciliation: {
         Row: {
+          balance_after: number | null
+          balance_before: number | null
           counted_by: string | null
           counted_quantity: number | null
           created_at: string
           id: string
           item_id: string | null
+          posted_at: string | null
+          posted_by: string | null
           reason: string | null
           reconciliation_date: string | null
           reconciliation_number: string | null
@@ -2002,11 +2032,15 @@ export type Database = {
           variance: number | null
         }
         Insert: {
+          balance_after?: number | null
+          balance_before?: number | null
           counted_by?: string | null
           counted_quantity?: number | null
           created_at?: string
           id?: string
           item_id?: string | null
+          posted_at?: string | null
+          posted_by?: string | null
           reason?: string | null
           reconciliation_date?: string | null
           reconciliation_number?: string | null
@@ -2015,11 +2049,15 @@ export type Database = {
           variance?: number | null
         }
         Update: {
+          balance_after?: number | null
+          balance_before?: number | null
           counted_by?: string | null
           counted_quantity?: number | null
           created_at?: string
           id?: string
           item_id?: string | null
+          posted_at?: string | null
+          posted_by?: string | null
           reason?: string | null
           reconciliation_date?: string | null
           reconciliation_number?: string | null
@@ -2057,6 +2095,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "stock_reconciliation_posted_by_fkey"
+            columns: ["posted_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "stock_reconciliation_reviewed_by_fkey"
             columns: ["reviewed_by"]
             isOneToOne: false
@@ -2081,6 +2126,8 @@ export type Database = {
       }
       store_issues: {
         Row: {
+          balance_after: number | null
+          balance_before: number | null
           created_at: string
           id: string
           issue_date: string | null
@@ -2088,6 +2135,8 @@ export type Database = {
           issued_by: string | null
           issued_to: string | null
           item_id: string | null
+          posted_at: string | null
+          posted_by: string | null
           quantity: number | null
           remarks: string | null
           request_id: string | null
@@ -2095,6 +2144,8 @@ export type Database = {
           unit: string | null
         }
         Insert: {
+          balance_after?: number | null
+          balance_before?: number | null
           created_at?: string
           id?: string
           issue_date?: string | null
@@ -2102,6 +2153,8 @@ export type Database = {
           issued_by?: string | null
           issued_to?: string | null
           item_id?: string | null
+          posted_at?: string | null
+          posted_by?: string | null
           quantity?: number | null
           remarks?: string | null
           request_id?: string | null
@@ -2109,6 +2162,8 @@ export type Database = {
           unit?: string | null
         }
         Update: {
+          balance_after?: number | null
+          balance_before?: number | null
           created_at?: string
           id?: string
           issue_date?: string | null
@@ -2116,6 +2171,8 @@ export type Database = {
           issued_by?: string | null
           issued_to?: string | null
           item_id?: string | null
+          posted_at?: string | null
+          posted_by?: string | null
           quantity?: number | null
           remarks?: string | null
           request_id?: string | null
@@ -2173,6 +2230,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "store_issues_posted_by_fkey"
+            columns: ["posted_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "store_issues_request_id_fkey"
             columns: ["request_id"]
             isOneToOne: false
@@ -2218,9 +2282,13 @@ export type Database = {
       }
       store_receipts: {
         Row: {
+          balance_after: number | null
+          balance_before: number | null
           created_at: string
           id: string
           item_id: string | null
+          posted_at: string | null
+          posted_by: string | null
           purchase_order_id: string | null
           quantity: number | null
           receipt_date: string | null
@@ -2231,9 +2299,13 @@ export type Database = {
           unit: string | null
         }
         Insert: {
+          balance_after?: number | null
+          balance_before?: number | null
           created_at?: string
           id?: string
           item_id?: string | null
+          posted_at?: string | null
+          posted_by?: string | null
           purchase_order_id?: string | null
           quantity?: number | null
           receipt_date?: string | null
@@ -2244,9 +2316,13 @@ export type Database = {
           unit?: string | null
         }
         Update: {
+          balance_after?: number | null
+          balance_before?: number | null
           created_at?: string
           id?: string
           item_id?: string | null
+          posted_at?: string | null
+          posted_by?: string | null
           purchase_order_id?: string | null
           quantity?: number | null
           receipt_date?: string | null
@@ -2262,6 +2338,13 @@ export type Database = {
             columns: ["item_id"]
             isOneToOne: false
             referencedRelation: "inventory_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "store_receipts_posted_by_fkey"
+            columns: ["posted_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
           {

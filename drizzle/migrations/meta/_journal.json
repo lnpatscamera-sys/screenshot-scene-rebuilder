@@ -64,6 +64,13 @@
       "when": 1792316928520,
       "tag": "0008_stage_logistics_records",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1792317171740,
+      "tag": "0009_automatic_inventory_posting",
+      "breakpoints": true
     }
   ]
 }
