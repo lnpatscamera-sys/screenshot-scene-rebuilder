@@ -20,7 +20,7 @@ export const Route = createFileRoute("/_authenticated/supplies")({
   component: Supplies,
 });
 
-function Supplies() {
+export function Supplies() {
   const { session, hasAny } = useAuth();
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
@@ -33,6 +33,7 @@ function Supplies() {
         supabase.from("sections").select("id,name").order("name"),
         supabase.from("inventory_items").select("id,name,unit,quantity").order("name"),
       ]);
+      if (r.error || s.error || i.error) throw new Error("Equipment requests could not be loaded");
       return { reqs: r.data ?? [], sections: s.data ?? [], items: i.data ?? [] };
     },
   });
@@ -40,12 +41,13 @@ function Supplies() {
 
   const submit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (!session) return;
     const f = formValues(e.currentTarget);
     const item = data?.items.find((i) => i.id === f.item_id);
     const { error } = await supabase.from("supply_requests").insert({
       section_id: f.section_id, item_id: item?.id ?? null, item_name: item?.name ?? f.item_name, description: f.description,
       quantity: Number(f.quantity), unit: item?.unit ?? "pcs", priority: f.priority, justification: f.justification,
-      requested_by: session!.user.id, requested_by_name: f.requested_by_name,
+      requested_by: session.user.id, requested_by_name: f.requested_by_name,
     });
     if (error) { toast.error(error.message); return; }
     toast.success("Request submitted to Assistant Commissioner");

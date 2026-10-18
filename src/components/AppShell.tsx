@@ -21,10 +21,22 @@ const NAV: { group: string; items: NavItem[] }[] = [
       { to: "/officers", label: "Officers", icon: Users },
       { to: "/leave", label: "Leave", icon: CalendarDays },
       { to: "/supplies", label: "Supply Requests", icon: PackageSearch },
-      { to: "/inventory", label: "Inventory & Assets", icon: Boxes },
+      { to: "/inventory", label: "Inventory Items", icon: Boxes },
       { to: "/registry", label: "Registry", icon: FileText },
       { to: "/documents", label: "Documents", icon: FileText },
       { to: "/search", label: "Global Search", icon: Search },
+    ],
+  },
+  {
+    group: "Logistics",
+    items: [
+      { to: "/stock-movements", label: "Stock Movements", icon: ScrollText },
+      { to: "/equipment-requests", label: "Equipment Requests", icon: PackageSearch },
+      { to: "/receipts", label: "Store Receipts", icon: Boxes },
+      { to: "/issues", label: "Store Issues", icon: Boxes },
+      { to: "/suppliers", label: "Suppliers", icon: Building2 },
+      { to: "/assets", label: "Assets", icon: Boxes },
+      { to: "/vehicle-bookings", label: "Vehicle Bookings", icon: Truck },
     ],
   },
   {

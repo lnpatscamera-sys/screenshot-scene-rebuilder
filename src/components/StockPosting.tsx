@@ -14,11 +14,11 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 type Item = { id: string; name: string; code: string; quantity: number; unit: string };
 type Mode = "Receipt" | "Issue" | "Reconciliation";
 
-export function StockPosting({ items }: { items: Item[] }) {
+export function StockPosting({ items, initialMode = "Receipt" }: { items: Item[]; initialMode?: Mode }) {
   const { hasAny } = useAuth();
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
-  const [mode, setMode] = useState<Mode>("Receipt");
+  const [mode, setMode] = useState<Mode>(initialMode);
   const [busy, setBusy] = useState(false);
   const [entryId, setEntryId] = useState("");
   const [itemId, setItemId] = useState("");
@@ -55,6 +55,7 @@ export function StockPosting({ items }: { items: Item[] }) {
         qc.invalidateQueries({ queryKey: ["inventory-movements"] }),
         qc.invalidateQueries({ queryKey: ["supplies"] }),
         qc.invalidateQueries({ queryKey: ["audit"] }),
+        qc.invalidateQueries({ queryKey: ["logistics"] }),
       ]);
       setOpen(false);
       toast.success(`${mode} recorded; stock updated`);
