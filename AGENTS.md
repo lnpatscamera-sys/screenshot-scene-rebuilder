@@ -18,3 +18,4 @@
 - Store optional officer name parts without automatically splitting existing full names. Why: parsing names would invent personal data.
 - Phase 2 correspondence and document mutations use database-authorized RPCs; private attachments use exact path membership and signed links. Why: read access never implies approval or file access.
 - Phase 2 screens share query options and PDF/Excel report controls; registry is canonical for both correspondence directions. Why: consistent reads and preserved revision histories.
+- App emails use the managed server-only template sender, with no local queue or generic send endpoint; email preview routes bypass app guards and authenticate themselves. Why: delivery and suppression are managed centrally.
