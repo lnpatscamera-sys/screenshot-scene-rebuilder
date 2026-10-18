@@ -7,6 +7,8 @@ import { canAnalyzeStock } from '@/lib/logistics';
 import { Button } from './ui/button';
 import { Label } from './ui/label';
 import { Textarea } from './ui/textarea';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 export function StockAnalysis({ items }: { items: { id: string; code: string; name: string }[] }) {
   const { roles } = useAuth();
@@ -25,6 +27,6 @@ export function StockAnalysis({ items }: { items: { id: string; code: string; na
     </form>
     {busy && <p role="status" className="text-sm text-muted-foreground flex items-center gap-2"><LoaderCircle className="h-4 w-4 animate-spin motion-reduce:animate-none" />Reviewing movements, reconciliations and audit entries…</p>}
     {result?.error && <p role="alert" className="text-sm text-destructive whitespace-pre-wrap">{result.error}</p>}
-    {result?.text && <div className="border-l-2 border-primary pl-4 space-y-3"><p className="text-xs text-muted-foreground">{result.movementCount} movements · {result.reconciliationCount} reconciliations · {result.auditCount} audit entries{result.truncated ? ' · Recent evidence only' : ''}</p><div className="text-sm whitespace-pre-wrap break-words leading-relaxed">{result.text}</div><p className="text-xs text-muted-foreground">Advisory findings · Staff verification required · No stock changes made</p></div>}
+    {result?.text && <div className="border-l-2 border-primary pl-4 space-y-3"><p className="text-xs text-muted-foreground">{result.movementCount} movements · {result.reconciliationCount} reconciliations · {result.auditCount} audit entries{result.truncated ? ' · Recent evidence only' : ''}</p><div className="text-sm break-words leading-relaxed space-y-3"><ReactMarkdown remarkPlugins={[remarkGfm]} components={{ h2: props => <h3 className="text-lg font-semibold pt-3" {...props} />, table: props => <div className="overflow-x-auto"><table className="w-full border-collapse text-sm" {...props} /></div>, th: props => <th className="border-b text-left p-2" {...props} />, td: props => <td className="border-b p-2 align-top" {...props} />, ul: props => <ul className="list-disc pl-5 space-y-2" {...props} />, ol: props => <ol className="list-decimal pl-5 space-y-2" {...props} /> }}>{result.text}</ReactMarkdown></div><p className="text-xs text-muted-foreground">Advisory findings · Staff verification required · No stock changes made</p></div>}
   </section>;
 }
