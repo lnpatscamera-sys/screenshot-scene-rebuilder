@@ -14,10 +14,12 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedAuditRouteImport } from './routes/_authenticated/audit'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedDocumentsRouteImport } from './routes/_authenticated/documents'
 import { Route as AuthenticatedInventoryRouteImport } from './routes/_authenticated/inventory'
 import { Route as AuthenticatedLeaveRouteImport } from './routes/_authenticated/leave'
 import { Route as AuthenticatedOrganizationRouteImport } from './routes/_authenticated/organization'
 import { Route as AuthenticatedRegistryRouteImport } from './routes/_authenticated/registry'
+import { Route as AuthenticatedSearchRouteImport } from './routes/_authenticated/search'
 import { Route as AuthenticatedSuppliesRouteImport } from './routes/_authenticated/supplies'
 import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated/admin.users'
 import { Route as AuthenticatedModulesModuleRouteImport } from './routes/_authenticated/modules.$module'
@@ -48,6 +50,11 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedDocumentsRoute = AuthenticatedDocumentsRouteImport.update({
+  id: '/documents',
+  path: '/documents',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedInventoryRoute = AuthenticatedInventoryRouteImport.update({
   id: '/inventory',
   path: '/inventory',
@@ -67,6 +74,11 @@ const AuthenticatedOrganizationRoute =
 const AuthenticatedRegistryRoute = AuthenticatedRegistryRouteImport.update({
   id: '/registry',
   path: '/registry',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedSearchRoute = AuthenticatedSearchRouteImport.update({
+  id: '/search',
+  path: '/search',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedSuppliesRoute = AuthenticatedSuppliesRouteImport.update({
@@ -102,10 +114,12 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/audit': typeof AuthenticatedAuditRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/documents': typeof AuthenticatedDocumentsRoute
   '/inventory': typeof AuthenticatedInventoryRoute
   '/leave': typeof AuthenticatedLeaveRoute
   '/organization': typeof AuthenticatedOrganizationRoute
   '/registry': typeof AuthenticatedRegistryRoute
+  '/search': typeof AuthenticatedSearchRoute
   '/supplies': typeof AuthenticatedSuppliesRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/modules/$module': typeof AuthenticatedModulesModuleRoute
@@ -117,10 +131,12 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/audit': typeof AuthenticatedAuditRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/documents': typeof AuthenticatedDocumentsRoute
   '/inventory': typeof AuthenticatedInventoryRoute
   '/leave': typeof AuthenticatedLeaveRoute
   '/organization': typeof AuthenticatedOrganizationRoute
   '/registry': typeof AuthenticatedRegistryRoute
+  '/search': typeof AuthenticatedSearchRoute
   '/supplies': typeof AuthenticatedSuppliesRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/modules/$module': typeof AuthenticatedModulesModuleRoute
@@ -134,10 +150,12 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/_authenticated/audit': typeof AuthenticatedAuditRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/documents': typeof AuthenticatedDocumentsRoute
   '/_authenticated/inventory': typeof AuthenticatedInventoryRoute
   '/_authenticated/leave': typeof AuthenticatedLeaveRoute
   '/_authenticated/organization': typeof AuthenticatedOrganizationRoute
   '/_authenticated/registry': typeof AuthenticatedRegistryRoute
+  '/_authenticated/search': typeof AuthenticatedSearchRoute
   '/_authenticated/supplies': typeof AuthenticatedSuppliesRoute
   '/_authenticated/admin/users': typeof AuthenticatedAdminUsersRoute
   '/_authenticated/modules/$module': typeof AuthenticatedModulesModuleRoute
@@ -151,10 +169,12 @@ export interface FileRouteTypes {
     | '/auth'
     | '/audit'
     | '/dashboard'
+    | '/documents'
     | '/inventory'
     | '/leave'
     | '/organization'
     | '/registry'
+    | '/search'
     | '/supplies'
     | '/admin/users'
     | '/modules/$module'
@@ -166,10 +186,12 @@ export interface FileRouteTypes {
     | '/auth'
     | '/audit'
     | '/dashboard'
+    | '/documents'
     | '/inventory'
     | '/leave'
     | '/organization'
     | '/registry'
+    | '/search'
     | '/supplies'
     | '/admin/users'
     | '/modules/$module'
@@ -182,10 +204,12 @@ export interface FileRouteTypes {
     | '/auth'
     | '/_authenticated/audit'
     | '/_authenticated/dashboard'
+    | '/_authenticated/documents'
     | '/_authenticated/inventory'
     | '/_authenticated/leave'
     | '/_authenticated/organization'
     | '/_authenticated/registry'
+    | '/_authenticated/search'
     | '/_authenticated/supplies'
     | '/_authenticated/admin/users'
     | '/_authenticated/modules/$module'
@@ -236,6 +260,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/documents': {
+      id: '/_authenticated/documents'
+      path: '/documents'
+      fullPath: '/documents'
+      preLoaderRoute: typeof AuthenticatedDocumentsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/inventory': {
       id: '/_authenticated/inventory'
       path: '/inventory'
@@ -262,6 +293,13 @@ declare module '@tanstack/react-router' {
       path: '/registry'
       fullPath: '/registry'
       preLoaderRoute: typeof AuthenticatedRegistryRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/search': {
+      id: '/_authenticated/search'
+      path: '/search'
+      fullPath: '/search'
+      preLoaderRoute: typeof AuthenticatedSearchRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/supplies': {
@@ -305,10 +343,12 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAuditRoute: typeof AuthenticatedAuditRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedDocumentsRoute: typeof AuthenticatedDocumentsRoute
   AuthenticatedInventoryRoute: typeof AuthenticatedInventoryRoute
   AuthenticatedLeaveRoute: typeof AuthenticatedLeaveRoute
   AuthenticatedOrganizationRoute: typeof AuthenticatedOrganizationRoute
   AuthenticatedRegistryRoute: typeof AuthenticatedRegistryRoute
+  AuthenticatedSearchRoute: typeof AuthenticatedSearchRoute
   AuthenticatedSuppliesRoute: typeof AuthenticatedSuppliesRoute
   AuthenticatedAdminUsersRoute: typeof AuthenticatedAdminUsersRoute
   AuthenticatedModulesModuleRoute: typeof AuthenticatedModulesModuleRoute
@@ -319,10 +359,12 @@ interface AuthenticatedRouteRouteChildren {
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAuditRoute: AuthenticatedAuditRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedDocumentsRoute: AuthenticatedDocumentsRoute,
   AuthenticatedInventoryRoute: AuthenticatedInventoryRoute,
   AuthenticatedLeaveRoute: AuthenticatedLeaveRoute,
   AuthenticatedOrganizationRoute: AuthenticatedOrganizationRoute,
   AuthenticatedRegistryRoute: AuthenticatedRegistryRoute,
+  AuthenticatedSearchRoute: AuthenticatedSearchRoute,
   AuthenticatedSuppliesRoute: AuthenticatedSuppliesRoute,
   AuthenticatedAdminUsersRoute: AuthenticatedAdminUsersRoute,
   AuthenticatedModulesModuleRoute: AuthenticatedModulesModuleRoute,
