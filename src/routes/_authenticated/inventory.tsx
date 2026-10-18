@@ -54,9 +54,12 @@ function Inventory() {
     qc.invalidateQueries({ queryKey: ["inventory"] });
   };
   const adjust = async (id: string, qty: number, delta: number) => {
-    const { error } = await supabase.from("inventory_items").update({ quantity: Math.max(0, qty + delta) }).eq("id", id);
+    const { error } = delta > 0
+      ? await supabase.from("store_receipts").insert({ item_id: id, quantity: 1, remarks: "Stores ledger increment" })
+      : await supabase.from("store_issues").insert({ item_id: id, quantity: 1, remarks: "Stores ledger decrement" });
     if (error) toast.error(error.message);
     qc.invalidateQueries({ queryKey: ["inventory"] });
+    qc.invalidateQueries({ queryKey: ["inventory-movements"] });
   };
 
   return (

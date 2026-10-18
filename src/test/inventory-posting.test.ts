@@ -31,7 +31,7 @@ beforeAll(async () => {
     CREATE FUNCTION audit_trigger() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN INSERT INTO audit_logs VALUES(TG_TABLE_NAME,jsonb_build_object('old',to_jsonb(OLD),'new',to_jsonb(NEW))); RETURN NEW; END $$;
     CREATE TRIGGER audit_inventory AFTER UPDATE ON inventory_items FOR EACH ROW EXECUTE FUNCTION audit_trigger();
   `);
-  for (const path of ["0008_stage_logistics_records.sql", "0009_automatic_inventory_posting.sql", "0010_stock_movement_reconciliation_details.sql"]) {
+  for (const path of ["0008_stage_logistics_records.sql", "0009_automatic_inventory_posting.sql", "0010_stock_movement_reconciliation_details.sql", "0011_isolate_stock_issue_validation.sql"]) {
     await db.exec(readFileSync(`drizzle/migrations/${path}`, "utf8"));
   }
   await db.exec(`INSERT INTO profiles VALUES('${actor}','test'); SELECT set_config('test.actor','${actor}',false);`);
