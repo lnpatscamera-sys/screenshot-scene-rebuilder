@@ -29,7 +29,12 @@ export const logisticsOptions = (kind: LogisticsKind) => queryOptions({ queryKey
   const permission = await supabase.rpc('has_any_role', { _user_id: (await supabase.auth.getUser()).data.user?.id || '', _roles: ['storekeeper','commandant'] });
   if (permission.error || !permission.data) throw new Error('You do not have access to logistics management.');
   const [records, items, vehicles, officers] = await Promise.all([
-    supabase.from(config[kind].table).select('*').limit(1000),
+    kind === 'movements' ? supabase.from('inventory_movements').select('*').limit(1000)
+      : kind === 'receipts' ? supabase.from('store_receipts').select('*').limit(1000)
+      : kind === 'issues' ? supabase.from('store_issues').select('*').limit(1000)
+      : kind === 'suppliers' ? supabase.from('suppliers').select('*').limit(1000)
+      : kind === 'assets' ? supabase.from('assets').select('*').limit(1000)
+      : supabase.from('vehicle_bookings').select('*').limit(1000),
     supabase.from('inventory_items').select('id,name,code,quantity,unit').order('code'),
     supabase.from('vehicles').select('id,vehicle_no').order('vehicle_no'),
     supabase.from('officers').select('id,full_name').order('full_name'),

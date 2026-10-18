@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useServerFn } from '@tanstack/react-start';
-import { ClipboardSearch, LoaderCircle } from 'lucide-react';
+import { Search as ClipboardSearch, LoaderCircle } from 'lucide-react';
 import { analyzeStock } from '@/lib/stock-analysis.functions';
 import { useAuth } from '@/lib/auth';
 import { canAnalyzeStock } from '@/lib/logistics';
