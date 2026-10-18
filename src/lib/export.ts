@@ -24,6 +24,15 @@ export async function exportPdf(title: string, rows: Record<string, unknown>[]) 
   doc.text(`LNPATS — ${title}`, 14, 18);
   doc.setFontSize(9);
   doc.text(new Date().toLocaleString(), 14, 25);
+  if (title === "Leave approval letter") {
+    const record = rows[0];
+    if (!record) return;
+    doc.setFontSize(12);
+    const lines = [`Reference: ${record['Reference'] ?? ""}`, `Officer: ${record['Officer'] ?? ""}`, `Service number: ${record['Service'] ?? ""}`, "", `Your ${record['Type'] ?? ""} leave request for ${record['Days'] ?? ""} days, from ${record['Start'] ?? ""} to ${record['End'] ?? ""}, has been approved and processed by the Human Resource Section.`, "", "Please report back for duty at the end of your approved leave period.", "", "Human Resource Section", "Liberia National Police Academy and Training School"];
+    doc.text(doc.splitTextToSize(lines.join("\n"), 250), 14, 42);
+    doc.save(`${title}.pdf`);
+    return;
+  }
   const keys = Object.keys(rows[0] ?? {});
   autoTable(doc, { startY: 30, head: [keys], body: rows.map(r => keys.map(k => String(r[k] ?? ""))), styles: { fontSize: 8 } });
   doc.save(`${title}.pdf`);

@@ -10,7 +10,8 @@
 - [x] Audit log
 
 ## Later phases
-- [ ] Phase 2: complete leave processing, registry workflows, document repository/version approvals, global search, audit activity, PDF/Excel reports and notifications.
+- [x] Phase 2: connected leave HR processing, registry chain, document approvals/revisions/rollback, global search, private uploads, in-app notifications, audit activity, PDF/Excel/print reports and role-aware summaries.
+- [ ] Phase 2 email notices — blocked until an owned sender domain is configured.
+- [ ] Cryptographic document signatures — currently recorded signer names only; requires the organization's signing identity/certificate provider.
 - [x] Extend ERP schema from supplied SQL without replacing existing workflows; match the supplied offices and sections.
-- [ ] Training, Finance, Procurement, Transport, HR, ICT helpdesk, Documents
-- [ ] Notifications (email), PDF/Excel reports, role-specific dashboards
+- [ ] Training, Finance, Procurement, Transport, HR, ICT helpdesk (outside Phase 2 scope)

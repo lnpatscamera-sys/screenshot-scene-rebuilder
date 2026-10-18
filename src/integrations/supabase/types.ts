@@ -1788,6 +1788,10 @@ export type Database = {
         Args: { _action: string; _id: string; _module: string }
         Returns: undefined
       }
+      same_approval_scope: {
+        Args: { _officer: string; _section: string }
+        Returns: boolean
+      }
       supply_stage_role: {
         Args: { _stage: number }
         Returns: Database["public"]["Enums"]["app_role"][]
