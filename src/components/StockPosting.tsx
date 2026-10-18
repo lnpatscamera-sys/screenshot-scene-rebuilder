@@ -14,11 +14,11 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 type Item = { id: string; name: string; code: string; quantity: number; unit: string };
 type Mode = "Receipt" | "Issue" | "Reconciliation";
 
-export function StockPosting({ items }: { items: Item[] }) {
+export function StockPosting({ items, initialMode = "Receipt", showHistory = true }: { items: Item[]; initialMode?: Mode; showHistory?: boolean }) {
   const { hasAny } = useAuth();
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
-  const [mode, setMode] = useState<Mode>("Receipt");
+  const [mode, setMode] = useState<Mode>(initialMode);
   const [busy, setBusy] = useState(false);
   const [entryId, setEntryId] = useState("");
   const [itemId, setItemId] = useState("");
@@ -55,6 +55,7 @@ export function StockPosting({ items }: { items: Item[] }) {
         qc.invalidateQueries({ queryKey: ["inventory-movements"] }),
         qc.invalidateQueries({ queryKey: ["supplies"] }),
         qc.invalidateQueries({ queryKey: ["audit"] }),
+        qc.invalidateQueries({ queryKey: ["logistics"] }),
       ]);
       setOpen(false);
       toast.success(`${mode} recorded; stock updated`);
@@ -65,7 +66,7 @@ export function StockPosting({ items }: { items: Item[] }) {
   if (!canRead) return null;
   return <section className="mt-8 border-t pt-6">
     <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
-      <h2 className="text-lg font-semibold">Stock movements</h2>
+      <h2 className="text-lg font-semibold">{showHistory ? "Stock movements" : "Stock posting"}</h2>
       {canPost && <Button onClick={() => { setEntryId(crypto.randomUUID()); setItemId(""); setOpen(true); }}>Record stock entry</Button>}
     </div>
     <Dialog open={open} onOpenChange={value => { if (!busy) setOpen(value); }}>
@@ -85,10 +86,10 @@ export function StockPosting({ items }: { items: Item[] }) {
         </form>
       </DialogContent>
     </Dialog>
-    {isError ? <div className="flex items-center gap-3"><p className="text-sm text-destructive">Stock history could not be loaded.</p><Button variant="outline" onClick={() => qc.invalidateQueries({ queryKey: ["inventory-movements"] })}>Retry</Button></div>
+    {showHistory && (isError ? <div className="flex items-center gap-3"><p className="text-sm text-destructive">Stock history could not be loaded.</p><Button variant="outline" onClick={() => qc.invalidateQueries({ queryKey: ["inventory-movements"] })}>Retry</Button></div>
       : isPending ? <p className="text-sm text-muted-foreground">Loading stock history…</p>
       : <Table><TableHeader><TableRow><TableHead>Date</TableHead><TableHead>Item</TableHead><TableHead>Entry</TableHead><TableHead>Change</TableHead><TableHead>Before</TableHead><TableHead>After</TableHead><TableHead>Recorded by</TableHead><TableHead>Remarks</TableHead></TableRow></TableHeader>
         <TableBody>{movements.map(m => <TableRow key={m.id}><TableCell className="whitespace-nowrap">{new Date(m.created_at).toLocaleString()}</TableCell><TableCell>{items.find(i => i.id === m.item_id)?.name || m.item_id}</TableCell><TableCell>{m.movement_type}</TableCell><TableCell>{(m.quantity ?? 0) > 0 ? "+" : ""}{m.quantity}</TableCell><TableCell>{m.balance_before}</TableCell><TableCell>{m.balance_after}</TableCell><TableCell className="font-mono text-xs">{m.actor_id || "Legacy"}</TableCell><TableCell>{m.remarks}</TableCell></TableRow>)}{movements.length === 0 && <TableRow><TableCell colSpan={8} className="text-muted-foreground">No stock movements recorded.</TableCell></TableRow>}</TableBody>
-      </Table>}
+      </Table>)}
   </section>;
 }

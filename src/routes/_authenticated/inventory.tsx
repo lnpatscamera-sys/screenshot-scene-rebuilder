@@ -16,6 +16,8 @@ import { PageHeader } from "@/components/AppShell";
 import { useAuth } from "@/lib/auth";
 import { exportCsv } from "@/lib/export";
 import { StockPosting } from "@/components/StockPosting";
+import { StockAnalysis } from "@/components/StockAnalysis";
+import { Pencil } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/inventory")({
   head: () => ({ meta: [{ title: "Inventory & Assets — LNPATS ERP" }, { name: "description", content: "Track LNPATS stock levels, assets, storage locations, and collection." }, { property: "og:title", content: "Inventory & Assets — LNPATS ERP" }, { property: "og:description", content: "Track LNPATS stock levels, assets, storage locations, and collection." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
@@ -27,6 +29,7 @@ function Inventory() {
   const qc = useQueryClient();
   const [tab, setTab] = useState("all");
   const [open, setOpen] = useState(false);
+  const [editId, setEditId] = useState<string | null>(null);
   const [q, setQ] = useState("");
   const { data = [] } = useQuery({
     queryKey: ["inventory"],
@@ -37,6 +40,7 @@ function Inventory() {
     },
   });
   const canEdit = hasAny(["storekeeper"]);
+  const editing = data.find(item => item.id === editId);
   let rows = data.filter((i) => `${i.name} ${i.code} ${i.category}`.toLowerCase().includes(q.toLowerCase()));
   if (tab === "assets") rows = rows.filter((i) => i.is_asset);
   if (tab === "consumables") rows = rows.filter((i) => !i.is_asset);
@@ -45,10 +49,11 @@ function Inventory() {
   const add = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const f = formValues(e.currentTarget);
-    const { error } = await supabase.from("inventory_items").insert({
-      code: f.code, name: f.name, category: f.category, unit: f.unit, quantity: Number(f.quantity), reorder_level: Number(f.reorder_level),
+    const metadata = {
+      code: f.code, name: f.name, category: f.category, unit: f.unit, reorder_level: Number(f.reorder_level),
       location: f.location, is_asset: f.category === "Equipment" && f.is_asset === "on", assigned_to: f.assigned_to || null,
-    });
+    };
+    const { error } = editId ? await supabase.from("inventory_items").update(metadata).eq("id", editId).select("id").single() : await supabase.from("inventory_items").insert({ ...metadata, quantity: Number(f.quantity) });
     if (error) { toast.error(error.message); return; }
     setOpen(false);
     qc.invalidateQueries({ queryKey: ["inventory"] });
@@ -72,21 +77,21 @@ function Inventory() {
             <Button variant="outline" onClick={() => exportCsv("store-ledger.csv", rows.map(({ id, created_at, ...r }) => r))}>Export ledger</Button>
             {canEdit && (
               <Dialog open={open} onOpenChange={setOpen}>
-                <DialogTrigger asChild><Button>Add item</Button></DialogTrigger>
+                <DialogTrigger asChild><Button onClick={() => setEditId(null)}>Add item</Button></DialogTrigger>
                 <DialogContent>
-                  <DialogHeader><DialogTitle>New inventory item</DialogTitle></DialogHeader>
-                  <form onSubmit={add} className="grid grid-cols-2 gap-3">
-                    <div className="space-y-1"><Label>Code</Label><Input name="code" required /></div>
-                    <div className="space-y-1"><Label>Name</Label><Input name="name" required /></div>
+                  <DialogHeader><DialogTitle>{editing ? "Edit inventory item" : "New inventory item"}</DialogTitle></DialogHeader>
+                  <form onSubmit={add} className="grid grid-cols-2 gap-3" key={editId || "new"}>
+                    <div className="space-y-1"><Label>Code</Label><Input name="code" required defaultValue={editing?.code} /></div>
+                    <div className="space-y-1"><Label>Name</Label><Input name="name" required defaultValue={editing?.name} /></div>
                     <div className="space-y-1"><Label>Category</Label>
-                      <select name="category" className="w-full h-9 rounded-md border bg-background px-2 text-sm"><option>Office Supply</option><option>Consumable</option><option>Equipment</option></select>
+                      <select name="category" defaultValue={editing?.category} className="w-full h-9 rounded-md border bg-background px-2 text-sm"><option>Office Supply</option><option>Consumable</option><option>Equipment</option></select>
                     </div>
-                    <div className="space-y-1"><Label>Unit</Label><Input name="unit" defaultValue="pcs" /></div>
-                    <div className="space-y-1"><Label>Quantity</Label><Input name="quantity" type="number" defaultValue={0} /></div>
-                    <div className="space-y-1"><Label>Reorder level</Label><Input name="reorder_level" type="number" defaultValue={10} /></div>
-                    <div className="space-y-1"><Label>Location</Label><Input name="location" /></div>
-                    <div className="space-y-1"><Label>Assigned to</Label><Input name="assigned_to" /></div>
-                    <label className="col-span-2 flex items-center gap-2 text-sm"><input type="checkbox" name="is_asset" /> Tracked fixed asset</label>
+                    <div className="space-y-1"><Label>Unit</Label><Input name="unit" defaultValue={editing?.unit || "pcs"} /></div>
+                    <div className="space-y-1"><Label>Quantity</Label><Input name="quantity" type="number" min={0} defaultValue={editing?.quantity || 0} disabled={!!editing} /></div>
+                    <div className="space-y-1"><Label>Reorder level</Label><Input name="reorder_level" type="number" min={0} defaultValue={editing?.reorder_level ?? 10} /></div>
+                    <div className="space-y-1"><Label>Location</Label><Input name="location" defaultValue={editing?.location || ""} /></div>
+                    <div className="space-y-1"><Label>Assigned to</Label><Input name="assigned_to" defaultValue={editing?.assigned_to || ""} /></div>
+                    <label className="col-span-2 flex items-center gap-2 text-sm"><input type="checkbox" name="is_asset" defaultChecked={editing?.is_asset} /> Tracked fixed asset</label>
                     <Button className="col-span-2">Save</Button>
                   </form>
                 </DialogContent>
@@ -120,6 +125,7 @@ function Inventory() {
                   </TableCell>
                   {canEdit && (
                     <TableCell className="whitespace-nowrap">
+                      <Button size="icon" variant="ghost" aria-label={`Edit ${i.name}`} onClick={() => { setEditId(i.id); setOpen(true); }}><Pencil className="h-4 w-4" /></Button>
                       <Button size="sm" variant="outline" onClick={() => adjust(i.id, i.quantity, -1)}>−</Button>{" "}
                       <Button size="sm" variant="outline" onClick={() => adjust(i.id, i.quantity, 1)}>+</Button>
                     </TableCell>
@@ -131,6 +137,7 @@ function Inventory() {
         </Table>
       </Card>
       <StockPosting items={data} />
+      <StockAnalysis items={data} />
     </div>
   );
 }

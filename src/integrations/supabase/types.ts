@@ -2013,6 +2013,30 @@ export type Database = {
           },
         ]
       }
+      stock_analysis_access: {
+        Row: {
+          blocked: boolean
+          id: string
+          reason: string | null
+          status_code: number | null
+          updated_at: string
+        }
+        Insert: {
+          blocked?: boolean
+          id?: string
+          reason?: string | null
+          status_code?: number | null
+          updated_at?: string
+        }
+        Update: {
+          blocked?: boolean
+          id?: string
+          reason?: string | null
+          status_code?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       stock_reconciliation: {
         Row: {
           balance_after: number | null
