@@ -1,0 +1,7 @@
+import type { AppRole } from "./auth";
+export const DOCUMENT_TYPES = ["Policies", "SOPs", "Administrative Orders", "Circulars", "Standing Orders", "Training Manuals", "Personnel Documents", "Financial Documents", "Procurement Documents", "Meeting Minutes", "Cadet Files"];
+export const DOCUMENT_STAGES = ["Draft", "Section Head", "Assistant Commissioner", "Deputy Commissioner", "Commandant", "Published"];
+export const DOCUMENT_ROLES: Record<number, AppRole[]> = { 1: ["section_head"], 2: ["assistant_commissioner"], 3: ["dc_admin", "dc_academy"], 4: ["commandant"] };
+export const REGISTRY_STAGES = ["Registration", "Deputy Commandant Review", "Commandant Review", "Assignment to Office", "Assignment to Officer", "Action Taken", "Archive"];
+export const REGISTRY_ROLES: Record<number, AppRole[]> = { 0: ["registry_officer"], 1: ["deputy_commandant"], 2: ["commandant"], 3: ["registry_officer"], 4: ["registry_officer"], 5: ["registry_officer"], 6: ["registry_officer"] };
+export function phaseHead(title: string, description: string) { return { meta: [{ title: `${title} — LNPATS ERP` }, { name: "description", content: description }, { property: "og:title", content: `${title} — LNPATS ERP` }, { property: "og:description", content: description }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }; }
