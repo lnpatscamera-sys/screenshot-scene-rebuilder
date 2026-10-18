@@ -48,12 +48,12 @@ describe("automatic stock posting", () => {
     expect(await balance()).toBe(15);
     const movement = (await db.query("select quantity,balance_before,balance_after,actor_id from inventory_movements")).rows[0];
     expect(movement).toEqual({quantity:5,balance_before:10,balance_after:15,actor_id:actor});
-    expect((await db.query("select table_name from audit_logs")).rows.map(r=>r.table_name)).toEqual(expect.arrayContaining(["inventory_items","store_receipts","inventory_movements"]));
+    expect((await db.query<{table_name:string}>("select table_name from audit_logs")).rows.map(r=>r.table_name)).toEqual(expect.arrayContaining(["inventory_items","store_receipts","inventory_movements"]));
   });
   it("issue subtracts quantity", async () => {
     await db.query("insert into store_issues(item_id,quantity) values($1,3)",[item]);
     expect(await balance()).toBe(7);
-    expect((await db.query("select quantity from inventory_movements")).rows[0]?.quantity).toBe(-3);
+    expect((await db.query<{quantity:number}>("select quantity from inventory_movements")).rows[0]?.quantity).toBe(-3);
   });
   it("reconciliation uses locked actual stock and records the count variance", async () => {
     await db.query("insert into stock_reconciliation(item_id,system_quantity,counted_quantity,reason) values($1,999,4,'Count correction')",[item]);
@@ -64,7 +64,7 @@ describe("automatic stock posting", () => {
   it("shortages roll back the source, balance and movement", async () => {
     await expect(db.query("insert into store_issues(item_id,quantity) values($1,11)",[item])).rejects.toThrow("Insufficient stock");
     expect(await balance()).toBe(10);
-    expect((await db.query("select count(*)::int as n from inventory_movements")).rows[0]?.n).toBe(0);
+    expect((await db.query<{n:number}>("select count(*)::int as n from inventory_movements")).rows[0]?.n).toBe(0);
   });
   it("duplicate posting IDs do not increase stock twice", async () => {
     await db.query("insert into store_receipts(id,item_id,quantity) values($1,$2,5)",[request,item]);
@@ -86,15 +86,15 @@ describe("automatic stock posting", () => {
     await db.query("insert into supply_requests(id,item_id,quantity,stage,approval_status,collection_status,request_number) values($1,$2,3,7,'Approved','Ready for Collection','TEST')",[request,item]);
     await db.query("select act_on_supply($1,true,'Collected')",[request]);
     expect(await balance()).toBe(7);
-    expect((await db.query("select count(*)::int as n from store_issues")).rows[0]?.n).toBe(1);
-    expect((await db.query("select count(*)::int as n from inventory_movements")).rows[0]?.n).toBe(1);
+    expect((await db.query<{n:number}>("select count(*)::int as n from store_issues")).rows[0]?.n).toBe(1);
+    expect((await db.query<{n:number}>("select count(*)::int as n from inventory_movements")).rows[0]?.n).toBe(1);
     await expect(db.query("select act_on_supply($1,true,'Again')",[request])).rejects.toThrow("already closed");
     expect(await balance()).toBe(7);
   });
   it("short supply collection does not advance the request", async () => {
     await db.query("insert into supply_requests(id,item_id,quantity,stage,approval_status,collection_status) values($1,$2,11,7,'Approved','Ready for Collection')",[request,item]);
     await expect(db.query("select act_on_supply($1,true,'Collected')",[request])).rejects.toThrow("Insufficient stock");
-    expect((await db.query("select stage from supply_requests")).rows[0]?.stage).toBe(7);
+    expect((await db.query<{stage:number}>("select stage from supply_requests")).rows[0]?.stage).toBe(7);
     expect(await balance()).toBe(10);
   });
 });
