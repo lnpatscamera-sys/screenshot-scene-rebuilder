@@ -57,7 +57,8 @@ export function LogisticsRecords({ kind }: { kind: LogisticsKind }) {
   };
   async function save(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault(); if (busy || !editing || !mutable) return;
-    const f = Object.fromEntries(new FormData(e.currentTarget)) as Record<string, string>;
+    const values = new FormData(e.currentTarget);
+    const f = { company_name: String(values.get('company_name') || ''), contact_person: String(values.get('contact_person') || ''), phone: String(values.get('phone') || ''), email: String(values.get('email') || ''), address: String(values.get('address') || ''), asset_number: String(values.get('asset_number') || ''), asset_name: String(values.get('asset_name') || ''), category: String(values.get('category') || ''), assigned_to: String(values.get('assigned_to') || ''), condition: String(values.get('condition') || ''), purchase_date: String(values.get('purchase_date') || ''), value: String(values.get('value') || ''), start_at: String(values.get('start_at') || ''), end_at: String(values.get('end_at') || ''), vehicle_id: String(values.get('vehicle_id') || ''), requested_by: String(values.get('requested_by') || ''), driver_id: String(values.get('driver_id') || ''), destination: String(values.get('destination') || ''), purpose: String(values.get('purpose') || ''), status: String(values.get('status') || ''), remarks: String(values.get('remarks') || '') };
     setBusy(true);
     try {
       let result;
