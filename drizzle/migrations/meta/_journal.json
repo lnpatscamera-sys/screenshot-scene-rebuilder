@@ -99,6 +99,13 @@
       "when": 1792318265477,
       "tag": "0013_inventory_warehouses_costs_transfers",
       "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1792318317337,
+      "tag": "0014_warehouse_count_posting",
+      "breakpoints": true
     }
   ]
 }
