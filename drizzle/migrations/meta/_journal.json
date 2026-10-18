@@ -43,6 +43,13 @@
       "when": 1792314459039,
       "tag": "0005_phase2_workflows",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1792314668795,
+      "tag": "0006_phase2_access_guards",
+      "breakpoints": true
     }
   ]
 }
