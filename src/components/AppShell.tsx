@@ -181,7 +181,7 @@ export function PageHeader({ title, subtitle, actions }: { title: string; subtit
         <h1 className="text-2xl md:text-3xl font-bold">{title}</h1>
         {subtitle && <p className="text-muted-foreground text-sm mt-1">{subtitle}</p>}
       </div>
-      <div className="flex gap-2 no-print">{actions}</div>
+      <div className="flex flex-wrap gap-2 no-print">{actions}</div>
     </div>
   );
 }
