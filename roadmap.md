@@ -10,6 +10,7 @@
 - [x] Audit log
 
 ## Later phases
+- [ ] Add the listed logistics records with protected access, auditing, and compatibility with existing stock and equipment workflows.
 - [x] Phase 2: connected leave HR processing, registry chain, document approvals/revisions/rollback, global search, private uploads, in-app notifications, audit activity, PDF/Excel/print reports and role-aware summaries.
 - [x] Managed email infrastructure for notify.lnpats.net; protected preview verified.
 - [ ] Phase 2 email notices — templates and workflow send triggers pending; delivery waits for sender DNS verification.
