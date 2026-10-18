@@ -1,0 +1,12 @@
+CREATE TABLE public.stock_analysis_access (id text PRIMARY KEY DEFAULT 'stock-discrepancy', blocked boolean NOT NULL DEFAULT false, reason text, status_code integer, updated_at timestamptz NOT NULL DEFAULT now());
+GRANT SELECT ON public.stock_analysis_access TO authenticated;
+GRANT ALL ON public.stock_analysis_access TO service_role;
+ALTER TABLE public.stock_analysis_access ENABLE ROW LEVEL SECURITY;
+CREATE POLICY stores_analysis_read ON public.stock_analysis_access FOR SELECT TO authenticated USING(public.has_any_role(auth.uid(), ARRAY['storekeeper']::public.app_role[]));
+CREATE TRIGGER audit_stock_analysis_access AFTER INSERT OR UPDATE OR DELETE ON public.stock_analysis_access FOR EACH ROW EXECUTE FUNCTION public.audit_trigger();
+CREATE POLICY stores_supplier_read ON public.vendors FOR SELECT TO authenticated USING(public.has_any_role(auth.uid(),ARRAY['storekeeper','commandant']::public.app_role[]));
+CREATE POLICY stores_asset_read ON public.assets FOR SELECT TO authenticated USING(public.has_any_role(auth.uid(),ARRAY['storekeeper','commandant']::public.app_role[]));
+CREATE POLICY stores_booking_read ON public.vehicle_bookings FOR SELECT TO authenticated USING(public.has_any_role(auth.uid(),ARRAY['storekeeper','commandant']::public.app_role[]));
+CREATE POLICY stores_vehicle_read ON public.vehicles FOR SELECT TO authenticated USING(public.has_any_role(auth.uid(),ARRAY['storekeeper','commandant']::public.app_role[]));
+CREATE OR REPLACE FUNCTION public.validate_vehicle_booking() RETURNS trigger LANGUAGE plpgsql SET search_path=public AS $$ BEGIN IF NEW.vehicle_id IS NULL OR NEW.start_at IS NULL OR NEW.end_at IS NULL OR NEW.end_at <= NEW.start_at THEN RAISE EXCEPTION 'Select a vehicle and an end time after the start time'; END IF; RETURN NEW; END $$;
+CREATE TRIGGER validate_vehicle_booking BEFORE INSERT OR UPDATE ON public.vehicle_bookings FOR EACH ROW EXECUTE FUNCTION public.validate_vehicle_booking();
