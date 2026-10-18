@@ -1,0 +1,20 @@
+import { useState } from "react";
+import { Download, FileDown, Printer } from "lucide-react";
+import { toast } from "sonner";
+import { Button } from "./ui/button";
+import { Label } from "./ui/label";
+import { Input } from "./ui/input";
+import { exportExcel, exportPdf } from "@/lib/export";
+import { historyRecords, openPhaseFile, type FileRecord } from "@/lib/phase2-data";
+import type { Json } from "@/integrations/supabase/types";
+
+export function ReportActions({ title, rows }: { title: string; rows: Record<string, unknown>[] }) {
+  const [busy, setBusy] = useState(false);
+  const run = async (action: () => Promise<void>) => { setBusy(true); try { await action(); } catch { toast.error("Report could not be exported"); } finally { setBusy(false); } };
+  return <div className="flex flex-wrap gap-2 no-print"><Button variant="outline" size="sm" disabled={busy} onClick={() => run(() => exportPdf(title, rows))}><FileDown className="h-4 w-4" />PDF</Button><Button variant="outline" size="sm" disabled={busy} onClick={() => run(() => exportExcel(title, rows))}><Download className="h-4 w-4" />Excel</Button><Button variant="outline" size="icon" aria-label="Print report" onClick={() => window.print()}><Printer className="h-4 w-4" /></Button></div>;
+}
+export function Field({ label, name, type = "text", required = false, defaultValue }: { label: string; name: string; type?: string; required?: boolean; defaultValue?: string }) { return <div className="space-y-1"><Label htmlFor={name}>{label}</Label><Input id={name} name={name} type={type} required={required} defaultValue={defaultValue} /></div>; }
+export function SelectField({ label, name, options, required, defaultValue }: { label: string; name: string; options: { value: string; label: string }[]; required?: boolean; defaultValue?: string }) { return <div className="space-y-1"><Label htmlFor={name}>{label}</Label><select id={name} name={name} defaultValue={defaultValue} required={required} className="w-full min-w-0 h-9 border rounded-md bg-background px-2 text-sm"><option value="">Select…</option>{options.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}</select></div>; }
+export function History({ value }: { value: Json }) { const rows = historyRecords(value); return <div className="space-y-3 text-sm">{rows.length === 0 && <p className="text-muted-foreground">No recorded activity.</p>}{rows.map((h, i) => <div key={i} className="border-l-2 border-gold pl-3"><div className="font-medium capitalize">{h.action}</div><div className="text-xs text-muted-foreground break-all">{h.by} · {h.at ? new Date(h.at).toLocaleString() : ""}</div>{h.note && <p className="mt-1">{h.note}</p>}</div>)}</div>; }
+export function AttachedFiles({ files, module, id }: { files: FileRecord[]; module: string; id: string }) { return <div className="space-y-2">{files.length === 0 && <p className="text-sm text-muted-foreground">No attachments.</p>}{files.map(f => <div key={f.path} className="flex items-center justify-between gap-2 border-b py-2"><span className="text-sm break-all">{f.name}</span><div className="flex shrink-0 gap-1"><Button size="sm" variant="outline" onClick={() => openPhaseFile(f, module, id).catch(e => toast.error(e.message))}>Preview</Button><Button size="icon" variant="ghost" aria-label={`Download ${f.name}`} onClick={() => openPhaseFile(f, module, id, true).catch(e => toast.error(e.message))}><Download className="h-4 w-4" /></Button></div></div>)}</div>; }
+export function MetricBand({ items }: { items: { label: string; value: number }[] }) { return <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-4 border-y py-5 mb-6">{items.map(i => <div key={i.label}><div className="text-xs text-muted-foreground">{i.label}</div><div className="text-3xl font-bold mt-1">{i.value}</div></div>)}</div>; }
