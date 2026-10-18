@@ -18,7 +18,7 @@ beforeAll(async () => {
     CREATE TABLE profiles(id uuid PRIMARY KEY,email text);
     CREATE TABLE officers(id uuid PRIMARY KEY,user_id uuid);
     CREATE TABLE sections(id uuid PRIMARY KEY);
-    CREATE TABLE inventory_items(id uuid PRIMARY KEY,quantity integer,unit text);
+    CREATE TABLE inventory_items(id uuid PRIMARY KEY DEFAULT gen_random_uuid(),code text,name text,category text,quantity integer DEFAULT 0,unit text,reorder_level integer DEFAULT 10,location text,is_asset boolean DEFAULT false,assigned_to text);
     CREATE TABLE vendors(id uuid PRIMARY KEY,company_name text,contact_person text,phone text,email text,address text);
     CREATE TABLE purchase_orders(id uuid PRIMARY KEY);
     CREATE TABLE assets(id uuid PRIMARY KEY); CREATE TABLE vehicles(id uuid PRIMARY KEY);
@@ -31,18 +31,55 @@ beforeAll(async () => {
     CREATE FUNCTION audit_trigger() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN INSERT INTO audit_logs VALUES(TG_TABLE_NAME,jsonb_build_object('old',to_jsonb(OLD),'new',to_jsonb(NEW))); RETURN NEW; END $$;
     CREATE TRIGGER audit_inventory AFTER UPDATE ON inventory_items FOR EACH ROW EXECUTE FUNCTION audit_trigger();
   `);
-  for (const path of ["0008_stage_logistics_records.sql", "0009_automatic_inventory_posting.sql", "0010_stock_movement_reconciliation_details.sql", "0011_isolate_stock_issue_validation.sql"]) {
+  for (const path of ["0008_stage_logistics_records.sql", "0009_automatic_inventory_posting.sql", "0010_stock_movement_reconciliation_details.sql", "0011_isolate_stock_issue_validation.sql", "0013_inventory_warehouses_costs_transfers.sql", "0014_warehouse_count_posting.sql"]) {
     await db.exec(readFileSync(`drizzle/migrations/${path}`, "utf8"));
   }
   await db.exec(`INSERT INTO profiles VALUES('${actor}','test'); SELECT set_config('test.actor','${actor}',false);`);
 }, 30000);
 
 beforeEach(async () => {
-  await db.exec(`TRUNCATE inventory_movements,store_receipts,store_issues,stock_reconciliation,supply_requests,inventory_items,audit_logs CASCADE; SELECT set_config('test.allowed','true',false); INSERT INTO inventory_items VALUES('${item}',10,'pcs');`);
+  await db.exec(`TRUNCATE inventory_movements,store_receipts,store_issues,stock_reconciliation,supply_requests,inventory_items,warehouses,stock_transfers,audit_logs CASCADE; SELECT set_config('test.allowed','true',false); ALTER TABLE inventory_items DISABLE TRIGGER guard_inventory_metadata; INSERT INTO inventory_items(id,quantity,unit) VALUES('${item}',10,'pcs'); ALTER TABLE inventory_items ENABLE TRIGGER guard_inventory_metadata; INSERT INTO warehouse_stock(item_id,quantity) VALUES('${item}',10);`);
 });
 afterAll(async () => { await db.close(); });
 
 describe("automatic stock posting", () => {
+  it('generates distinct item codes and audits opening stock', async () => {
+    const result = await db.query<{ id: string }>("select register_inventory('{\"name\":\"Test\",\"category\":\"Office Supplies\",\"unit\":\"pcs\",\"unit_cost\":2}',3) as id");
+    const id = result.rows[0]?.id;
+    expect((await db.query<{ code: string; quantity: number }>('select code,quantity from inventory_items where id=$1', [id])).rows[0]).toEqual({ code: expect.stringMatching(/^LNPATS-INV-\d{6}$/), quantity: 3 });
+    expect((await db.query<{ quantity: number }>('select quantity from inventory_movements where item_id=$1', [id])).rows[0]?.quantity).toBe(3);
+  });
+  it('blocks direct balance edits and deletion of items with stock', async () => {
+    await expect(db.exec('update inventory_items set quantity=99')).rejects.toThrow('audited stock posting');
+    await expect(db.exec('delete from inventory_items')).rejects.toThrow('cannot be deleted');
+  });
+  it('transfers stock atomically without changing total and rejects duplicate transfer IDs', async () => {
+    const wh = '40000000-0000-4000-8000-000000000001';
+    await db.query('insert into warehouses(id,name) values($1,$2)', [wh, 'Main']);
+    await db.query('select transfer_inventory($1,$2,null,$3,4,$4)', [request,item,wh,'Move stock']);
+    expect(await balance()).toBe(10);
+    expect((await db.query<{quantity:number}>('select quantity from warehouse_stock where warehouse_id=$1',[wh])).rows[0]?.quantity).toBe(4);
+    expect((await db.query<{quantity:number}>('select quantity from warehouse_stock where warehouse_id is null')).rows[0]?.quantity).toBe(6);
+    await expect(db.query('select transfer_inventory($1,$2,null,$3,4,$4)', [request,item,wh,'Duplicate'])).rejects.toThrow();
+    expect((await db.query<{quantity:number}>('select quantity from warehouse_stock where warehouse_id=$1',[wh])).rows[0]?.quantity).toBe(4);
+    expect((await db.query<{n:number}>("select count(*)::int as n from audit_logs where table_name='stock_transfers'")).rows[0]?.n).toBe(1);
+  });
+  it('warehouse reconciliation changes only that warehouse and preserves other balances', async () => {
+    const wh = '40000000-0000-4000-8000-000000000001';
+    await db.query('insert into warehouses(id,name) values($1,$2)', [wh,'Main']);
+    await db.query('select transfer_inventory($1,$2,null,$3,4,$4)', [request,item,wh,'Move']);
+    await db.query('insert into stock_reconciliation(item_id,warehouse_id,counted_quantity,reason) values($1,$2,2,$3)',[item,wh,'Count']);
+    expect(await balance()).toBe(8);
+    expect((await db.query<{quantity:number}>('select quantity from warehouse_stock where warehouse_id is null')).rows[0]?.quantity).toBe(6);
+  });
+  it('transfers reject unauthorized staff and source shortages', async () => {
+    const wh = '40000000-0000-4000-8000-000000000001';
+    await db.query('insert into warehouses(id,name) values($1,$2)', [wh,'Main']);
+    await expect(db.query('select transfer_inventory($1,$2,null,$3,11,$4)', [request,item,wh,'Move'])).rejects.toThrow('Insufficient stock');
+    await db.exec("select set_config('test.allowed','false',false)");
+    await expect(db.query('select transfer_inventory($1,$2,null,$3,1,$4)', [request,item,wh,'Move'])).rejects.toThrow('Only stores staff');
+    expect(await balance()).toBe(10);
+  });
   it("receipt adds quantity and records before/after balances and audit", async () => {
     await db.query("insert into store_receipts(item_id,quantity) values($1,5)",[item]);
     expect(await balance()).toBe(15);

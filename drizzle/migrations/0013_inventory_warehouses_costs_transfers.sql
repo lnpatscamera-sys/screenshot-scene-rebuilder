@@ -1,0 +1,67 @@
+CREATE SEQUENCE public.inventory_code_seq;
+GRANT USAGE ON SEQUENCE public.inventory_code_seq TO authenticated,service_role;
+ALTER TABLE public.inventory_items ALTER COLUMN code SET DEFAULT ('LNPATS-INV-' || lpad(nextval('public.inventory_code_seq')::text,6,'0'));
+ALTER TABLE public.inventory_items ADD COLUMN unit_cost numeric(14,2) NOT NULL DEFAULT 0 CHECK(unit_cost>=0);
+CREATE TABLE public.warehouses(id uuid PRIMARY KEY DEFAULT gen_random_uuid(),name text NOT NULL UNIQUE CHECK(length(trim(name))>0),location text,created_at timestamptz NOT NULL DEFAULT now());
+GRANT SELECT,INSERT,UPDATE,DELETE ON public.warehouses TO authenticated; GRANT ALL ON public.warehouses TO service_role;
+ALTER TABLE public.warehouses ENABLE ROW LEVEL SECURITY;
+CREATE POLICY warehouse_read ON public.warehouses FOR SELECT TO authenticated USING(true);
+CREATE POLICY warehouse_manage ON public.warehouses FOR ALL TO authenticated USING(public.has_any_role(auth.uid(),ARRAY['storekeeper']::public.app_role[])) WITH CHECK(public.has_any_role(auth.uid(),ARRAY['storekeeper']::public.app_role[]));
+CREATE TRIGGER audit_warehouses AFTER INSERT OR UPDATE OR DELETE ON public.warehouses FOR EACH ROW EXECUTE FUNCTION public.audit_trigger();
+ALTER TABLE public.inventory_items ADD COLUMN warehouse_id uuid REFERENCES public.warehouses(id);
+CREATE TABLE public.warehouse_stock(id uuid PRIMARY KEY DEFAULT gen_random_uuid(),item_id uuid NOT NULL REFERENCES public.inventory_items(id) ON DELETE CASCADE,warehouse_id uuid REFERENCES public.warehouses(id),quantity integer NOT NULL DEFAULT 0 CHECK(quantity>=0),UNIQUE NULLS NOT DISTINCT(item_id,warehouse_id));
+GRANT SELECT ON public.warehouse_stock TO authenticated; GRANT ALL ON public.warehouse_stock TO service_role;
+ALTER TABLE public.warehouse_stock ENABLE ROW LEVEL SECURITY;
+CREATE POLICY warehouse_stock_read ON public.warehouse_stock FOR SELECT TO authenticated USING(true);
+CREATE TRIGGER audit_warehouse_stock AFTER INSERT OR UPDATE OR DELETE ON public.warehouse_stock FOR EACH ROW EXECUTE FUNCTION public.audit_trigger();
+INSERT INTO public.warehouse_stock(item_id,quantity) SELECT id,quantity FROM public.inventory_items;
+CREATE TABLE public.stock_transfers(id uuid PRIMARY KEY DEFAULT gen_random_uuid(),item_id uuid NOT NULL REFERENCES public.inventory_items(id),from_warehouse_id uuid REFERENCES public.warehouses(id),to_warehouse_id uuid REFERENCES public.warehouses(id),quantity integer NOT NULL CHECK(quantity>0),reason text NOT NULL CHECK(length(trim(reason))>0),posted_by uuid NOT NULL REFERENCES public.profiles(id),created_at timestamptz NOT NULL DEFAULT now(),CHECK(from_warehouse_id IS DISTINCT FROM to_warehouse_id));
+GRANT SELECT ON public.stock_transfers TO authenticated; GRANT ALL ON public.stock_transfers TO service_role;
+ALTER TABLE public.stock_transfers ENABLE ROW LEVEL SECURITY;
+CREATE POLICY transfer_read ON public.stock_transfers FOR SELECT TO authenticated USING(public.has_any_role(auth.uid(),ARRAY['storekeeper','commandant']::public.app_role[]));
+CREATE TRIGGER audit_stock_transfers AFTER INSERT OR UPDATE OR DELETE ON public.stock_transfers FOR EACH ROW EXECUTE FUNCTION public.audit_trigger();
+ALTER TABLE public.inventory_movements ADD COLUMN transfer_id uuid REFERENCES public.stock_transfers(id),ADD COLUMN warehouse_id uuid REFERENCES public.warehouses(id),ADD COLUMN to_warehouse_id uuid REFERENCES public.warehouses(id);
+ALTER TABLE public.store_receipts ADD COLUMN warehouse_id uuid REFERENCES public.warehouses(id);
+ALTER TABLE public.store_issues ADD COLUMN warehouse_id uuid REFERENCES public.warehouses(id);
+ALTER TABLE public.stock_reconciliation ADD COLUMN warehouse_id uuid REFERENCES public.warehouses(id);
+CREATE FUNCTION public.guard_inventory_metadata() RETURNS trigger LANGUAGE plpgsql SET search_path=public AS $$ BEGIN
+ IF TG_OP='DELETE' THEN IF OLD.quantity<>0 OR EXISTS(SELECT 1 FROM public.inventory_movements WHERE item_id=OLD.id) THEN RAISE EXCEPTION 'Items with stock or movement history cannot be deleted'; END IF; RETURN OLD; END IF;
+ IF TG_OP='INSERT' THEN IF NEW.quantity<>0 THEN RAISE EXCEPTION 'Opening stock must be posted as a receipt'; END IF;
+ ELSIF pg_trigger_depth()=1 THEN
+ IF NEW.quantity IS DISTINCT FROM OLD.quantity THEN RAISE EXCEPTION 'Use audited stock posting to change quantity'; END IF;
+ IF NEW.code IS DISTINCT FROM OLD.code THEN RAISE EXCEPTION 'Item codes are immutable'; END IF;
+ IF NEW.warehouse_id IS DISTINCT FROM OLD.warehouse_id AND OLD.quantity<>0 THEN RAISE EXCEPTION 'Transfer existing stock before changing its default warehouse'; END IF;
+ END IF; RETURN NEW; END $$;
+CREATE TRIGGER guard_inventory_metadata BEFORE INSERT OR UPDATE OR DELETE ON public.inventory_items FOR EACH ROW EXECUTE FUNCTION public.guard_inventory_metadata();
+CREATE FUNCTION public.sync_warehouse_posting() RETURNS trigger LANGUAGE plpgsql SECURITY DEFINER SET search_path=public AS $$ DECLARE wh uuid; before_qty integer; change integer; BEGIN
+ SELECT coalesce(NEW.warehouse_id,warehouse_id) INTO wh FROM public.inventory_items WHERE id=NEW.item_id;
+ INSERT INTO public.warehouse_stock(item_id,warehouse_id,quantity) VALUES(NEW.item_id,wh,0) ON CONFLICT(item_id,warehouse_id) DO NOTHING;
+ SELECT quantity INTO before_qty FROM public.warehouse_stock WHERE item_id=NEW.item_id AND warehouse_id IS NOT DISTINCT FROM wh FOR UPDATE;
+ change:=NEW.balance_after-NEW.balance_before;
+ IF before_qty+change<0 THEN RAISE EXCEPTION 'Insufficient stock in selected warehouse: % available',before_qty; END IF;
+ UPDATE public.warehouse_stock SET quantity=before_qty+change WHERE item_id=NEW.item_id AND warehouse_id IS NOT DISTINCT FROM wh;
+ UPDATE public.inventory_movements SET warehouse_id=wh WHERE item_id=NEW.item_id AND (receipt_id=NEW.id OR issue_id=NEW.id OR reconciliation_id=NEW.id);
+ RETURN NEW; END $$;
+CREATE TRIGGER z_sync_receipt AFTER INSERT ON public.store_receipts FOR EACH ROW EXECUTE FUNCTION public.sync_warehouse_posting();
+CREATE TRIGGER z_sync_issue AFTER INSERT ON public.store_issues FOR EACH ROW EXECUTE FUNCTION public.sync_warehouse_posting();
+CREATE TRIGGER z_sync_reconciliation AFTER INSERT ON public.stock_reconciliation FOR EACH ROW EXECUTE FUNCTION public.sync_warehouse_posting();
+CREATE FUNCTION public.transfer_inventory(_id uuid,_item uuid,_from uuid,_to uuid,_quantity integer,_reason text) RETURNS void LANGUAGE plpgsql SECURITY DEFINER SET search_path=public AS $$ DECLARE stock public.inventory_items; available integer; BEGIN
+ IF auth.uid() IS NULL OR NOT public.has_any_role(auth.uid(),ARRAY['storekeeper']::public.app_role[]) THEN RAISE EXCEPTION 'Only stores staff can transfer stock'; END IF;
+ IF _quantity IS NULL OR _quantity<=0 OR _from IS NOT DISTINCT FROM _to OR nullif(trim(_reason),'') IS NULL THEN RAISE EXCEPTION 'Select different warehouses, a positive quantity and a reason'; END IF;
+ SELECT * INTO stock FROM public.inventory_items WHERE id=_item FOR UPDATE; IF NOT FOUND THEN RAISE EXCEPTION 'Item not found'; END IF;
+ SELECT quantity INTO available FROM public.warehouse_stock WHERE item_id=_item AND warehouse_id IS NOT DISTINCT FROM _from FOR UPDATE;
+ IF coalesce(available,0)<_quantity THEN RAISE EXCEPTION 'Insufficient stock in source warehouse'; END IF;
+ INSERT INTO public.stock_transfers(id,item_id,from_warehouse_id,to_warehouse_id,quantity,reason,posted_by) VALUES(_id,_item,_from,_to,_quantity,_reason,auth.uid());
+ UPDATE public.warehouse_stock SET quantity=quantity-_quantity WHERE item_id=_item AND warehouse_id IS NOT DISTINCT FROM _from;
+ INSERT INTO public.warehouse_stock(item_id,warehouse_id,quantity) VALUES(_item,_to,_quantity) ON CONFLICT(item_id,warehouse_id) DO UPDATE SET quantity=warehouse_stock.quantity+excluded.quantity;
+ INSERT INTO public.inventory_movements(item_id,movement_type,quantity,balance_before,balance_after,actor_id,remarks,transfer_id,warehouse_id,to_warehouse_id) VALUES(_item,'Transfer',0,stock.quantity,stock.quantity,auth.uid(),_quantity||' '||stock.unit||': '||_reason,_id,_from,_to);
+ END $$;
+REVOKE ALL ON FUNCTION public.transfer_inventory(uuid,uuid,uuid,uuid,integer,text) FROM PUBLIC,anon; GRANT EXECUTE ON FUNCTION public.transfer_inventory(uuid,uuid,uuid,uuid,integer,text) TO authenticated;
+CREATE FUNCTION public.register_inventory(_metadata jsonb,_quantity integer) RETURNS uuid LANGUAGE plpgsql SECURITY DEFINER SET search_path=public AS $$ DECLARE item uuid; BEGIN
+ IF auth.uid() IS NULL OR NOT public.has_any_role(auth.uid(),ARRAY['storekeeper']::public.app_role[]) THEN RAISE EXCEPTION 'Only stores staff can register items'; END IF;
+ IF _quantity IS NULL OR _quantity<0 OR nullif(trim(_metadata->>'name'),'') IS NULL THEN RAISE EXCEPTION 'An item name and nonnegative opening quantity are required'; END IF;
+ INSERT INTO public.inventory_items(name,category,unit,unit_cost,reorder_level,location,warehouse_id,is_asset,assigned_to) VALUES(trim(_metadata->>'name'),_metadata->>'category',coalesce(nullif(_metadata->>'unit',''),'pcs'),coalesce((_metadata->>'unit_cost')::numeric,0),coalesce((_metadata->>'reorder_level')::integer,10),_metadata->>'location',nullif(_metadata->>'warehouse_id','')::uuid,coalesce((_metadata->>'is_asset')::boolean,false),nullif(_metadata->>'assigned_to','')) RETURNING id INTO item;
+ IF _quantity>0 THEN INSERT INTO public.store_receipts(item_id,quantity,remarks) VALUES(item,_quantity,'Opening stock on registration'); END IF; RETURN item;
+ END $$;
+REVOKE ALL ON FUNCTION public.register_inventory(jsonb,integer) FROM PUBLIC,anon; GRANT EXECUTE ON FUNCTION public.register_inventory(jsonb,integer) TO authenticated;
+REVOKE ALL ON FUNCTION public.sync_warehouse_posting(),public.guard_inventory_metadata() FROM PUBLIC,anon,authenticated;
