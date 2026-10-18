@@ -10,6 +10,7 @@
 - [x] Audit log
 
 ## Later phases
+- [ ] Phase 2: complete leave processing, registry workflows, document repository/version approvals, global search, audit activity, PDF/Excel reports and notifications.
 - [x] Extend ERP schema from supplied SQL without replacing existing workflows; match the supplied offices and sections.
 - [ ] Training, Finance, Procurement, Transport, HR, ICT helpdesk, Documents
 - [ ] Notifications (email), PDF/Excel reports, role-specific dashboards
