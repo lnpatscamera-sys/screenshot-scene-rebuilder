@@ -12,15 +12,22 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedAssetsRouteImport } from './routes/_authenticated/assets'
 import { Route as AuthenticatedAuditRouteImport } from './routes/_authenticated/audit'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedDocumentsRouteImport } from './routes/_authenticated/documents'
+import { Route as AuthenticatedEquipmentRequestsRouteImport } from './routes/_authenticated/equipment-requests'
 import { Route as AuthenticatedInventoryRouteImport } from './routes/_authenticated/inventory'
+import { Route as AuthenticatedIssuesRouteImport } from './routes/_authenticated/issues'
 import { Route as AuthenticatedLeaveRouteImport } from './routes/_authenticated/leave'
 import { Route as AuthenticatedOrganizationRouteImport } from './routes/_authenticated/organization'
+import { Route as AuthenticatedReceiptsRouteImport } from './routes/_authenticated/receipts'
 import { Route as AuthenticatedRegistryRouteImport } from './routes/_authenticated/registry'
 import { Route as AuthenticatedSearchRouteImport } from './routes/_authenticated/search'
+import { Route as AuthenticatedStockMovementsRouteImport } from './routes/_authenticated/stock-movements'
+import { Route as AuthenticatedSuppliersRouteImport } from './routes/_authenticated/suppliers'
 import { Route as AuthenticatedSuppliesRouteImport } from './routes/_authenticated/supplies'
+import { Route as AuthenticatedVehicleBookingsRouteImport } from './routes/_authenticated/vehicle-bookings'
 import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated/admin.users'
 import { Route as AuthenticatedModulesModuleRouteImport } from './routes/_authenticated/modules.$module'
 import { Route as AuthenticatedOfficersIndexRouteImport } from './routes/_authenticated/officers.index'
@@ -41,6 +48,11 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedAssetsRoute = AuthenticatedAssetsRouteImport.update({
+  id: '/assets',
+  path: '/assets',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedAuditRoute = AuthenticatedAuditRouteImport.update({
   id: '/audit',
   path: '/audit',
@@ -56,9 +68,20 @@ const AuthenticatedDocumentsRoute = AuthenticatedDocumentsRouteImport.update({
   path: '/documents',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedEquipmentRequestsRoute =
+  AuthenticatedEquipmentRequestsRouteImport.update({
+    id: '/equipment-requests',
+    path: '/equipment-requests',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedInventoryRoute = AuthenticatedInventoryRouteImport.update({
   id: '/inventory',
   path: '/inventory',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedIssuesRoute = AuthenticatedIssuesRouteImport.update({
+  id: '/issues',
+  path: '/issues',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedLeaveRoute = AuthenticatedLeaveRouteImport.update({
@@ -72,6 +95,11 @@ const AuthenticatedOrganizationRoute =
     path: '/organization',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedReceiptsRoute = AuthenticatedReceiptsRouteImport.update({
+  id: '/receipts',
+  path: '/receipts',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedRegistryRoute = AuthenticatedRegistryRouteImport.update({
   id: '/registry',
   path: '/registry',
@@ -82,11 +110,28 @@ const AuthenticatedSearchRoute = AuthenticatedSearchRouteImport.update({
   path: '/search',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedStockMovementsRoute =
+  AuthenticatedStockMovementsRouteImport.update({
+    id: '/stock-movements',
+    path: '/stock-movements',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedSuppliersRoute = AuthenticatedSuppliersRouteImport.update({
+  id: '/suppliers',
+  path: '/suppliers',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedSuppliesRoute = AuthenticatedSuppliesRouteImport.update({
   id: '/supplies',
   path: '/supplies',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedVehicleBookingsRoute =
+  AuthenticatedVehicleBookingsRouteImport.update({
+    id: '/vehicle-bookings',
+    path: '/vehicle-bookings',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAdminUsersRoute = AuthenticatedAdminUsersRouteImport.update({
   id: '/admin/users',
   path: '/admin/users',
@@ -119,15 +164,22 @@ const LovableEmailTransactionalPreviewRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/assets': typeof AuthenticatedAssetsRoute
   '/audit': typeof AuthenticatedAuditRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/documents': typeof AuthenticatedDocumentsRoute
+  '/equipment-requests': typeof AuthenticatedEquipmentRequestsRoute
   '/inventory': typeof AuthenticatedInventoryRoute
+  '/issues': typeof AuthenticatedIssuesRoute
   '/leave': typeof AuthenticatedLeaveRoute
   '/organization': typeof AuthenticatedOrganizationRoute
+  '/receipts': typeof AuthenticatedReceiptsRoute
   '/registry': typeof AuthenticatedRegistryRoute
   '/search': typeof AuthenticatedSearchRoute
+  '/stock-movements': typeof AuthenticatedStockMovementsRoute
+  '/suppliers': typeof AuthenticatedSuppliersRoute
   '/supplies': typeof AuthenticatedSuppliesRoute
+  '/vehicle-bookings': typeof AuthenticatedVehicleBookingsRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/modules/$module': typeof AuthenticatedModulesModuleRoute
   '/officers/$id': typeof AuthenticatedOfficersIdRoute
@@ -137,15 +189,22 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/assets': typeof AuthenticatedAssetsRoute
   '/audit': typeof AuthenticatedAuditRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/documents': typeof AuthenticatedDocumentsRoute
+  '/equipment-requests': typeof AuthenticatedEquipmentRequestsRoute
   '/inventory': typeof AuthenticatedInventoryRoute
+  '/issues': typeof AuthenticatedIssuesRoute
   '/leave': typeof AuthenticatedLeaveRoute
   '/organization': typeof AuthenticatedOrganizationRoute
+  '/receipts': typeof AuthenticatedReceiptsRoute
   '/registry': typeof AuthenticatedRegistryRoute
   '/search': typeof AuthenticatedSearchRoute
+  '/stock-movements': typeof AuthenticatedStockMovementsRoute
+  '/suppliers': typeof AuthenticatedSuppliersRoute
   '/supplies': typeof AuthenticatedSuppliesRoute
+  '/vehicle-bookings': typeof AuthenticatedVehicleBookingsRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/modules/$module': typeof AuthenticatedModulesModuleRoute
   '/officers/$id': typeof AuthenticatedOfficersIdRoute
@@ -157,15 +216,22 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/_authenticated/assets': typeof AuthenticatedAssetsRoute
   '/_authenticated/audit': typeof AuthenticatedAuditRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/documents': typeof AuthenticatedDocumentsRoute
+  '/_authenticated/equipment-requests': typeof AuthenticatedEquipmentRequestsRoute
   '/_authenticated/inventory': typeof AuthenticatedInventoryRoute
+  '/_authenticated/issues': typeof AuthenticatedIssuesRoute
   '/_authenticated/leave': typeof AuthenticatedLeaveRoute
   '/_authenticated/organization': typeof AuthenticatedOrganizationRoute
+  '/_authenticated/receipts': typeof AuthenticatedReceiptsRoute
   '/_authenticated/registry': typeof AuthenticatedRegistryRoute
   '/_authenticated/search': typeof AuthenticatedSearchRoute
+  '/_authenticated/stock-movements': typeof AuthenticatedStockMovementsRoute
+  '/_authenticated/suppliers': typeof AuthenticatedSuppliersRoute
   '/_authenticated/supplies': typeof AuthenticatedSuppliesRoute
+  '/_authenticated/vehicle-bookings': typeof AuthenticatedVehicleBookingsRoute
   '/_authenticated/admin/users': typeof AuthenticatedAdminUsersRoute
   '/_authenticated/modules/$module': typeof AuthenticatedModulesModuleRoute
   '/_authenticated/officers/$id': typeof AuthenticatedOfficersIdRoute
@@ -177,15 +243,22 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
+    | '/assets'
     | '/audit'
     | '/dashboard'
     | '/documents'
+    | '/equipment-requests'
     | '/inventory'
+    | '/issues'
     | '/leave'
     | '/organization'
+    | '/receipts'
     | '/registry'
     | '/search'
+    | '/stock-movements'
+    | '/suppliers'
     | '/supplies'
+    | '/vehicle-bookings'
     | '/admin/users'
     | '/modules/$module'
     | '/officers/$id'
@@ -195,15 +268,22 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
+    | '/assets'
     | '/audit'
     | '/dashboard'
     | '/documents'
+    | '/equipment-requests'
     | '/inventory'
+    | '/issues'
     | '/leave'
     | '/organization'
+    | '/receipts'
     | '/registry'
     | '/search'
+    | '/stock-movements'
+    | '/suppliers'
     | '/supplies'
+    | '/vehicle-bookings'
     | '/admin/users'
     | '/modules/$module'
     | '/officers/$id'
@@ -214,15 +294,22 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/_authenticated/assets'
     | '/_authenticated/audit'
     | '/_authenticated/dashboard'
     | '/_authenticated/documents'
+    | '/_authenticated/equipment-requests'
     | '/_authenticated/inventory'
+    | '/_authenticated/issues'
     | '/_authenticated/leave'
     | '/_authenticated/organization'
+    | '/_authenticated/receipts'
     | '/_authenticated/registry'
     | '/_authenticated/search'
+    | '/_authenticated/stock-movements'
+    | '/_authenticated/suppliers'
     | '/_authenticated/supplies'
+    | '/_authenticated/vehicle-bookings'
     | '/_authenticated/admin/users'
     | '/_authenticated/modules/$module'
     | '/_authenticated/officers/$id'
@@ -260,6 +347,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/assets': {
+      id: '/_authenticated/assets'
+      path: '/assets'
+      fullPath: '/assets'
+      preLoaderRoute: typeof AuthenticatedAssetsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/audit': {
       id: '/_authenticated/audit'
       path: '/audit'
@@ -281,11 +375,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDocumentsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/equipment-requests': {
+      id: '/_authenticated/equipment-requests'
+      path: '/equipment-requests'
+      fullPath: '/equipment-requests'
+      preLoaderRoute: typeof AuthenticatedEquipmentRequestsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/inventory': {
       id: '/_authenticated/inventory'
       path: '/inventory'
       fullPath: '/inventory'
       preLoaderRoute: typeof AuthenticatedInventoryRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/issues': {
+      id: '/_authenticated/issues'
+      path: '/issues'
+      fullPath: '/issues'
+      preLoaderRoute: typeof AuthenticatedIssuesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/leave': {
@@ -302,6 +410,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedOrganizationRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/receipts': {
+      id: '/_authenticated/receipts'
+      path: '/receipts'
+      fullPath: '/receipts'
+      preLoaderRoute: typeof AuthenticatedReceiptsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/registry': {
       id: '/_authenticated/registry'
       path: '/registry'
@@ -316,11 +431,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSearchRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/stock-movements': {
+      id: '/_authenticated/stock-movements'
+      path: '/stock-movements'
+      fullPath: '/stock-movements'
+      preLoaderRoute: typeof AuthenticatedStockMovementsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/suppliers': {
+      id: '/_authenticated/suppliers'
+      path: '/suppliers'
+      fullPath: '/suppliers'
+      preLoaderRoute: typeof AuthenticatedSuppliersRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/supplies': {
       id: '/_authenticated/supplies'
       path: '/supplies'
       fullPath: '/supplies'
       preLoaderRoute: typeof AuthenticatedSuppliesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/vehicle-bookings': {
+      id: '/_authenticated/vehicle-bookings'
+      path: '/vehicle-bookings'
+      fullPath: '/vehicle-bookings'
+      preLoaderRoute: typeof AuthenticatedVehicleBookingsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/admin/users': {
@@ -362,15 +498,22 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAssetsRoute: typeof AuthenticatedAssetsRoute
   AuthenticatedAuditRoute: typeof AuthenticatedAuditRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedDocumentsRoute: typeof AuthenticatedDocumentsRoute
+  AuthenticatedEquipmentRequestsRoute: typeof AuthenticatedEquipmentRequestsRoute
   AuthenticatedInventoryRoute: typeof AuthenticatedInventoryRoute
+  AuthenticatedIssuesRoute: typeof AuthenticatedIssuesRoute
   AuthenticatedLeaveRoute: typeof AuthenticatedLeaveRoute
   AuthenticatedOrganizationRoute: typeof AuthenticatedOrganizationRoute
+  AuthenticatedReceiptsRoute: typeof AuthenticatedReceiptsRoute
   AuthenticatedRegistryRoute: typeof AuthenticatedRegistryRoute
   AuthenticatedSearchRoute: typeof AuthenticatedSearchRoute
+  AuthenticatedStockMovementsRoute: typeof AuthenticatedStockMovementsRoute
+  AuthenticatedSuppliersRoute: typeof AuthenticatedSuppliersRoute
   AuthenticatedSuppliesRoute: typeof AuthenticatedSuppliesRoute
+  AuthenticatedVehicleBookingsRoute: typeof AuthenticatedVehicleBookingsRoute
   AuthenticatedAdminUsersRoute: typeof AuthenticatedAdminUsersRoute
   AuthenticatedModulesModuleRoute: typeof AuthenticatedModulesModuleRoute
   AuthenticatedOfficersIdRoute: typeof AuthenticatedOfficersIdRoute
@@ -378,15 +521,22 @@ interface AuthenticatedRouteRouteChildren {
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAssetsRoute: AuthenticatedAssetsRoute,
   AuthenticatedAuditRoute: AuthenticatedAuditRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedDocumentsRoute: AuthenticatedDocumentsRoute,
+  AuthenticatedEquipmentRequestsRoute: AuthenticatedEquipmentRequestsRoute,
   AuthenticatedInventoryRoute: AuthenticatedInventoryRoute,
+  AuthenticatedIssuesRoute: AuthenticatedIssuesRoute,
   AuthenticatedLeaveRoute: AuthenticatedLeaveRoute,
   AuthenticatedOrganizationRoute: AuthenticatedOrganizationRoute,
+  AuthenticatedReceiptsRoute: AuthenticatedReceiptsRoute,
   AuthenticatedRegistryRoute: AuthenticatedRegistryRoute,
   AuthenticatedSearchRoute: AuthenticatedSearchRoute,
+  AuthenticatedStockMovementsRoute: AuthenticatedStockMovementsRoute,
+  AuthenticatedSuppliersRoute: AuthenticatedSuppliersRoute,
   AuthenticatedSuppliesRoute: AuthenticatedSuppliesRoute,
+  AuthenticatedVehicleBookingsRoute: AuthenticatedVehicleBookingsRoute,
   AuthenticatedAdminUsersRoute: AuthenticatedAdminUsersRoute,
   AuthenticatedModulesModuleRoute: AuthenticatedModulesModuleRoute,
   AuthenticatedOfficersIdRoute: AuthenticatedOfficersIdRoute,
