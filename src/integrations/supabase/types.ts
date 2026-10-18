@@ -14,6 +14,305 @@ export type Database = {
   }
   public: {
     Tables: {
+      asset_assignments: {
+        Row: {
+          asset_id: string | null
+          assigned_by: string | null
+          assigned_date: string | null
+          created_at: string
+          id: string
+          officer_id: string | null
+          remarks: string | null
+          returned_date: string | null
+          section_id: string | null
+        }
+        Insert: {
+          asset_id?: string | null
+          assigned_by?: string | null
+          assigned_date?: string | null
+          created_at?: string
+          id?: string
+          officer_id?: string | null
+          remarks?: string | null
+          returned_date?: string | null
+          section_id?: string | null
+        }
+        Update: {
+          asset_id?: string | null
+          assigned_by?: string | null
+          assigned_date?: string | null
+          created_at?: string
+          id?: string
+          officer_id?: string | null
+          remarks?: string | null
+          returned_date?: string | null
+          section_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "asset_assignments_asset_id_fkey"
+            columns: ["asset_id"]
+            isOneToOne: false
+            referencedRelation: "assets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "asset_assignments_assigned_by_fkey"
+            columns: ["assigned_by"]
+            isOneToOne: false
+            referencedRelation: "approvals"
+            referencedColumns: ["approver_id"]
+          },
+          {
+            foreignKeyName: "asset_assignments_assigned_by_fkey"
+            columns: ["assigned_by"]
+            isOneToOne: false
+            referencedRelation: "equipment_requests"
+            referencedColumns: ["requested_by"]
+          },
+          {
+            foreignKeyName: "asset_assignments_assigned_by_fkey"
+            columns: ["assigned_by"]
+            isOneToOne: false
+            referencedRelation: "officers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "asset_assignments_officer_id_fkey"
+            columns: ["officer_id"]
+            isOneToOne: false
+            referencedRelation: "approvals"
+            referencedColumns: ["approver_id"]
+          },
+          {
+            foreignKeyName: "asset_assignments_officer_id_fkey"
+            columns: ["officer_id"]
+            isOneToOne: false
+            referencedRelation: "equipment_requests"
+            referencedColumns: ["requested_by"]
+          },
+          {
+            foreignKeyName: "asset_assignments_officer_id_fkey"
+            columns: ["officer_id"]
+            isOneToOne: false
+            referencedRelation: "officers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "asset_assignments_section_id_fkey"
+            columns: ["section_id"]
+            isOneToOne: false
+            referencedRelation: "sections"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      asset_maintenance: {
+        Row: {
+          asset_id: string | null
+          cost: number | null
+          created_at: string
+          description: string | null
+          id: string
+          maintenance_date: string | null
+          maintenance_type: string | null
+          next_service_date: string | null
+          recorded_by: string | null
+          supplier_id: string | null
+        }
+        Insert: {
+          asset_id?: string | null
+          cost?: number | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          maintenance_date?: string | null
+          maintenance_type?: string | null
+          next_service_date?: string | null
+          recorded_by?: string | null
+          supplier_id?: string | null
+        }
+        Update: {
+          asset_id?: string | null
+          cost?: number | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          maintenance_date?: string | null
+          maintenance_type?: string | null
+          next_service_date?: string | null
+          recorded_by?: string | null
+          supplier_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "asset_maintenance_asset_id_fkey"
+            columns: ["asset_id"]
+            isOneToOne: false
+            referencedRelation: "assets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "asset_maintenance_recorded_by_fkey"
+            columns: ["recorded_by"]
+            isOneToOne: false
+            referencedRelation: "approvals"
+            referencedColumns: ["approver_id"]
+          },
+          {
+            foreignKeyName: "asset_maintenance_recorded_by_fkey"
+            columns: ["recorded_by"]
+            isOneToOne: false
+            referencedRelation: "equipment_requests"
+            referencedColumns: ["requested_by"]
+          },
+          {
+            foreignKeyName: "asset_maintenance_recorded_by_fkey"
+            columns: ["recorded_by"]
+            isOneToOne: false
+            referencedRelation: "officers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "asset_maintenance_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "suppliers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "asset_maintenance_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "vendors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      asset_transfers: {
+        Row: {
+          asset_id: string | null
+          created_at: string
+          from_officer_id: string | null
+          from_section_id: string | null
+          id: string
+          reason: string | null
+          recorded_by: string | null
+          to_officer_id: string | null
+          to_section_id: string | null
+          transfer_date: string | null
+        }
+        Insert: {
+          asset_id?: string | null
+          created_at?: string
+          from_officer_id?: string | null
+          from_section_id?: string | null
+          id?: string
+          reason?: string | null
+          recorded_by?: string | null
+          to_officer_id?: string | null
+          to_section_id?: string | null
+          transfer_date?: string | null
+        }
+        Update: {
+          asset_id?: string | null
+          created_at?: string
+          from_officer_id?: string | null
+          from_section_id?: string | null
+          id?: string
+          reason?: string | null
+          recorded_by?: string | null
+          to_officer_id?: string | null
+          to_section_id?: string | null
+          transfer_date?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "asset_transfers_asset_id_fkey"
+            columns: ["asset_id"]
+            isOneToOne: false
+            referencedRelation: "assets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "asset_transfers_from_officer_id_fkey"
+            columns: ["from_officer_id"]
+            isOneToOne: false
+            referencedRelation: "approvals"
+            referencedColumns: ["approver_id"]
+          },
+          {
+            foreignKeyName: "asset_transfers_from_officer_id_fkey"
+            columns: ["from_officer_id"]
+            isOneToOne: false
+            referencedRelation: "equipment_requests"
+            referencedColumns: ["requested_by"]
+          },
+          {
+            foreignKeyName: "asset_transfers_from_officer_id_fkey"
+            columns: ["from_officer_id"]
+            isOneToOne: false
+            referencedRelation: "officers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "asset_transfers_from_section_id_fkey"
+            columns: ["from_section_id"]
+            isOneToOne: false
+            referencedRelation: "sections"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "asset_transfers_recorded_by_fkey"
+            columns: ["recorded_by"]
+            isOneToOne: false
+            referencedRelation: "approvals"
+            referencedColumns: ["approver_id"]
+          },
+          {
+            foreignKeyName: "asset_transfers_recorded_by_fkey"
+            columns: ["recorded_by"]
+            isOneToOne: false
+            referencedRelation: "equipment_requests"
+            referencedColumns: ["requested_by"]
+          },
+          {
+            foreignKeyName: "asset_transfers_recorded_by_fkey"
+            columns: ["recorded_by"]
+            isOneToOne: false
+            referencedRelation: "officers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "asset_transfers_to_officer_id_fkey"
+            columns: ["to_officer_id"]
+            isOneToOne: false
+            referencedRelation: "approvals"
+            referencedColumns: ["approver_id"]
+          },
+          {
+            foreignKeyName: "asset_transfers_to_officer_id_fkey"
+            columns: ["to_officer_id"]
+            isOneToOne: false
+            referencedRelation: "equipment_requests"
+            referencedColumns: ["requested_by"]
+          },
+          {
+            foreignKeyName: "asset_transfers_to_officer_id_fkey"
+            columns: ["to_officer_id"]
+            isOneToOne: false
+            referencedRelation: "officers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "asset_transfers_to_section_id_fkey"
+            columns: ["to_section_id"]
+            isOneToOne: false
+            referencedRelation: "sections"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       assets: {
         Row: {
           asset_name: string | null
@@ -562,6 +861,101 @@ export type Database = {
           },
         ]
       }
+      fuel_logs: {
+        Row: {
+          booking_id: string | null
+          cost: number | null
+          created_at: string
+          fuel_date: string | null
+          fuel_type: string | null
+          id: string
+          litres: number | null
+          odometer: number | null
+          recorded_by: string | null
+          remarks: string | null
+          supplier_id: string | null
+          vehicle_id: string | null
+        }
+        Insert: {
+          booking_id?: string | null
+          cost?: number | null
+          created_at?: string
+          fuel_date?: string | null
+          fuel_type?: string | null
+          id?: string
+          litres?: number | null
+          odometer?: number | null
+          recorded_by?: string | null
+          remarks?: string | null
+          supplier_id?: string | null
+          vehicle_id?: string | null
+        }
+        Update: {
+          booking_id?: string | null
+          cost?: number | null
+          created_at?: string
+          fuel_date?: string | null
+          fuel_type?: string | null
+          id?: string
+          litres?: number | null
+          odometer?: number | null
+          recorded_by?: string | null
+          remarks?: string | null
+          supplier_id?: string | null
+          vehicle_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fuel_logs_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "vehicle_bookings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fuel_logs_recorded_by_fkey"
+            columns: ["recorded_by"]
+            isOneToOne: false
+            referencedRelation: "approvals"
+            referencedColumns: ["approver_id"]
+          },
+          {
+            foreignKeyName: "fuel_logs_recorded_by_fkey"
+            columns: ["recorded_by"]
+            isOneToOne: false
+            referencedRelation: "equipment_requests"
+            referencedColumns: ["requested_by"]
+          },
+          {
+            foreignKeyName: "fuel_logs_recorded_by_fkey"
+            columns: ["recorded_by"]
+            isOneToOne: false
+            referencedRelation: "officers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fuel_logs_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "suppliers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fuel_logs_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "vendors"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fuel_logs_vehicle_id_fkey"
+            columns: ["vehicle_id"]
+            isOneToOne: false
+            referencedRelation: "vehicles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       incoming_mail: {
         Row: {
           assigned_to: string | null
@@ -664,6 +1058,126 @@ export type Database = {
           unit?: string
         }
         Relationships: []
+      }
+      inventory_movements: {
+        Row: {
+          created_at: string
+          id: string
+          issue_id: string | null
+          item_id: string | null
+          movement_date: string | null
+          movement_type: string | null
+          quantity: number | null
+          receipt_id: string | null
+          recorded_by: string | null
+          remarks: string | null
+          request_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          issue_id?: string | null
+          item_id?: string | null
+          movement_date?: string | null
+          movement_type?: string | null
+          quantity?: number | null
+          receipt_id?: string | null
+          recorded_by?: string | null
+          remarks?: string | null
+          request_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          issue_id?: string | null
+          item_id?: string | null
+          movement_date?: string | null
+          movement_type?: string | null
+          quantity?: number | null
+          receipt_id?: string | null
+          recorded_by?: string | null
+          remarks?: string | null
+          request_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inventory_movements_issue_id_fkey"
+            columns: ["issue_id"]
+            isOneToOne: false
+            referencedRelation: "store_issues"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "inventory_movements_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: false
+            referencedRelation: "inventory_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "inventory_movements_receipt_id_fkey"
+            columns: ["receipt_id"]
+            isOneToOne: false
+            referencedRelation: "store_receipts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "inventory_movements_recorded_by_fkey"
+            columns: ["recorded_by"]
+            isOneToOne: false
+            referencedRelation: "approvals"
+            referencedColumns: ["approver_id"]
+          },
+          {
+            foreignKeyName: "inventory_movements_recorded_by_fkey"
+            columns: ["recorded_by"]
+            isOneToOne: false
+            referencedRelation: "equipment_requests"
+            referencedColumns: ["requested_by"]
+          },
+          {
+            foreignKeyName: "inventory_movements_recorded_by_fkey"
+            columns: ["recorded_by"]
+            isOneToOne: false
+            referencedRelation: "officers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "inventory_movements_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "approvals"
+            referencedColumns: ["request_id"]
+          },
+          {
+            foreignKeyName: "inventory_movements_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "equipment_request_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "inventory_movements_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "equipment_request_items"
+            referencedColumns: ["request_id"]
+          },
+          {
+            foreignKeyName: "inventory_movements_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "equipment_requests"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "inventory_movements_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "supply_requests"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       leave_balances: {
         Row: {
@@ -825,6 +1339,91 @@ export type Database = {
             columns: ["officer_id"]
             isOneToOne: false
             referencedRelation: "officers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      maintenance_logs: {
+        Row: {
+          cost: number | null
+          created_at: string
+          description: string | null
+          id: string
+          maintenance_date: string | null
+          maintenance_type: string | null
+          next_service_date: string | null
+          odometer: number | null
+          recorded_by: string | null
+          supplier_id: string | null
+          vehicle_id: string | null
+        }
+        Insert: {
+          cost?: number | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          maintenance_date?: string | null
+          maintenance_type?: string | null
+          next_service_date?: string | null
+          odometer?: number | null
+          recorded_by?: string | null
+          supplier_id?: string | null
+          vehicle_id?: string | null
+        }
+        Update: {
+          cost?: number | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          maintenance_date?: string | null
+          maintenance_type?: string | null
+          next_service_date?: string | null
+          odometer?: number | null
+          recorded_by?: string | null
+          supplier_id?: string | null
+          vehicle_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "maintenance_logs_recorded_by_fkey"
+            columns: ["recorded_by"]
+            isOneToOne: false
+            referencedRelation: "approvals"
+            referencedColumns: ["approver_id"]
+          },
+          {
+            foreignKeyName: "maintenance_logs_recorded_by_fkey"
+            columns: ["recorded_by"]
+            isOneToOne: false
+            referencedRelation: "equipment_requests"
+            referencedColumns: ["requested_by"]
+          },
+          {
+            foreignKeyName: "maintenance_logs_recorded_by_fkey"
+            columns: ["recorded_by"]
+            isOneToOne: false
+            referencedRelation: "officers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "maintenance_logs_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "suppliers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "maintenance_logs_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "vendors"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "maintenance_logs_vehicle_id_fkey"
+            columns: ["vehicle_id"]
+            isOneToOne: false
+            referencedRelation: "vehicles"
             referencedColumns: ["id"]
           },
         ]
@@ -1243,6 +1842,13 @@ export type Database = {
             foreignKeyName: "purchase_orders_vendor_id_fkey"
             columns: ["vendor_id"]
             isOneToOne: false
+            referencedRelation: "suppliers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "purchase_orders_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
             referencedRelation: "vendors"
             referencedColumns: ["id"]
           },
@@ -1377,6 +1983,327 @@ export type Database = {
             columns: ["section_head"]
             isOneToOne: false
             referencedRelation: "officers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      stock_reconciliation: {
+        Row: {
+          counted_by: string | null
+          counted_quantity: number | null
+          created_at: string
+          id: string
+          item_id: string | null
+          reason: string | null
+          reconciliation_date: string | null
+          reconciliation_number: string | null
+          reviewed_by: string | null
+          system_quantity: number | null
+          variance: number | null
+        }
+        Insert: {
+          counted_by?: string | null
+          counted_quantity?: number | null
+          created_at?: string
+          id?: string
+          item_id?: string | null
+          reason?: string | null
+          reconciliation_date?: string | null
+          reconciliation_number?: string | null
+          reviewed_by?: string | null
+          system_quantity?: number | null
+          variance?: number | null
+        }
+        Update: {
+          counted_by?: string | null
+          counted_quantity?: number | null
+          created_at?: string
+          id?: string
+          item_id?: string | null
+          reason?: string | null
+          reconciliation_date?: string | null
+          reconciliation_number?: string | null
+          reviewed_by?: string | null
+          system_quantity?: number | null
+          variance?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "stock_reconciliation_counted_by_fkey"
+            columns: ["counted_by"]
+            isOneToOne: false
+            referencedRelation: "approvals"
+            referencedColumns: ["approver_id"]
+          },
+          {
+            foreignKeyName: "stock_reconciliation_counted_by_fkey"
+            columns: ["counted_by"]
+            isOneToOne: false
+            referencedRelation: "equipment_requests"
+            referencedColumns: ["requested_by"]
+          },
+          {
+            foreignKeyName: "stock_reconciliation_counted_by_fkey"
+            columns: ["counted_by"]
+            isOneToOne: false
+            referencedRelation: "officers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "stock_reconciliation_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: false
+            referencedRelation: "inventory_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "stock_reconciliation_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "approvals"
+            referencedColumns: ["approver_id"]
+          },
+          {
+            foreignKeyName: "stock_reconciliation_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "equipment_requests"
+            referencedColumns: ["requested_by"]
+          },
+          {
+            foreignKeyName: "stock_reconciliation_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "officers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      store_issues: {
+        Row: {
+          created_at: string
+          id: string
+          issue_date: string | null
+          issue_number: string | null
+          issued_by: string | null
+          issued_to: string | null
+          item_id: string | null
+          quantity: number | null
+          remarks: string | null
+          request_id: string | null
+          section_id: string | null
+          unit: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          issue_date?: string | null
+          issue_number?: string | null
+          issued_by?: string | null
+          issued_to?: string | null
+          item_id?: string | null
+          quantity?: number | null
+          remarks?: string | null
+          request_id?: string | null
+          section_id?: string | null
+          unit?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          issue_date?: string | null
+          issue_number?: string | null
+          issued_by?: string | null
+          issued_to?: string | null
+          item_id?: string | null
+          quantity?: number | null
+          remarks?: string | null
+          request_id?: string | null
+          section_id?: string | null
+          unit?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "store_issues_issued_by_fkey"
+            columns: ["issued_by"]
+            isOneToOne: false
+            referencedRelation: "approvals"
+            referencedColumns: ["approver_id"]
+          },
+          {
+            foreignKeyName: "store_issues_issued_by_fkey"
+            columns: ["issued_by"]
+            isOneToOne: false
+            referencedRelation: "equipment_requests"
+            referencedColumns: ["requested_by"]
+          },
+          {
+            foreignKeyName: "store_issues_issued_by_fkey"
+            columns: ["issued_by"]
+            isOneToOne: false
+            referencedRelation: "officers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "store_issues_issued_to_fkey"
+            columns: ["issued_to"]
+            isOneToOne: false
+            referencedRelation: "approvals"
+            referencedColumns: ["approver_id"]
+          },
+          {
+            foreignKeyName: "store_issues_issued_to_fkey"
+            columns: ["issued_to"]
+            isOneToOne: false
+            referencedRelation: "equipment_requests"
+            referencedColumns: ["requested_by"]
+          },
+          {
+            foreignKeyName: "store_issues_issued_to_fkey"
+            columns: ["issued_to"]
+            isOneToOne: false
+            referencedRelation: "officers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "store_issues_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: false
+            referencedRelation: "inventory_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "store_issues_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "approvals"
+            referencedColumns: ["request_id"]
+          },
+          {
+            foreignKeyName: "store_issues_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "equipment_request_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "store_issues_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "equipment_request_items"
+            referencedColumns: ["request_id"]
+          },
+          {
+            foreignKeyName: "store_issues_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "equipment_requests"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "store_issues_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "supply_requests"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "store_issues_section_id_fkey"
+            columns: ["section_id"]
+            isOneToOne: false
+            referencedRelation: "sections"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      store_receipts: {
+        Row: {
+          created_at: string
+          id: string
+          item_id: string | null
+          purchase_order_id: string | null
+          quantity: number | null
+          receipt_date: string | null
+          receipt_number: string | null
+          received_by: string | null
+          remarks: string | null
+          supplier_id: string | null
+          unit: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          item_id?: string | null
+          purchase_order_id?: string | null
+          quantity?: number | null
+          receipt_date?: string | null
+          receipt_number?: string | null
+          received_by?: string | null
+          remarks?: string | null
+          supplier_id?: string | null
+          unit?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          item_id?: string | null
+          purchase_order_id?: string | null
+          quantity?: number | null
+          receipt_date?: string | null
+          receipt_number?: string | null
+          received_by?: string | null
+          remarks?: string | null
+          supplier_id?: string | null
+          unit?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "store_receipts_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: false
+            referencedRelation: "inventory_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "store_receipts_purchase_order_id_fkey"
+            columns: ["purchase_order_id"]
+            isOneToOne: false
+            referencedRelation: "purchase_orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "store_receipts_received_by_fkey"
+            columns: ["received_by"]
+            isOneToOne: false
+            referencedRelation: "approvals"
+            referencedColumns: ["approver_id"]
+          },
+          {
+            foreignKeyName: "store_receipts_received_by_fkey"
+            columns: ["received_by"]
+            isOneToOne: false
+            referencedRelation: "equipment_requests"
+            referencedColumns: ["requested_by"]
+          },
+          {
+            foreignKeyName: "store_receipts_received_by_fkey"
+            columns: ["received_by"]
+            isOneToOne: false
+            referencedRelation: "officers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "store_receipts_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "suppliers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "store_receipts_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "vendors"
             referencedColumns: ["id"]
           },
         ]
@@ -1605,6 +2532,108 @@ export type Database = {
         }
         Relationships: []
       }
+      vehicle_bookings: {
+        Row: {
+          created_at: string
+          destination: string | null
+          driver_id: string | null
+          end_at: string | null
+          id: string
+          purpose: string | null
+          remarks: string | null
+          requested_by: string | null
+          section_id: string | null
+          start_at: string | null
+          status: string | null
+          vehicle_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          destination?: string | null
+          driver_id?: string | null
+          end_at?: string | null
+          id?: string
+          purpose?: string | null
+          remarks?: string | null
+          requested_by?: string | null
+          section_id?: string | null
+          start_at?: string | null
+          status?: string | null
+          vehicle_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          destination?: string | null
+          driver_id?: string | null
+          end_at?: string | null
+          id?: string
+          purpose?: string | null
+          remarks?: string | null
+          requested_by?: string | null
+          section_id?: string | null
+          start_at?: string | null
+          status?: string | null
+          vehicle_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vehicle_bookings_driver_id_fkey"
+            columns: ["driver_id"]
+            isOneToOne: false
+            referencedRelation: "approvals"
+            referencedColumns: ["approver_id"]
+          },
+          {
+            foreignKeyName: "vehicle_bookings_driver_id_fkey"
+            columns: ["driver_id"]
+            isOneToOne: false
+            referencedRelation: "equipment_requests"
+            referencedColumns: ["requested_by"]
+          },
+          {
+            foreignKeyName: "vehicle_bookings_driver_id_fkey"
+            columns: ["driver_id"]
+            isOneToOne: false
+            referencedRelation: "officers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vehicle_bookings_requested_by_fkey"
+            columns: ["requested_by"]
+            isOneToOne: false
+            referencedRelation: "approvals"
+            referencedColumns: ["approver_id"]
+          },
+          {
+            foreignKeyName: "vehicle_bookings_requested_by_fkey"
+            columns: ["requested_by"]
+            isOneToOne: false
+            referencedRelation: "equipment_requests"
+            referencedColumns: ["requested_by"]
+          },
+          {
+            foreignKeyName: "vehicle_bookings_requested_by_fkey"
+            columns: ["requested_by"]
+            isOneToOne: false
+            referencedRelation: "officers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vehicle_bookings_section_id_fkey"
+            columns: ["section_id"]
+            isOneToOne: false
+            referencedRelation: "sections"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vehicle_bookings_vehicle_id_fkey"
+            columns: ["vehicle_id"]
+            isOneToOne: false
+            referencedRelation: "vehicles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       vehicles: {
         Row: {
           assigned_driver: string | null
@@ -1706,6 +2735,44 @@ export type Database = {
           },
         ]
       }
+      equipment_request_items: {
+        Row: {
+          description: string | null
+          id: string | null
+          item_id: string | null
+          item_name: string | null
+          quantity: number | null
+          request_id: string | null
+          unit: string | null
+        }
+        Insert: {
+          description?: string | null
+          id?: string | null
+          item_id?: string | null
+          item_name?: string | null
+          quantity?: number | null
+          request_id?: string | null
+          unit?: string | null
+        }
+        Update: {
+          description?: string | null
+          id?: string | null
+          item_id?: string | null
+          item_name?: string | null
+          quantity?: number | null
+          request_id?: string | null
+          unit?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "supply_requests_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: false
+            referencedRelation: "inventory_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       equipment_requests: {
         Row: {
           collection_status: string | null
@@ -1731,6 +2798,33 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      suppliers: {
+        Row: {
+          address: string | null
+          company_name: string | null
+          contact_person: string | null
+          email: string | null
+          id: string | null
+          phone: string | null
+        }
+        Insert: {
+          address?: string | null
+          company_name?: string | null
+          contact_person?: string | null
+          email?: string | null
+          id?: string | null
+          phone?: string | null
+        }
+        Update: {
+          address?: string | null
+          company_name?: string | null
+          contact_person?: string | null
+          email?: string | null
+          id?: string | null
+          phone?: string | null
+        }
+        Relationships: []
       }
     }
     Functions: {
