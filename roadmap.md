@@ -10,6 +10,7 @@
 - [x] Audit log
 
 ## Later phases
+- [ ] Expand inventory: required categories, generated item codes, unit costs, dashboard/search, warehouse CRUD, audited adjustments/transfers, PDF/Excel exports, and signed-in verification.
 - [x] Protected logistics management screens for items, movements, equipment requests, receipts, issues, suppliers, assets, and vehicle bookings; supplier/asset/booking writes remain system-admin-only.
 - [x] Inventory-staff AI discrepancy analysis grounded in audited movements and reconciliations; signed-in gateway analysis and supplier create/update/delete verified.
 - [x] Automatically post receipts, issues, and reconciliations to stock with audit history, staff controls, immutable entries, and signed-in verification.
