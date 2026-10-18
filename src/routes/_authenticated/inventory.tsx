@@ -15,6 +15,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PageHeader } from "@/components/AppShell";
 import { useAuth } from "@/lib/auth";
 import { exportCsv } from "@/lib/export";
+import { StockPosting } from "@/components/StockPosting";
 
 export const Route = createFileRoute("/_authenticated/inventory")({
   head: () => ({ meta: [{ title: "Inventory & Assets — LNPATS ERP" }, { name: "description", content: "Track LNPATS stock levels, assets, storage locations, and collection." }, { property: "og:title", content: "Inventory & Assets — LNPATS ERP" }, { property: "og:description", content: "Track LNPATS stock levels, assets, storage locations, and collection." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
@@ -29,7 +30,11 @@ function Inventory() {
   const [q, setQ] = useState("");
   const { data = [] } = useQuery({
     queryKey: ["inventory"],
-    queryFn: async () => (await supabase.from("inventory_items").select("*").order("code")).data ?? [],
+    queryFn: async () => {
+      const result = await supabase.from("inventory_items").select("*").order("code");
+      if (result.error) throw result.error;
+      return result.data;
+    },
   });
   const canEdit = hasAny(["storekeeper"]);
   let rows = data.filter((i) => `${i.name} ${i.code} ${i.category}`.toLowerCase().includes(q.toLowerCase()));
@@ -49,9 +54,12 @@ function Inventory() {
     qc.invalidateQueries({ queryKey: ["inventory"] });
   };
   const adjust = async (id: string, qty: number, delta: number) => {
-    const { error } = await supabase.from("inventory_items").update({ quantity: Math.max(0, qty + delta) }).eq("id", id);
+    const { error } = delta > 0
+      ? await supabase.from("store_receipts").insert({ item_id: id, quantity: 1, remarks: "Stores ledger increment" })
+      : await supabase.from("store_issues").insert({ item_id: id, quantity: 1, remarks: "Stores ledger decrement" });
     if (error) toast.error(error.message);
     qc.invalidateQueries({ queryKey: ["inventory"] });
+    qc.invalidateQueries({ queryKey: ["inventory-movements"] });
   };
 
   return (
@@ -122,6 +130,7 @@ function Inventory() {
           </TableBody>
         </Table>
       </Card>
+      <StockPosting items={data} />
     </div>
   );
 }
