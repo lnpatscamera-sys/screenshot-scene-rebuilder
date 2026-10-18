@@ -1022,11 +1022,13 @@ export type Database = {
           reorder_level: number
           storage_location: string | null
           unit: string
+          unit_cost: number
+          warehouse_id: string | null
         }
         Insert: {
           assigned_to?: string | null
           category?: string
-          code: string
+          code?: string
           created_at?: string
           id?: string
           is_asset?: boolean
@@ -1039,6 +1041,8 @@ export type Database = {
           reorder_level?: number
           storage_location?: string | null
           unit?: string
+          unit_cost?: number
+          warehouse_id?: string | null
         }
         Update: {
           assigned_to?: string | null
@@ -1056,8 +1060,18 @@ export type Database = {
           reorder_level?: number
           storage_location?: string | null
           unit?: string
+          unit_cost?: number
+          warehouse_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "inventory_items_warehouse_id_fkey"
+            columns: ["warehouse_id"]
+            isOneToOne: false
+            referencedRelation: "warehouses"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       inventory_movements: {
         Row: {
@@ -1076,6 +1090,9 @@ export type Database = {
           recorded_by: string | null
           remarks: string | null
           request_id: string | null
+          to_warehouse_id: string | null
+          transfer_id: string | null
+          warehouse_id: string | null
         }
         Insert: {
           actor_id?: string | null
@@ -1093,6 +1110,9 @@ export type Database = {
           recorded_by?: string | null
           remarks?: string | null
           request_id?: string | null
+          to_warehouse_id?: string | null
+          transfer_id?: string | null
+          warehouse_id?: string | null
         }
         Update: {
           actor_id?: string | null
@@ -1110,6 +1130,9 @@ export type Database = {
           recorded_by?: string | null
           remarks?: string | null
           request_id?: string | null
+          to_warehouse_id?: string | null
+          transfer_id?: string | null
+          warehouse_id?: string | null
         }
         Relationships: [
           {
@@ -1201,6 +1224,27 @@ export type Database = {
             columns: ["request_id"]
             isOneToOne: false
             referencedRelation: "supply_requests"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "inventory_movements_to_warehouse_id_fkey"
+            columns: ["to_warehouse_id"]
+            isOneToOne: false
+            referencedRelation: "warehouses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "inventory_movements_transfer_id_fkey"
+            columns: ["transfer_id"]
+            isOneToOne: false
+            referencedRelation: "stock_transfers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "inventory_movements_warehouse_id_fkey"
+            columns: ["warehouse_id"]
+            isOneToOne: false
+            referencedRelation: "warehouses"
             referencedColumns: ["id"]
           },
         ]
@@ -2054,6 +2098,7 @@ export type Database = {
           reviewed_by: string | null
           system_quantity: number | null
           variance: number | null
+          warehouse_id: string | null
         }
         Insert: {
           balance_after?: number | null
@@ -2071,6 +2116,7 @@ export type Database = {
           reviewed_by?: string | null
           system_quantity?: number | null
           variance?: number | null
+          warehouse_id?: string | null
         }
         Update: {
           balance_after?: number | null
@@ -2088,6 +2134,7 @@ export type Database = {
           reviewed_by?: string | null
           system_quantity?: number | null
           variance?: number | null
+          warehouse_id?: string | null
         }
         Relationships: [
           {
@@ -2146,6 +2193,75 @@ export type Database = {
             referencedRelation: "officers"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "stock_reconciliation_warehouse_id_fkey"
+            columns: ["warehouse_id"]
+            isOneToOne: false
+            referencedRelation: "warehouses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      stock_transfers: {
+        Row: {
+          created_at: string
+          from_warehouse_id: string | null
+          id: string
+          item_id: string
+          posted_by: string
+          quantity: number
+          reason: string
+          to_warehouse_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          from_warehouse_id?: string | null
+          id?: string
+          item_id: string
+          posted_by: string
+          quantity: number
+          reason: string
+          to_warehouse_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          from_warehouse_id?: string | null
+          id?: string
+          item_id?: string
+          posted_by?: string
+          quantity?: number
+          reason?: string
+          to_warehouse_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "stock_transfers_from_warehouse_id_fkey"
+            columns: ["from_warehouse_id"]
+            isOneToOne: false
+            referencedRelation: "warehouses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "stock_transfers_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: false
+            referencedRelation: "inventory_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "stock_transfers_posted_by_fkey"
+            columns: ["posted_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "stock_transfers_to_warehouse_id_fkey"
+            columns: ["to_warehouse_id"]
+            isOneToOne: false
+            referencedRelation: "warehouses"
+            referencedColumns: ["id"]
+          },
         ]
       }
       store_issues: {
@@ -2166,6 +2282,7 @@ export type Database = {
           request_id: string | null
           section_id: string | null
           unit: string | null
+          warehouse_id: string | null
         }
         Insert: {
           balance_after?: number | null
@@ -2184,6 +2301,7 @@ export type Database = {
           request_id?: string | null
           section_id?: string | null
           unit?: string | null
+          warehouse_id?: string | null
         }
         Update: {
           balance_after?: number | null
@@ -2202,6 +2320,7 @@ export type Database = {
           request_id?: string | null
           section_id?: string | null
           unit?: string | null
+          warehouse_id?: string | null
         }
         Relationships: [
           {
@@ -2302,6 +2421,13 @@ export type Database = {
             referencedRelation: "sections"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "store_issues_warehouse_id_fkey"
+            columns: ["warehouse_id"]
+            isOneToOne: false
+            referencedRelation: "warehouses"
+            referencedColumns: ["id"]
+          },
         ]
       }
       store_receipts: {
@@ -2321,6 +2447,7 @@ export type Database = {
           remarks: string | null
           supplier_id: string | null
           unit: string | null
+          warehouse_id: string | null
         }
         Insert: {
           balance_after?: number | null
@@ -2338,6 +2465,7 @@ export type Database = {
           remarks?: string | null
           supplier_id?: string | null
           unit?: string | null
+          warehouse_id?: string | null
         }
         Update: {
           balance_after?: number | null
@@ -2355,6 +2483,7 @@ export type Database = {
           remarks?: string | null
           supplier_id?: string | null
           unit?: string | null
+          warehouse_id?: string | null
         }
         Relationships: [
           {
@@ -2411,6 +2540,13 @@ export type Database = {
             columns: ["supplier_id"]
             isOneToOne: false
             referencedRelation: "vendors"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "store_receipts_warehouse_id_fkey"
+            columns: ["warehouse_id"]
+            isOneToOne: false
+            referencedRelation: "warehouses"
             referencedColumns: ["id"]
           },
         ]
@@ -2820,6 +2956,63 @@ export type Database = {
         }
         Relationships: []
       }
+      warehouse_stock: {
+        Row: {
+          id: string
+          item_id: string
+          quantity: number
+          warehouse_id: string | null
+        }
+        Insert: {
+          id?: string
+          item_id: string
+          quantity?: number
+          warehouse_id?: string | null
+        }
+        Update: {
+          id?: string
+          item_id?: string
+          quantity?: number
+          warehouse_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "warehouse_stock_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: false
+            referencedRelation: "inventory_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "warehouse_stock_warehouse_id_fkey"
+            columns: ["warehouse_id"]
+            isOneToOne: false
+            referencedRelation: "warehouses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      warehouses: {
+        Row: {
+          created_at: string
+          id: string
+          location: string | null
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          location?: string | null
+          name: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          location?: string | null
+          name?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       approvals: {
@@ -2989,6 +3182,10 @@ export type Database = {
         Args: { _action: string; _id: string; _module: string }
         Returns: undefined
       }
+      register_inventory: {
+        Args: { _metadata: Json; _quantity: number }
+        Returns: string
+      }
       same_approval_scope: {
         Args: { _officer: string; _section: string }
         Returns: boolean
@@ -2996,6 +3193,17 @@ export type Database = {
       supply_stage_role: {
         Args: { _stage: number }
         Returns: Database["public"]["Enums"]["app_role"][]
+      }
+      transfer_inventory: {
+        Args: {
+          _from: string
+          _id: string
+          _item: string
+          _quantity: number
+          _reason: string
+          _to: string
+        }
+        Returns: undefined
       }
     }
     Enums: {
