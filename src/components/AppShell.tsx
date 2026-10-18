@@ -3,7 +3,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import {
   LayoutDashboard, Users, CalendarDays, PackageSearch, Boxes, GraduationCap, Wallet, ShoppingCart,
-  Truck, Briefcase, LifeBuoy, FileText, ShieldCheck, ScrollText, Bell, Moon, Sun, LogOut, Menu, Building2,
+    Truck, Briefcase, LifeBuoy, FileText, ShieldCheck, ScrollText, Bell, Moon, Sun, LogOut, Menu, Building2, Search,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth, ROLE_LABELS } from "@/lib/auth";
@@ -22,6 +22,9 @@ const NAV: { group: string; items: NavItem[] }[] = [
       { to: "/leave", label: "Leave", icon: CalendarDays },
       { to: "/supplies", label: "Supply Requests", icon: PackageSearch },
       { to: "/inventory", label: "Inventory & Assets", icon: Boxes },
+      { to: "/registry", label: "Registry", icon: FileText },
+      { to: "/documents", label: "Documents", icon: FileText },
+      { to: "/search", label: "Global Search", icon: Search },
     ],
   },
   {
@@ -33,7 +36,6 @@ const NAV: { group: string; items: NavItem[] }[] = [
       { to: "/modules/$module", params: { module: "transport" }, label: "Transport", icon: Truck },
       { to: "/modules/$module", params: { module: "hr" }, label: "HR", icon: Briefcase },
       { to: "/modules/$module", params: { module: "ict" }, label: "ICT Helpdesk", icon: LifeBuoy },
-      { to: "/modules/$module", params: { module: "documents" }, label: "Documents", icon: FileText },
     ],
   },
   { group: "Administration", items: [{ to: "/audit", label: "Audit Log", icon: ScrollText }, { to: "/admin/users", label: "Users & Roles", icon: ShieldCheck }] },

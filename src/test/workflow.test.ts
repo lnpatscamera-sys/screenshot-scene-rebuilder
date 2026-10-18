@@ -7,6 +7,7 @@ describe("approval chains", () => {
     expect(LEAVE_STAGE_ROLES[2]).toEqual(["assistant_commissioner"]);
     expect(LEAVE_STAGE_ROLES[3]).toContain("dc_admin");
     expect(LEAVE_STAGE_ROLES[4]).toEqual(["commandant"]);
+    expect(LEAVE_STAGE_ROLES[5]).toEqual(["hr_officer"]);
   });
   it("supply: commandant approves at stage 3, storekeeper confirms collection at 7", () => {
     expect(SUPPLY_STAGE_ROLES[3]).toEqual(["commandant"]);
