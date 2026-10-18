@@ -19,3 +19,4 @@
 - Phase 2 correspondence and document mutations use database-authorized RPCs; private attachments use exact path membership and signed links. Why: read access never implies approval or file access.
 - Phase 2 screens share query options and PDF/Excel report controls; registry is canonical for both correspondence directions. Why: consistent reads and preserved revision histories.
 - App emails use the managed server-only template sender, with no local queue or generic send endpoint; email preview routes bypass app guards and authenticate themselves. Why: delivery and suppression are managed centrally.
+- Logistics history tables are staged records, not stock or asset mutation endpoints; suppliers and equipment request items are read-only security-invoker projections of vendors and supply requests. Why: preserves canonical identities, single-item approvals, and stock collection safeguards until logistics workflows are implemented.
