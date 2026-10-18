@@ -16,6 +16,7 @@ export const ROLE_LABELS: Record<AppRole, string> = {
   storekeeper: "Storekeeper",
   finance_officer: "Finance Officer",
   hr_officer: "HR Officer",
+  registry_officer: "Registry Officer",
   ict_admin: "ICT Administrator",
   system_admin: "System Administrator",
 };

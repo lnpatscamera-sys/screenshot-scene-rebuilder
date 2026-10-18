@@ -9,6 +9,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PageHeader, StatusBadge } from "@/components/AppShell";
 import { useAuth } from "@/lib/auth";
 import { LEAVE_STAGE_ROLES, SUPPLY_STAGE_ROLES } from "@/lib/workflow";
+import { phase2Options } from "@/lib/phase2-data";
+import { DOCUMENT_ROLES, REGISTRY_ROLES } from "@/lib/phase2";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({ meta: [{ title: "Dashboard — LNPATS ERP" }, { name: "description", content: "Command overview of LNPATS officers, leave, supply requests, and inventory." }, { property: "og:title", content: "Dashboard — LNPATS ERP" }, { property: "og:description", content: "Command overview of LNPATS officers, leave, supply requests, and inventory." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
@@ -20,12 +22,13 @@ const COLORS = ["var(--chart-1)", "var(--chart-2)", "var(--chart-3)", "var(--cha
 function Dashboard() {
   const { hasAny } = useAuth();
   const qc = useQueryClient();
+  const phase = useQuery(phase2Options);
   const { data } = useQuery({
     queryKey: ["dashboard"],
     queryFn: async () => {
       const [o, l, s, i, a] = await Promise.all([
         supabase.from("officers").select("id, rank, employment_status, sections(name)"),
-        supabase.from("leave_requests").select("id, leave_type, status, stage, created_at, officers(full_name)").order("created_at", { ascending: false }),
+        supabase.from("leave_requests").select("id, leave_type, status, stage, created_at, officers!officer_id(full_name)").order("created_at", { ascending: false }),
         supabase.from("supply_requests").select("id, request_number, item_name, stage, approval_status, collection_status, priority, created_at").order("created_at", { ascending: false }),
         supabase.from("inventory_items").select("id, name, quantity, reorder_level, is_asset"),
         supabase.from("audit_logs").select("*").order("created_at", { ascending: false }).limit(8),
@@ -64,6 +67,7 @@ function Dashboard() {
   return (
     <div>
       <PageHeader title="Command Dashboard" subtitle="Live overview of the Academy — updates automatically" />
+      <div className="flex flex-wrap gap-4 border-y py-4 mb-5 text-sm"><Link to="/registry" className="flex-1 min-w-40"><span className="text-muted-foreground">Registry pending</span><strong className="block text-2xl">{phase.data?.registry.filter(r=>r.stage<6).length ?? 0}</strong><span className="text-xs text-muted-foreground">{phase.data?.registry.filter(r=>r.stage<7&&hasAny([...(REGISTRY_ROLES[r.stage]??[]),"commandant","ict_admin"])).length ?? 0} awaiting you</span></Link><Link to="/documents" className="flex-1 min-w-40"><span className="text-muted-foreground">Document approvals</span><strong className="block text-2xl">{phase.data?.documents.filter(d=>d.status==='Pending'&&hasAny([...(DOCUMENT_ROLES[d.stage]??[]),"commandant","ict_admin"])).length ?? 0}</strong><span className="text-xs text-muted-foreground">Awaiting your review</span></Link><Link to="/leave" className="flex-1 min-w-40"><span className="text-muted-foreground">HR processing</span><strong className="block text-2xl">{phase.data?.leave.filter(l=>l.stage===5&&l.status==='Pending').length ?? 0}</strong><span className="text-xs text-muted-foreground">Leave awaiting final processing</span></Link><Link to="/search" className="self-center text-primary font-medium">Search records →</Link></div>
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {kpis.map((k) => (
           <Card key={k.label}>

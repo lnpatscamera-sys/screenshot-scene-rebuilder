@@ -1,11 +1,12 @@
 import type { AppRole } from "./auth";
 
-export const LEAVE_STAGES = ["Section Head", "Assistant Commissioner", "Deputy Commissioner", "Commandant", "Approved"];
+export const LEAVE_STAGES = ["Section Head", "Assistant Commissioner", "Deputy Commissioner", "Commandant", "Human Resource Section", "Processed"];
 export const LEAVE_STAGE_ROLES: Record<number, AppRole[]> = {
   1: ["section_head"],
   2: ["assistant_commissioner"],
   3: ["dc_admin", "dc_academy"],
   4: ["commandant"],
+  5: ["hr_officer"],
 };
 
 export const SUPPLY_STAGES = [
@@ -42,3 +43,4 @@ export function leaveDays(start: string, end: string) {
 }
 
 export const LEAVE_ENTITLEMENT: Record<string, number> = { Annual: 30, Sick: 14, Emergency: 5, Maternity: 90, Special: 10 };
+export const LEAVE_TYPES = [...Object.keys(LEAVE_ENTITLEMENT), "Study"];

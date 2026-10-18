@@ -29,6 +29,34 @@
       "when": 1792280353962,
       "tag": "0003_add_leave_balances",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1792314370100,
+      "tag": "0004_phase2_registry_role",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1792314459039,
+      "tag": "0005_phase2_workflows",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1792314668795,
+      "tag": "0006_phase2_access_guards",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1792314857246,
+      "tag": "0007_phase2_division_approval_scope",
+      "breakpoints": true
     }
   ]
 }
