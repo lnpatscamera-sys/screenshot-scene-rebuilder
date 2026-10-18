@@ -25,7 +25,7 @@ function Dashboard() {
     queryFn: async () => {
       const [o, l, s, i, a] = await Promise.all([
         supabase.from("officers").select("id, rank, employment_status, sections(name)"),
-        supabase.from("leave_requests").select("id, leave_type, status, stage, created_at, officers(full_name)").order("created_at", { ascending: false }),
+        supabase.from("leave_requests").select("id, leave_type, status, stage, created_at, officers!officer_id(full_name)").order("created_at", { ascending: false }),
         supabase.from("supply_requests").select("id, request_number, item_name, stage, approval_status, collection_status, priority, created_at").order("created_at", { ascending: false }),
         supabase.from("inventory_items").select("id, name, quantity, reorder_level, is_asset"),
         supabase.from("audit_logs").select("*").order("created_at", { ascending: false }).limit(8),

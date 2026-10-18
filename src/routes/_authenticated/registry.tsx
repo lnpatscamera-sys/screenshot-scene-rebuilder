@@ -1,0 +1,47 @@
+import { createFileRoute } from "@tanstack/react-router";
+import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
+import { useState } from "react";
+import { toast } from "sonner";
+import { Plus, ArrowRight, Pencil, Trash2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/lib/auth";
+import { phaseHead, REGISTRY_ROLES, REGISTRY_STAGES } from "@/lib/phase2";
+import { fileRecords, phase2Options, uploadPhaseFile } from "@/lib/phase2-data";
+import { formValues } from "@/lib/export";
+import { PageHeader, StatusBadge } from "@/components/AppShell";
+import { AttachedFiles, Field, History, MetricBand, ReportActions, SelectField } from "@/components/Phase2Shared";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import type { Json } from "@/integrations/supabase/types";
+
+export const Route = createFileRoute("/_authenticated/registry")({ head: () => phaseHead("Registry Management", "LNPATS incoming and outgoing correspondence, assignments and archive."), loader: ({ context }) => context.queryClient.ensureQueryData(phase2Options), component: Registry });
+
+function Registry() {
+  const { data } = useSuspenseQuery(phase2Options);
+  const qc = useQueryClient();
+  const { hasAny, session } = useAuth();
+  const [query, setQuery] = useState("");
+  const [filter, setFilter] = useState("All");
+  const [create, setCreate] = useState(false);
+  const [selected, setSelected] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+  const row = data.registry.find(r => r.id === selected);
+  const manager = hasAny(["registry_officer", "commandant", "ict_admin"]);
+  const rows = data.registry.filter(r => (filter === "All" || r.direction === filter || r.status === filter) && `${r.reference_number} ${r.subject} ${r.party} ${r.keywords ?? ""}`.toLowerCase().includes(query.toLowerCase()));
+  const reports = rows.map(r => ({ Reference: r.reference_number, Direction: r.direction, Date: r.record_date, Subject: r.subject, Party: r.party, Stage: REGISTRY_STAGES[r.stage] ?? "Archived", Status: r.status, Office: data.offices.find(o => o.id === r.office_id)?.name, Officer: data.officers.find(o => o.id === r.officer_id)?.full_name, Action: r.action_taken }));
+  const action = async (id: string | null, command: string, payload: Json = {}) => { setBusy(true); try { const { error } = await supabase.rpc("phase2_workflow", { _module: "registry", _id: id ?? "00000000-0000-0000-0000-000000000000", _action: command, _payload: payload }); if (error) throw error; await qc.invalidateQueries({ queryKey: ["phase2"] }); toast.success("Correspondence saved"); return true; } catch (e) { toast.error(e instanceof Error ? e.message : "Unable to save correspondence"); return false; } finally { setBusy(false); } };
+  const submit = async (e: React.FormEvent<HTMLFormElement>) => { e.preventDefault(); if (!session) return; const form = e.currentTarget; const f = formValues(form); setBusy(true); try { const files = Array.from((form.elements.namedItem("files") as HTMLInputElement)?.files ?? []); const attachments = await Promise.all(files.map(file => uploadPhaseFile(file, session.user.id))); if (await action(null, "create", { direction: f.direction, subject: f.subject, party: f.party, record_date: f.record_date, keywords: f.keywords, attachments })) setCreate(false); } catch (e) { toast.error(e instanceof Error ? e.message : "Upload failed"); } finally { setBusy(false); } };
+  const show = (id: string) => { setSelected(id); supabase.rpc("record_activity", { _module: "registry", _id: id, _action: "VIEW" }).then(({ error }) => { if (error) toast.error(error.message); }); };
+  return <div><PageHeader title="Registry Management" subtitle="Correspondence register" actions={<>{manager && <Button onClick={() => setCreate(true)}><Plus className="h-4 w-4" />Register correspondence</Button>}</>} />
+    <MetricBand items={[{ label: "Incoming", value: data.registry.filter(r => r.direction === "IN").length }, { label: "Outgoing", value: data.registry.filter(r => r.direction === "OUT").length }, { label: "Pending action", value: data.registry.filter(r => r.stage < 6).length }, { label: "Completed / archived", value: data.registry.filter(r => r.stage >= 6).length }]} />
+    <div className="flex flex-wrap gap-3 justify-between mb-4"><div className="flex gap-2 flex-wrap"><Input aria-label="Search registry" placeholder="Reference, subject or sender" value={query} onChange={e => setQuery(e.target.value)} className="w-64" /><select aria-label="Registry filter" className="h-9 border rounded-md bg-background px-2 text-sm" value={filter} onChange={e => setFilter(e.target.value)}>{["All", "IN", "OUT", "Registered", "In Progress", "Completed", "Archived"].map(f => <option key={f}>{f}</option>)}</select></div><ReportActions title="Correspondence register" rows={reports} /></div>
+    <div className="border rounded-md overflow-auto"><Table><TableHeader><TableRow><TableHead>Reference / Date</TableHead><TableHead>Subject</TableHead><TableHead>Sender / Recipient</TableHead><TableHead>Current stage</TableHead><TableHead>Status</TableHead></TableRow></TableHeader><TableBody>{rows.map(r => <TableRow key={r.id}><TableCell><Button className="p-0 h-auto text-left" variant="link" onClick={() => show(r.id)}>{r.reference_number}</Button><div className="text-xs text-muted-foreground">{r.record_date} · {r.direction}</div></TableCell><TableCell>{r.subject}</TableCell><TableCell>{r.party}</TableCell><TableCell>{REGISTRY_STAGES[r.stage] ?? "Archived"}</TableCell><TableCell><StatusBadge value={r.status} /></TableCell></TableRow>)}{!rows.length && <TableRow><TableCell colSpan={5} className="text-center py-10 text-muted-foreground">No correspondence found.</TableCell></TableRow>}</TableBody></Table></div>
+    <Dialog open={create} onOpenChange={setCreate}><DialogContent><DialogHeader><DialogTitle>Register correspondence</DialogTitle></DialogHeader><form onSubmit={submit} className="space-y-3"><SelectField label="Direction" name="direction" required options={[{ value: "IN", label: "Incoming" }, { value: "OUT", label: "Outgoing" }]} /><Field label="Subject" name="subject" required /><Field label="Sender / Recipient" name="party" required /><Field label="Date" name="record_date" type="date" required defaultValue={new Date().toISOString().slice(0, 10)} /><Field label="Keywords" name="keywords" /><Field label="Scanned documents" name="files" type="file" /><Button disabled={busy} className="w-full">{busy ? "Saving…" : "Register"}</Button></form></DialogContent></Dialog>
+    <Dialog open={!!row} onOpenChange={o => !o && setSelected(null)}><DialogContent className="sm:max-w-2xl max-h-[85vh] overflow-auto"><DialogHeader><DialogTitle>{row?.reference_number}</DialogTitle></DialogHeader>{row && <div className="space-y-5"><div><h2 className="text-lg font-semibold">{row.subject}</h2><p className="text-sm text-muted-foreground">{row.party} · {row.record_date}</p><div className="mt-2 flex gap-2"><StatusBadge value={row.status} /><span className="text-sm">{REGISTRY_STAGES[row.stage] ?? "Archived"}</span></div></div><AttachedFiles files={fileRecords(row.attachments)} module="registry" id={row.id} />
+      {row.stage < 7 && (hasAny([...(REGISTRY_ROLES[row.stage] ?? []), "commandant", "ict_admin"]) || (row.stage === 5 && data.officers.some(o => o.id === row.officer_id && o.user_id === session?.user.id))) && <form className="space-y-3 border-t pt-4" onSubmit={async e => { e.preventDefault(); const f = formValues(e.currentTarget); await action(row.id, "advance", { office_id: f.office_id ?? "", officer_id: f.officer_id ?? "", note: f.note ?? "" }); }}>
+        {row.stage === 3 && <SelectField label="Assign to office" name="office_id" required options={data.offices.map(o => ({ value: o.id, label: o.name }))} />}{row.stage === 4 && <SelectField label="Assign to officer" name="officer_id" required options={data.officers.filter(o => !row.office_id || o.office_id === row.office_id).map(o => ({ value: o.id, label: `${o.rank} ${o.full_name}` }))} />}{row.stage === 5 && <Field label="Action taken" name="note" required />}<Button disabled={busy}><ArrowRight className="h-4 w-4" />{["Send for Deputy Commandant review", "Forward to Commandant", "Approve and route", "Assign office", "Assign officer", "Record action", "Archive"][row.stage]}</Button>
+      </form>}{manager && row.stage === 0 && <div className="flex gap-2"><Button disabled={busy} variant="outline" onClick={() => { const subject = prompt("Subject", row.subject); if (subject) action(row.id, "edit", { subject }); }}><Pencil className="h-4 w-4" />Edit</Button><Button disabled={busy} variant="outline" onClick={async () => { if (confirm("Delete this registered correspondence?")) if (await action(row.id, "delete")) setSelected(null); }}><Trash2 className="h-4 w-4" />Delete</Button></div>}{row.action_taken && <p className="text-sm">Action taken: {row.action_taken}</p>}<h3 className="font-semibold">Tracking history</h3><History value={row.history} /><ReportActions title="Correspondence tracking" rows={[reports.find(r => r.Reference === row.reference_number) ?? { Reference: row.reference_number }]} /></div>}</DialogContent></Dialog>
+  </div>;
+}

@@ -12,7 +12,7 @@ export const phase2Options = queryOptions({
       supabase.from("officers").select("id,full_name,rank,service_number,user_id,office_id,section_id").order("full_name"),
       supabase.from("offices").select("id,name").order("rank_order"),
       supabase.from("sections").select("id,name"),
-      supabase.from("leave_requests").select("*,officers(full_name,rank,service_number)").order("created_at", { ascending: false }),
+      supabase.from("leave_requests").select("*,officers!officer_id(full_name,rank,service_number)").order("created_at", { ascending: false }),
       supabase.from("leave_balances").select("*"),
     ]);
     for (const result of results) if (result.error) throw result.error;
@@ -21,15 +21,14 @@ export const phase2Options = queryOptions({
   },
 });
 
-export type PhaseData = Awaited<ReturnType<typeof phase2Options.queryFn & (() => Promise<unknown>)>>;
 export type FileRecord = { path: string; name: string };
 export function fileRecords(value: Json): FileRecord[] {
   if (!Array.isArray(value)) return [];
-  return value.flatMap(v => v && typeof v === "object" && !Array.isArray(v) && typeof v.path === "string" && typeof v.name === "string" ? [{ path: v.path, name: v.name }] : []);
+  return value.flatMap(v => v && typeof v === "object" && !Array.isArray(v) && typeof v['path'] === "string" && typeof v['name'] === "string" ? [{ path: v['path'], name: v['name'] }] : []);
 }
 export function historyRecords(value: Json): { action: string; by: string; at: string; note: string }[] {
   if (!Array.isArray(value)) return [];
-  return value.flatMap(v => v && typeof v === "object" && !Array.isArray(v) ? [{ action: String(v.action ?? ""), by: String(v.by ?? ""), at: String(v.at ?? ""), note: String(v.note ?? "") }] : []);
+  return value.flatMap(v => v && typeof v === "object" && !Array.isArray(v) ? [{ action: String(v['action'] ?? ""), by: String(v['by'] ?? ""), at: String(v['at'] ?? ""), note: String(v['note'] ?? "") }] : []);
 }
 export async function uploadPhaseFile(file: File, userId: string): Promise<FileRecord> {
   const path = `${userId}/${crypto.randomUUID()}/${file.name.replace(/[^a-zA-Z0-9._-]/g, "_")}`;
