@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
-import type { Session } from "@supabase/supabase-js";
+import type { AuthChangeEvent, Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import type { Database } from "@/integrations/supabase/types";
 
@@ -24,26 +24,44 @@ export const ROLE_LABELS: Record<AppRole, string> = {
 type AuthCtx = { session: Session | null; roles: AppRole[]; loading: boolean; hasAny: (r: AppRole[]) => boolean };
 const Ctx = createContext<AuthCtx>({ session: null, roles: [], loading: true, hasAny: () => false });
 
-export function AuthProvider({ children }: { children: ReactNode }) {
+export function AuthProvider({ children, onIdentityChange }: { children: ReactNode; onIdentityChange?: (event: AuthChangeEvent) => void }) {
   const [session, setSession] = useState<Session | null>(null);
   const [roles, setRoles] = useState<AppRole[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const load = async (s: Session | null) => {
+    let active = true;
+    let identity: string | null | undefined;
+    let revision = 0;
+    const load = async (event: AuthChangeEvent, s: Session | null) => {
+      if (!active) return;
+      const nextIdentity = s?.user.id ?? null;
+      const initialized = identity !== undefined;
+      const changed = identity !== nextIdentity;
+      identity = nextIdentity;
       setSession(s);
-      if (s) {
-        const { data } = await supabase.from("user_roles").select("role").eq("user_id", s.user.id);
-        setRoles((data ?? []).map((r) => r.role));
-      } else setRoles([]);
-      setLoading(false);
+      if (!changed && event !== "USER_UPDATED") return;
+      const currentRevision = ++revision;
+      setRoles([]);
+      setLoading(true);
+      try {
+        if (s) {
+          const { data, error } = await supabase.from("user_roles").select("role").eq("user_id", s.user.id);
+          if (active && revision === currentRevision) setRoles(error ? [] : (data ?? []).map((r) => r.role));
+        }
+      } finally {
+        if (active && revision === currentRevision) setLoading(false);
+      }
+      if (active && revision === currentRevision && (initialized || event === "SIGNED_IN") && event !== "INITIAL_SESSION") {
+        onIdentityChange?.(event);
+      }
     };
-    supabase.auth.getSession().then(({ data }) => load(data.session));
-    const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => {
-      setTimeout(() => load(s), 0);
+    const { data: sub } = supabase.auth.onAuthStateChange((event, s) => {
+      // Run database reads after the auth callback releases its session lock.
+      setTimeout(() => { void load(event, s).catch(() => {}); }, 0);
     });
-    return () => sub.subscription.unsubscribe();
-  }, []);
+    return () => { active = false; sub.subscription.unsubscribe(); };
+  }, [onIdentityChange]);
 
   const hasAny = (r: AppRole[]) => roles.includes("system_admin") || r.some((x) => roles.includes(x));
   return <Ctx.Provider value={{ session, roles, loading, hasAny }}>{children}</Ctx.Provider>;
