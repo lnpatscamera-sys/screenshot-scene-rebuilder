@@ -42,17 +42,17 @@ export function StockPosting({ items, initialMode = "Receipt", showHistory = tru
     if (busy || !selected) return;
     const values = formValues(e.currentTarget);
     const quantity = Number(values.quantity);
-    const warehouse = warehouseId === 'default' ? undefined : warehouseId || null;
+    const warehouse = warehouseId === 'default' ? {} : { warehouse_id: warehouseId || null };
     if (!Number.isInteger(quantity) || quantity < (mode === "Reconciliation" ? 0 : 1)) {
       toast.error("Enter a valid whole quantity"); return;
     }
     setBusy(true);
     try {
       const result = mode === "Receipt"
-        ? await supabase.from("store_receipts").insert({ id: entryId, item_id: selected.id, quantity, warehouse_id: warehouse, receipt_number: values.reference || null, remarks: values.reason })
+        ? await supabase.from("store_receipts").insert({ id: entryId, item_id: selected.id, quantity, ...warehouse, receipt_number: values.reference || null, remarks: values.reason })
         : mode === "Issue"
-          ? await supabase.from("store_issues").insert({ id: entryId, item_id: selected.id, quantity, warehouse_id: warehouse, issue_number: values.reference || null, remarks: values.reason })
-          : await supabase.from("stock_reconciliation").insert({ id: entryId, item_id: selected.id, counted_quantity: quantity, warehouse_id: warehouse, reconciliation_number: values.reference || null, reason: values.reason });
+          ? await supabase.from("store_issues").insert({ id: entryId, item_id: selected.id, quantity, ...warehouse, issue_number: values.reference || null, remarks: values.reason })
+          : await supabase.from("stock_reconciliation").insert({ id: entryId, item_id: selected.id, counted_quantity: quantity, ...warehouse, reconciliation_number: values.reference || null, reason: values.reason });
       if (result.error) throw result.error;
       await refreshInventory(qc);
       setOpen(false);
