@@ -27,6 +27,7 @@ import { Route as AuthenticatedSearchRouteImport } from './routes/_authenticated
 import { Route as AuthenticatedStockMovementsRouteImport } from './routes/_authenticated/stock-movements'
 import { Route as AuthenticatedSuppliersRouteImport } from './routes/_authenticated/suppliers'
 import { Route as AuthenticatedSuppliesRouteImport } from './routes/_authenticated/supplies'
+import { Route as AuthenticatedTrainingRouteImport } from './routes/_authenticated/training'
 import { Route as AuthenticatedVehicleBookingsRouteImport } from './routes/_authenticated/vehicle-bookings'
 import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated/admin.users'
 import { Route as AuthenticatedModulesModuleRouteImport } from './routes/_authenticated/modules.$module'
@@ -126,6 +127,11 @@ const AuthenticatedSuppliesRoute = AuthenticatedSuppliesRouteImport.update({
   path: '/supplies',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedTrainingRoute = AuthenticatedTrainingRouteImport.update({
+  id: '/training',
+  path: '/training',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedVehicleBookingsRoute =
   AuthenticatedVehicleBookingsRouteImport.update({
     id: '/vehicle-bookings',
@@ -179,6 +185,7 @@ export interface FileRoutesByFullPath {
   '/stock-movements': typeof AuthenticatedStockMovementsRoute
   '/suppliers': typeof AuthenticatedSuppliersRoute
   '/supplies': typeof AuthenticatedSuppliesRoute
+  '/training': typeof AuthenticatedTrainingRoute
   '/vehicle-bookings': typeof AuthenticatedVehicleBookingsRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/modules/$module': typeof AuthenticatedModulesModuleRoute
@@ -204,6 +211,7 @@ export interface FileRoutesByTo {
   '/stock-movements': typeof AuthenticatedStockMovementsRoute
   '/suppliers': typeof AuthenticatedSuppliersRoute
   '/supplies': typeof AuthenticatedSuppliesRoute
+  '/training': typeof AuthenticatedTrainingRoute
   '/vehicle-bookings': typeof AuthenticatedVehicleBookingsRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/modules/$module': typeof AuthenticatedModulesModuleRoute
@@ -231,6 +239,7 @@ export interface FileRoutesById {
   '/_authenticated/stock-movements': typeof AuthenticatedStockMovementsRoute
   '/_authenticated/suppliers': typeof AuthenticatedSuppliersRoute
   '/_authenticated/supplies': typeof AuthenticatedSuppliesRoute
+  '/_authenticated/training': typeof AuthenticatedTrainingRoute
   '/_authenticated/vehicle-bookings': typeof AuthenticatedVehicleBookingsRoute
   '/_authenticated/admin/users': typeof AuthenticatedAdminUsersRoute
   '/_authenticated/modules/$module': typeof AuthenticatedModulesModuleRoute
@@ -258,6 +267,7 @@ export interface FileRouteTypes {
     | '/stock-movements'
     | '/suppliers'
     | '/supplies'
+    | '/training'
     | '/vehicle-bookings'
     | '/admin/users'
     | '/modules/$module'
@@ -283,6 +293,7 @@ export interface FileRouteTypes {
     | '/stock-movements'
     | '/suppliers'
     | '/supplies'
+    | '/training'
     | '/vehicle-bookings'
     | '/admin/users'
     | '/modules/$module'
@@ -309,6 +320,7 @@ export interface FileRouteTypes {
     | '/_authenticated/stock-movements'
     | '/_authenticated/suppliers'
     | '/_authenticated/supplies'
+    | '/_authenticated/training'
     | '/_authenticated/vehicle-bookings'
     | '/_authenticated/admin/users'
     | '/_authenticated/modules/$module'
@@ -452,6 +464,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSuppliesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/training': {
+      id: '/_authenticated/training'
+      path: '/training'
+      fullPath: '/training'
+      preLoaderRoute: typeof AuthenticatedTrainingRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/vehicle-bookings': {
       id: '/_authenticated/vehicle-bookings'
       path: '/vehicle-bookings'
@@ -513,6 +532,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedStockMovementsRoute: typeof AuthenticatedStockMovementsRoute
   AuthenticatedSuppliersRoute: typeof AuthenticatedSuppliersRoute
   AuthenticatedSuppliesRoute: typeof AuthenticatedSuppliesRoute
+  AuthenticatedTrainingRoute: typeof AuthenticatedTrainingRoute
   AuthenticatedVehicleBookingsRoute: typeof AuthenticatedVehicleBookingsRoute
   AuthenticatedAdminUsersRoute: typeof AuthenticatedAdminUsersRoute
   AuthenticatedModulesModuleRoute: typeof AuthenticatedModulesModuleRoute
@@ -536,6 +556,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedStockMovementsRoute: AuthenticatedStockMovementsRoute,
   AuthenticatedSuppliersRoute: AuthenticatedSuppliersRoute,
   AuthenticatedSuppliesRoute: AuthenticatedSuppliesRoute,
+  AuthenticatedTrainingRoute: AuthenticatedTrainingRoute,
   AuthenticatedVehicleBookingsRoute: AuthenticatedVehicleBookingsRoute,
   AuthenticatedAdminUsersRoute: AuthenticatedAdminUsersRoute,
   AuthenticatedModulesModuleRoute: AuthenticatedModulesModuleRoute,
