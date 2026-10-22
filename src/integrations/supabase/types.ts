@@ -14,6 +14,98 @@ export type Database = {
   }
   public: {
     Tables: {
+      assessment_results: {
+        Row: {
+          assessment_id: string
+          cadet_id: string
+          created_at: string
+          grade: string | null
+          id: string
+          remarks: string | null
+          score: number
+        }
+        Insert: {
+          assessment_id: string
+          cadet_id: string
+          created_at?: string
+          grade?: string | null
+          id?: string
+          remarks?: string | null
+          score: number
+        }
+        Update: {
+          assessment_id?: string
+          cadet_id?: string
+          created_at?: string
+          grade?: string | null
+          id?: string
+          remarks?: string | null
+          score?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "assessment_results_assessment_id_fkey"
+            columns: ["assessment_id"]
+            isOneToOne: false
+            referencedRelation: "assessments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "assessment_results_cadet_id_fkey"
+            columns: ["cadet_id"]
+            isOneToOne: false
+            referencedRelation: "cadets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      assessments: {
+        Row: {
+          assessment_type: string
+          course_id: string
+          created_at: string
+          exam_code: string | null
+          exam_date: string
+          id: string
+          max_score: number
+          passing_score: number
+          results_published: boolean
+          subject: string
+        }
+        Insert: {
+          assessment_type: string
+          course_id: string
+          created_at?: string
+          exam_code?: string | null
+          exam_date: string
+          id?: string
+          max_score?: number
+          passing_score?: number
+          results_published?: boolean
+          subject: string
+        }
+        Update: {
+          assessment_type?: string
+          course_id?: string
+          created_at?: string
+          exam_code?: string | null
+          exam_date?: string
+          id?: string
+          max_score?: number
+          passing_score?: number
+          results_published?: boolean
+          subject?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "assessments_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       asset_assignments: {
         Row: {
           asset_id: string | null
@@ -414,6 +506,54 @@ export type Database = {
           },
         ]
       }
+      attendance_records: {
+        Row: {
+          attendance_date: string
+          cadet_id: string
+          course_id: string
+          created_at: string
+          id: string
+          recorded_by: string | null
+          remarks: string | null
+          status: string
+        }
+        Insert: {
+          attendance_date?: string
+          cadet_id: string
+          course_id: string
+          created_at?: string
+          id?: string
+          recorded_by?: string | null
+          remarks?: string | null
+          status: string
+        }
+        Update: {
+          attendance_date?: string
+          cadet_id?: string
+          course_id?: string
+          created_at?: string
+          id?: string
+          recorded_by?: string | null
+          remarks?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "attendance_records_cadet_id_fkey"
+            columns: ["cadet_id"]
+            isOneToOne: false
+            referencedRelation: "cadets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "attendance_records_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       audit_logs: {
         Row: {
           action: string
@@ -490,36 +630,135 @@ export type Database = {
           address: string | null
           cadet_number: string | null
           date_enrolled: string | null
+          date_of_birth: string | null
+          documents: Json
+          email: string | null
+          emergency_contact: string | null
           first_name: string | null
           gender: string | null
           id: string
+          intake_number: string | null
           last_name: string | null
+          nationality: string | null
           phone: string | null
+          program_id: string | null
+          rank_before_admission: string | null
+          recruitment_date: string | null
+          sponsoring_unit: string | null
           status: string | null
+          user_id: string | null
         }
         Insert: {
           address?: string | null
           cadet_number?: string | null
           date_enrolled?: string | null
+          date_of_birth?: string | null
+          documents?: Json
+          email?: string | null
+          emergency_contact?: string | null
           first_name?: string | null
           gender?: string | null
           id?: string
+          intake_number?: string | null
           last_name?: string | null
+          nationality?: string | null
           phone?: string | null
+          program_id?: string | null
+          rank_before_admission?: string | null
+          recruitment_date?: string | null
+          sponsoring_unit?: string | null
           status?: string | null
+          user_id?: string | null
         }
         Update: {
           address?: string | null
           cadet_number?: string | null
           date_enrolled?: string | null
+          date_of_birth?: string | null
+          documents?: Json
+          email?: string | null
+          emergency_contact?: string | null
           first_name?: string | null
           gender?: string | null
           id?: string
+          intake_number?: string | null
           last_name?: string | null
+          nationality?: string | null
           phone?: string | null
+          program_id?: string | null
+          rank_before_admission?: string | null
+          recruitment_date?: string | null
+          sponsoring_unit?: string | null
           status?: string | null
+          user_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "cadets_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "training_programs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      certificates: {
+        Row: {
+          cadet_id: string
+          certificate_number: string
+          completion_date: string
+          created_at: string
+          graduation_id: string | null
+          id: string
+          program_id: string | null
+          signed_by: string | null
+          verification_code: string
+        }
+        Insert: {
+          cadet_id: string
+          certificate_number: string
+          completion_date?: string
+          created_at?: string
+          graduation_id?: string | null
+          id?: string
+          program_id?: string | null
+          signed_by?: string | null
+          verification_code?: string
+        }
+        Update: {
+          cadet_id?: string
+          certificate_number?: string
+          completion_date?: string
+          created_at?: string
+          graduation_id?: string | null
+          id?: string
+          program_id?: string | null
+          signed_by?: string | null
+          verification_code?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "certificates_cadet_id_fkey"
+            columns: ["cadet_id"]
+            isOneToOne: false
+            referencedRelation: "cadets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "certificates_graduation_id_fkey"
+            columns: ["graduation_id"]
+            isOneToOne: false
+            referencedRelation: "graduations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "certificates_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "training_programs"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       correspondence: {
         Row: {
@@ -609,27 +848,40 @@ export type Database = {
       }
       courses: {
         Row: {
+          course_code: string | null
           course_name: string | null
           description: string | null
           duration: number | null
           id: string
+          instructor_id: string | null
           training_program_id: string | null
         }
         Insert: {
+          course_code?: string | null
           course_name?: string | null
           description?: string | null
           duration?: number | null
           id?: string
+          instructor_id?: string | null
           training_program_id?: string | null
         }
         Update: {
+          course_code?: string | null
           course_name?: string | null
           description?: string | null
           duration?: number | null
           id?: string
+          instructor_id?: string | null
           training_program_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "courses_instructor_id_fkey"
+            columns: ["instructor_id"]
+            isOneToOne: false
+            referencedRelation: "instructors"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "courses_training_program_id_fkey"
             columns: ["training_program_id"]
@@ -956,6 +1208,54 @@ export type Database = {
           },
         ]
       }
+      graduations: {
+        Row: {
+          cadet_id: string
+          created_at: string
+          decided_at: string | null
+          decided_by: string | null
+          decision: string
+          id: string
+          program_id: string | null
+          remarks: string | null
+        }
+        Insert: {
+          cadet_id: string
+          created_at?: string
+          decided_at?: string | null
+          decided_by?: string | null
+          decision?: string
+          id?: string
+          program_id?: string | null
+          remarks?: string | null
+        }
+        Update: {
+          cadet_id?: string
+          created_at?: string
+          decided_at?: string | null
+          decided_by?: string | null
+          decision?: string
+          id?: string
+          program_id?: string | null
+          remarks?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "graduations_cadet_id_fkey"
+            columns: ["cadet_id"]
+            isOneToOne: false
+            referencedRelation: "cadets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "graduations_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "training_programs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       incoming_mail: {
         Row: {
           assigned_to: string | null
@@ -999,6 +1299,64 @@ export type Database = {
           {
             foreignKeyName: "incoming_mail_assigned_to_fkey"
             columns: ["assigned_to"]
+            isOneToOne: false
+            referencedRelation: "officers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      instructors: {
+        Row: {
+          contact: string | null
+          created_at: string
+          department: string | null
+          id: string
+          instructor_code: string | null
+          name: string
+          officer_id: string | null
+          qualification: string | null
+          rank: string | null
+        }
+        Insert: {
+          contact?: string | null
+          created_at?: string
+          department?: string | null
+          id?: string
+          instructor_code?: string | null
+          name: string
+          officer_id?: string | null
+          qualification?: string | null
+          rank?: string | null
+        }
+        Update: {
+          contact?: string | null
+          created_at?: string
+          department?: string | null
+          id?: string
+          instructor_code?: string | null
+          name?: string
+          officer_id?: string | null
+          qualification?: string | null
+          rank?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "instructors_officer_id_fkey"
+            columns: ["officer_id"]
+            isOneToOne: false
+            referencedRelation: "approvals"
+            referencedColumns: ["approver_id"]
+          },
+          {
+            foreignKeyName: "instructors_officer_id_fkey"
+            columns: ["officer_id"]
+            isOneToOne: false
+            referencedRelation: "equipment_requests"
+            referencedColumns: ["requested_by"]
+          },
+          {
+            foreignKeyName: "instructors_officer_id_fkey"
+            columns: ["officer_id"]
             isOneToOne: false
             referencedRelation: "officers"
             referencedColumns: ["id"]
@@ -1825,6 +2183,45 @@ export type Database = {
           id?: string
         }
         Relationships: []
+      }
+      program_enrollments: {
+        Row: {
+          cadet_id: string
+          enrolled_date: string
+          id: string
+          program_id: string
+          status: string
+        }
+        Insert: {
+          cadet_id: string
+          enrolled_date?: string
+          id?: string
+          program_id: string
+          status?: string
+        }
+        Update: {
+          cadet_id?: string
+          enrolled_date?: string
+          id?: string
+          program_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "program_enrollments_cadet_id_fkey"
+            columns: ["cadet_id"]
+            isOneToOne: false
+            referencedRelation: "cadets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "program_enrollments_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "training_programs"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       promotions: {
         Row: {
@@ -2714,7 +3111,11 @@ export type Database = {
           description: string | null
           end_date: string | null
           id: string
+          max_enrollment: number | null
+          objectives: string | null
+          program_code: string | null
           start_date: string | null
+          status: string
           title: string | null
         }
         Insert: {
@@ -2722,7 +3123,11 @@ export type Database = {
           description?: string | null
           end_date?: string | null
           id?: string
+          max_enrollment?: number | null
+          objectives?: string | null
+          program_code?: string | null
           start_date?: string | null
+          status?: string
           title?: string | null
         }
         Update: {
@@ -2730,7 +3135,11 @@ export type Database = {
           description?: string | null
           end_date?: string | null
           id?: string
+          max_enrollment?: number | null
+          objectives?: string | null
+          program_code?: string | null
           start_date?: string | null
+          status?: string
           title?: string | null
         }
         Relationships: [
@@ -3145,6 +3554,10 @@ export type Database = {
         Returns: undefined
       }
       can_read_document: { Args: { _id: string }; Returns: boolean }
+      graduate_cadet: {
+        Args: { _cadet_id: string; _decision: string; _remarks?: string }
+        Returns: string
+      }
       has_any_role: {
         Args: {
           _roles: Database["public"]["Enums"]["app_role"][]
@@ -3204,6 +3617,16 @@ export type Database = {
           _to: string
         }
         Returns: undefined
+      }
+      verify_certificate: {
+        Args: { _number: string }
+        Returns: {
+          cadet_name: string
+          cadet_status: string
+          certificate_number: string
+          completion_date: string
+          program_name: string
+        }[]
       }
     }
     Enums: {
