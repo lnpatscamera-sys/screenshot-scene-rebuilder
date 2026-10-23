@@ -561,6 +561,7 @@ export type Database = {
           details: Json | null
           id: number
           ip_address: string | null
+          previous_details: Json | null
           record_id: string | null
           table_name: string
           user_email: string | null
@@ -572,6 +573,7 @@ export type Database = {
           details?: Json | null
           id?: never
           ip_address?: string | null
+          previous_details?: Json | null
           record_id?: string | null
           table_name: string
           user_email?: string | null
@@ -583,6 +585,7 @@ export type Database = {
           details?: Json | null
           id?: never
           ip_address?: string | null
+          previous_details?: Json | null
           record_id?: string | null
           table_name?: string
           user_email?: string | null
@@ -590,29 +593,101 @@ export type Database = {
         }
         Relationships: []
       }
+      budget_allocations: {
+        Row: {
+          amount: number
+          budget_id: string
+          created_at: string
+          created_by: string | null
+          id: string
+          note: string | null
+          section_id: string | null
+        }
+        Insert: {
+          amount: number
+          budget_id: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          note?: string | null
+          section_id?: string | null
+        }
+        Update: {
+          amount?: number
+          budget_id?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          note?: string | null
+          section_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "budget_allocations_budget_id_fkey"
+            columns: ["budget_id"]
+            isOneToOne: false
+            referencedRelation: "budgets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "budget_allocations_section_id_fkey"
+            columns: ["section_id"]
+            isOneToOne: false
+            referencedRelation: "sections"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       budgets: {
         Row: {
           allocated_amount: number | null
+          budget_number: string | null
+          category: string | null
+          created_at: string
+          created_by: string | null
           department: string | null
+          description: string | null
           fiscal_year: number | null
+          funding_source: string | null
+          history: Json
           id: string
           remaining_amount: number | null
+          requested_amount: number
+          status: string
           used_amount: number | null
         }
         Insert: {
           allocated_amount?: number | null
+          budget_number?: string | null
+          category?: string | null
+          created_at?: string
+          created_by?: string | null
           department?: string | null
+          description?: string | null
           fiscal_year?: number | null
+          funding_source?: string | null
+          history?: Json
           id?: string
           remaining_amount?: number | null
+          requested_amount?: number
+          status?: string
           used_amount?: number | null
         }
         Update: {
           allocated_amount?: number | null
+          budget_number?: string | null
+          category?: string | null
+          created_at?: string
+          created_by?: string | null
           department?: string | null
+          description?: string | null
           fiscal_year?: number | null
+          funding_source?: string | null
+          history?: Json
           id?: string
           remaining_amount?: number | null
+          requested_amount?: number
+          status?: string
           used_amount?: number | null
         }
         Relationships: [
@@ -698,6 +773,83 @@ export type Database = {
             columns: ["program_id"]
             isOneToOne: false
             referencedRelation: "training_programs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      cash_requests: {
+        Row: {
+          amount: number
+          created_at: string
+          date_required: string | null
+          history: Json
+          id: string
+          justification: string | null
+          officer_id: string | null
+          purpose: string
+          request_number: string | null
+          requested_by: string
+          section_id: string | null
+          stage: number
+          status: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          date_required?: string | null
+          history?: Json
+          id?: string
+          justification?: string | null
+          officer_id?: string | null
+          purpose: string
+          request_number?: string | null
+          requested_by?: string
+          section_id?: string | null
+          stage?: number
+          status?: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          date_required?: string | null
+          history?: Json
+          id?: string
+          justification?: string | null
+          officer_id?: string | null
+          purpose?: string
+          request_number?: string | null
+          requested_by?: string
+          section_id?: string | null
+          stage?: number
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cash_requests_officer_id_fkey"
+            columns: ["officer_id"]
+            isOneToOne: false
+            referencedRelation: "approvals"
+            referencedColumns: ["approver_id"]
+          },
+          {
+            foreignKeyName: "cash_requests_officer_id_fkey"
+            columns: ["officer_id"]
+            isOneToOne: false
+            referencedRelation: "equipment_requests"
+            referencedColumns: ["requested_by"]
+          },
+          {
+            foreignKeyName: "cash_requests_officer_id_fkey"
+            columns: ["officer_id"]
+            isOneToOne: false
+            referencedRelation: "officers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "cash_requests_section_id_fkey"
+            columns: ["section_id"]
+            isOneToOne: false
+            referencedRelation: "sections"
             referencedColumns: ["id"]
           },
         ]
@@ -1067,29 +1219,69 @@ export type Database = {
       expenses: {
         Row: {
           amount: number | null
+          attachments: Json
+          budget_id: string | null
+          created_at: string
+          created_by: string | null
           description: string | null
           expense_date: string | null
+          expense_number: string | null
           expense_type: string | null
+          history: Json
           id: string
+          payment_method: string | null
           recorded_by: string | null
+          section_id: string | null
+          stage: number
+          status: string
+          vendor_id: string | null
         }
         Insert: {
           amount?: number | null
+          attachments?: Json
+          budget_id?: string | null
+          created_at?: string
+          created_by?: string | null
           description?: string | null
           expense_date?: string | null
+          expense_number?: string | null
           expense_type?: string | null
+          history?: Json
           id?: string
+          payment_method?: string | null
           recorded_by?: string | null
+          section_id?: string | null
+          stage?: number
+          status?: string
+          vendor_id?: string | null
         }
         Update: {
           amount?: number | null
+          attachments?: Json
+          budget_id?: string | null
+          created_at?: string
+          created_by?: string | null
           description?: string | null
           expense_date?: string | null
+          expense_number?: string | null
           expense_type?: string | null
+          history?: Json
           id?: string
+          payment_method?: string | null
           recorded_by?: string | null
+          section_id?: string | null
+          stage?: number
+          status?: string
+          vendor_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "expenses_budget_id_fkey"
+            columns: ["budget_id"]
+            isOneToOne: false
+            referencedRelation: "budgets"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "expenses_recorded_by_fkey"
             columns: ["recorded_by"]
@@ -1111,7 +1303,100 @@ export type Database = {
             referencedRelation: "officers"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "expenses_section_id_fkey"
+            columns: ["section_id"]
+            isOneToOne: false
+            referencedRelation: "sections"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "expenses_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "suppliers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "expenses_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "vendors"
+            referencedColumns: ["id"]
+          },
         ]
+      }
+      finance_approvals: {
+        Row: {
+          action: string
+          actor_id: string | null
+          actor_name: string | null
+          created_at: string
+          id: string
+          level: string | null
+          module: string
+          note: string | null
+          record_id: string
+          signature: string | null
+          stage: number | null
+        }
+        Insert: {
+          action: string
+          actor_id?: string | null
+          actor_name?: string | null
+          created_at?: string
+          id?: string
+          level?: string | null
+          module: string
+          note?: string | null
+          record_id: string
+          signature?: string | null
+          stage?: number | null
+        }
+        Update: {
+          action?: string
+          actor_id?: string | null
+          actor_name?: string | null
+          created_at?: string
+          id?: string
+          level?: string | null
+          module?: string
+          note?: string | null
+          record_id?: string
+          signature?: string | null
+          stage?: number | null
+        }
+        Relationships: []
+      }
+      financial_reports: {
+        Row: {
+          created_at: string
+          generated_by: string | null
+          id: string
+          period_end: string | null
+          period_start: string | null
+          report_type: string
+          summary: Json
+        }
+        Insert: {
+          created_at?: string
+          generated_by?: string | null
+          id?: string
+          period_end?: string | null
+          period_start?: string | null
+          report_type: string
+          summary?: Json
+        }
+        Update: {
+          created_at?: string
+          generated_by?: string | null
+          id?: string
+          period_end?: string | null
+          period_start?: string | null
+          report_type?: string
+          summary?: Json
+        }
+        Relationships: []
       }
       fuel_logs: {
         Row: {
@@ -2163,6 +2448,99 @@ export type Database = {
           },
         ]
       }
+      procurement_funding: {
+        Row: {
+          budget_id: string | null
+          created_at: string
+          estimated_cost: number
+          funding_code: string | null
+          history: Json
+          id: string
+          is_ict: boolean
+          item_description: string
+          purchase_order_id: string | null
+          quantity: number
+          request_number: string | null
+          requested_by: string
+          section_id: string | null
+          stage: number
+          status: string
+          vendor_id: string | null
+        }
+        Insert: {
+          budget_id?: string | null
+          created_at?: string
+          estimated_cost: number
+          funding_code?: string | null
+          history?: Json
+          id?: string
+          is_ict?: boolean
+          item_description: string
+          purchase_order_id?: string | null
+          quantity?: number
+          request_number?: string | null
+          requested_by?: string
+          section_id?: string | null
+          stage?: number
+          status?: string
+          vendor_id?: string | null
+        }
+        Update: {
+          budget_id?: string | null
+          created_at?: string
+          estimated_cost?: number
+          funding_code?: string | null
+          history?: Json
+          id?: string
+          is_ict?: boolean
+          item_description?: string
+          purchase_order_id?: string | null
+          quantity?: number
+          request_number?: string | null
+          requested_by?: string
+          section_id?: string | null
+          stage?: number
+          status?: string
+          vendor_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "procurement_funding_budget_id_fkey"
+            columns: ["budget_id"]
+            isOneToOne: false
+            referencedRelation: "budgets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "procurement_funding_purchase_order_id_fkey"
+            columns: ["purchase_order_id"]
+            isOneToOne: false
+            referencedRelation: "purchase_orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "procurement_funding_section_id_fkey"
+            columns: ["section_id"]
+            isOneToOne: false
+            referencedRelation: "sections"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "procurement_funding_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "suppliers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "procurement_funding_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "vendors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           created_at: string
@@ -2397,6 +2775,67 @@ export type Database = {
           year?: number
         }
         Relationships: []
+      }
+      revenues: {
+        Row: {
+          amount: number
+          created_at: string
+          created_by: string | null
+          description: string | null
+          id: string
+          received_by: string | null
+          received_by_name: string | null
+          received_date: string
+          revenue_number: string | null
+          source: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          received_by?: string | null
+          received_by_name?: string | null
+          received_date?: string
+          revenue_number?: string | null
+          source: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          received_by?: string | null
+          received_by_name?: string | null
+          received_date?: string
+          revenue_number?: string | null
+          source?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "revenues_received_by_fkey"
+            columns: ["received_by"]
+            isOneToOne: false
+            referencedRelation: "approvals"
+            referencedColumns: ["approver_id"]
+          },
+          {
+            foreignKeyName: "revenues_received_by_fkey"
+            columns: ["received_by"]
+            isOneToOne: false
+            referencedRelation: "equipment_requests"
+            referencedColumns: ["requested_by"]
+          },
+          {
+            foreignKeyName: "revenues_received_by_fkey"
+            columns: ["received_by"]
+            isOneToOne: false
+            referencedRelation: "officers"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       sections: {
         Row: {
@@ -3554,6 +3993,18 @@ export type Database = {
         Returns: undefined
       }
       can_read_document: { Args: { _id: string }; Returns: boolean }
+      finance_reader: { Args: never; Returns: boolean }
+      finance_staff: { Args: never; Returns: boolean }
+      finance_workflow: {
+        Args: {
+          _action: string
+          _amount?: number
+          _id: string
+          _module: string
+          _note?: string
+        }
+        Returns: undefined
+      }
       graduate_cadet: {
         Args: { _cadet_id: string; _decision: string; _remarks?: string }
         Returns: string
@@ -3585,6 +4036,7 @@ export type Database = {
           roles: Database["public"]["Enums"]["app_role"][]
         }[]
       }
+      my_section: { Args: never; Returns: string }
       next_registry_reference: { Args: { _direction: string }; Returns: string }
       phase2_admin: { Args: never; Returns: boolean }
       phase2_workflow: {
@@ -3603,6 +4055,7 @@ export type Database = {
         Args: { _officer: string; _section: string }
         Returns: boolean
       }
+      section_head_of: { Args: { _section: string }; Returns: boolean }
       supply_stage_role: {
         Args: { _stage: number }
         Returns: Database["public"]["Enums"]["app_role"][]

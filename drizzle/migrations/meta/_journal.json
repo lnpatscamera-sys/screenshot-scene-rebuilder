@@ -120,6 +120,13 @@
       "when": 1792792257563,
       "tag": "0016_finance_roles",
       "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1792792389075,
+      "tag": "0017_finance_module",
+      "breakpoints": true
     }
   ]
 }
