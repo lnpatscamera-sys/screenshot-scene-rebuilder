@@ -49,8 +49,8 @@ export const trainingOptions = queryOptions({
       supabase.from("certificates").select("*").order("created_at", { ascending: false }),
       supabase.from("officers").select("id,full_name,rank,service_number,user_id").order("full_name"),
     ]);
-    for (const result of results) if (result.error) throw result.error;
-    const [cadets, programs, courses, instructors, enrollments, attendance, assessments, results, graduations, certificates, officers] = results;
+    for (const result of responses) if (result.error) throw result.error;
+    const [cadets, programs, courses, instructors, enrollments, attendance, assessments, results, graduations, certificates, officers] = responses;
     return {
       cadets: cadets.data ?? [],
       programs: programs.data ?? [],
