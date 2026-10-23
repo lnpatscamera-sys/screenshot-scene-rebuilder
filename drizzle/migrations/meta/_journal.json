@@ -127,6 +127,13 @@
       "when": 1792792389075,
       "tag": "0017_finance_module",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1792793302402,
+      "tag": "0018_procurement_admin_role",
+      "breakpoints": true
     }
   ]
 }
