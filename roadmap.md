@@ -21,4 +21,5 @@
 - [ ] Phase 2 email notices — templates and workflow send triggers pending; delivery waits for sender DNS verification.
 - [ ] Cryptographic document signatures — currently recorded signer names only; requires the organization's signing identity/certificate provider.
 - [x] Extend ERP schema from supplied SQL without replacing existing workflows; match the supplied offices and sections.
-- [ ] Training, Finance, Procurement, Transport, HR, ICT helpdesk (outside Phase 2 scope)
+- [x] Training module: cadet registration, programs & courses, instructors, attendance registers with absence flags, assessments & results, graduation decisions with certificates and QR verification, dashboards and PDF/Excel reports.
+- [ ] Finance, Procurement, Transport, HR, ICT helpdesk (outside Phase 2 scope)
