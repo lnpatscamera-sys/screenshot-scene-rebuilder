@@ -22,4 +22,5 @@
 - [ ] Cryptographic document signatures — currently recorded signer names only; requires the organization's signing identity/certificate provider.
 - [x] Extend ERP schema from supplied SQL without replacing existing workflows; match the supplied offices and sections.
 - [x] Training module: cadet registration, programs & courses, instructors, attendance registers with absence flags, assessments & results, graduation decisions with certificates and QR verification, dashboards and PDF/Excel reports.
-- [ ] Finance, Procurement, Transport, HR, ICT helpdesk (outside Phase 2 scope)
+- [x] Finance module: budgets, monitoring alerts, expenses with documents, revenue receipts, cash advances, procurement funding, approval timelines, reports and audit trail.
+- [ ] Procurement, Transport, HR, ICT helpdesk (outside Phase 2 scope)
