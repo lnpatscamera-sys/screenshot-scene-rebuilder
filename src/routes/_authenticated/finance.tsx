@@ -47,7 +47,7 @@ function useAct() {
     if (needNote || action === "reject") {
       const n = window.prompt(action === "reject" ? "Reason for rejection" : "Comment (optional)") ?? null;
       if (n === null) return;
-      if (action === "reject" && !n.trim()) return toast.error("A reason is required");
+      if (action === "reject" && !n.trim()) { toast.error("A reason is required"); return; }
       note = n || undefined;
     }
     try { await financeAction(module, id, action, note, amount); toast.success("Updated"); await refreshFinance(qc); }
@@ -150,12 +150,12 @@ function BudgetsTab({ d }: { d: Data }) {
     e.preventDefault(); const v = formValues(e.currentTarget);
     const rec = { fiscal_year: Number(v.fiscal_year), department: v.department || null, category: v.category, description: v.description || null, requested_amount: Number(v.requested_amount), funding_source: v.funding_source || null };
     const { error } = edit === "new" ? await supabase.from("budgets").insert(rec) : await supabase.from("budgets").update(rec).eq("id", (edit as Budget).id);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     toast.success("Budget saved"); setEdit(null); refreshFinance(qc);
   };
   const approve = (b: Budget) => {
     const v = window.prompt("Approved amount", String(b.requested_amount)); if (v === null) return;
-    const amt = Number(v); if (!(amt >= 0)) return toast.error("Enter a valid amount");
+    const amt = Number(v); if (!(amt >= 0)) { toast.error("Enter a valid amount"); return; }
     act("budgets", b.id, "approve", false, amt);
   };
   const cur = edit && edit !== "new" ? edit : null;
@@ -276,7 +276,7 @@ function RevenueTab({ d }: { d: Data }) {
     e.preventDefault(); const v = formValues(e.currentTarget);
     const officer = d.officers.find((o) => o.id === v.received_by);
     const { error } = await supabase.from("revenues").insert({ source: v.source, received_date: v.received_date, amount: Number(v.amount), received_by: v.received_by || null, received_by_name: officer?.full_name ?? null, description: v.description || null });
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     toast.success("Revenue recorded"); setOpen(false); refreshFinance(qc);
   };
   const bySource = REVENUE_SOURCES.map((s) => ({ Source: s, Total: d.revenues.filter((r) => r.source === s).reduce((t, r) => t + num(r.amount), 0) }));
@@ -310,7 +310,7 @@ function CashTab({ d }: { d: Data }) {
     e.preventDefault(); const v = formValues(e.currentTarget);
     const rec = { officer_id: v.officer_id || null, section_id: v.section_id || null, purpose: v.purpose, amount: Number(v.amount), justification: v.justification || null, date_required: v.date_required || null };
     const { error } = cur ? await supabase.from("cash_requests").update(rec).eq("id", cur.id) : await supabase.from("cash_requests").insert(rec);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     toast.success("Saved as draft"); setEdit(null); refreshFinance(qc);
   };
   const remove = async (id: string) => { if (!window.confirm("Delete this draft?")) return; const { error } = await supabase.from("cash_requests").delete().eq("id", id); if (error) toast.error(error.message); else refreshFinance(qc); };
@@ -331,7 +331,7 @@ function CashTab({ d }: { d: Data }) {
         <form onSubmit={save} className="grid sm:grid-cols-2 gap-3">
           <SelectField label="Requesting officer" name="officer_id" required options={d.officers.map((o) => ({ value: o.id, label: o.full_name }))} defaultValue={cur?.officer_id ?? me?.id ?? ""} />
           <SelectField label="Department" name="section_id" required options={d.sections.map((s) => ({ value: s.id, label: s.name }))} defaultValue={cur?.section_id ?? me?.section_id ?? ""} />
-          <Field label="Purpose" name="purpose" required defaultValue={cur?.purpose} />
+          <Field label="Purpose" name="purpose" required defaultValue={cur?.purpose ?? ""} />
           <Field label="Amount requested (USD)" name="amount" type="number" required defaultValue={cur ? String(cur.amount) : ""} />
           <Field label="Date required" name="date_required" type="date" defaultValue={cur?.date_required ?? ""} />
           <div className="sm:col-span-2 space-y-1"><Label htmlFor="just">Justification</Label><Textarea id="just" name="justification" defaultValue={cur?.justification ?? ""} /></div>
@@ -352,7 +352,7 @@ function ProcurementTab({ d }: { d: Data }) {
     e.preventDefault(); const v = formValues(e.currentTarget);
     const rec = { section_id: v.section_id || null, item_description: v.item_description, quantity: Number(v.quantity), estimated_cost: Number(v.estimated_cost), vendor_id: v.vendor_id || null, funding_code: v.funding_code || null, budget_id: v.budget_id || null, is_ict: v.is_ict === "on" };
     const { error } = cur ? await supabase.from("procurement_funding").update(rec).eq("id", cur.id) : await supabase.from("procurement_funding").insert(rec);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     toast.success("Saved as draft"); setEdit(null); refreshFinance(qc);
   };
   void roles;
@@ -371,7 +371,7 @@ function ProcurementTab({ d }: { d: Data }) {
         <form onSubmit={save} className="grid sm:grid-cols-2 gap-3">
           <SelectField label="Department" name="section_id" required options={d.sections.map((s) => ({ value: s.id, label: s.name }))} defaultValue={cur?.section_id ?? ""} />
           <SelectField label="Vendor" name="vendor_id" options={d.vendors.map((v) => ({ value: v.id, label: v.company_name ?? "Vendor" }))} defaultValue={cur?.vendor_id ?? ""} />
-          <div className="sm:col-span-2"><Field label="Item description" name="item_description" required defaultValue={cur?.item_description} /></div>
+          <div className="sm:col-span-2"><Field label="Item description" name="item_description" required defaultValue={cur?.item_description ?? ""} /></div>
           <Field label="Quantity" name="quantity" type="number" required defaultValue={String(cur?.quantity ?? 1)} />
           <Field label="Estimated cost (USD)" name="estimated_cost" type="number" required defaultValue={cur ? String(cur.estimated_cost) : ""} />
           <Field label="Funding code" name="funding_code" defaultValue={cur?.funding_code ?? ""} />
