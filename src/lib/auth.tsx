@@ -19,6 +19,7 @@ export const ROLE_LABELS: Record<AppRole, string> = {
   finance_admin: "Finance Administrator",
   auditor: "Auditor",
   procurement_officer: "Procurement Officer",
+  procurement_admin: "Procurement Administrator",
   registry_officer: "Registry Officer",
   ict_admin: "ICT Administrator",
   system_admin: "System Administrator",
