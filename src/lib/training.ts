@@ -36,7 +36,7 @@ export const GRADUATION_ROLES: AppRole[] = ["dc_academy", "commandant"];
 export const trainingOptions = queryOptions({
   queryKey: ["training"],
   queryFn: async () => {
-    const results = await Promise.all([
+    const responses = await Promise.all([
       supabase.from("cadets").select("*").order("cadet_number"),
       supabase.from("training_programs").select("*").order("program_code"),
       supabase.from("courses").select("*").order("course_name"),
