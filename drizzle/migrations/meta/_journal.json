@@ -134,6 +134,13 @@
       "when": 1792793302402,
       "tag": "0018_procurement_admin_role",
       "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1792793611834,
+      "tag": "0019_procurement_module",
+      "breakpoints": true
     }
   ]
 }
