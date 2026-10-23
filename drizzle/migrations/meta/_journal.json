@@ -113,6 +113,20 @@
       "when": 1792666571532,
       "tag": "0015_training_module",
       "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "7",
+      "when": 1792792257563,
+      "tag": "0016_finance_roles",
+      "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1792792389075,
+      "tag": "0017_finance_module",
+      "breakpoints": true
     }
   ]
 }
