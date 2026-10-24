@@ -183,6 +183,13 @@
       "when": 1792835959393,
       "tag": "0025_hr_workflow_validation",
       "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "7",
+      "when": 1792836090410,
+      "tag": "0026_hr_decision_payload_guard",
+      "breakpoints": true
     }
   ]
 }
