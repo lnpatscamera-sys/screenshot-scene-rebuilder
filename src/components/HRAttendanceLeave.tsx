@@ -7,6 +7,7 @@ import { HRForm, HRTable, HRDetail, useHRMutation } from './HRShared';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { StatusBadge } from './AppShell';
+import { HRScanner } from './HRScanner';
 export function HRAttendance({d}:{d:HRData}){
  const {hasAny,session}=useAuth();const [open,setOpen]=useState(false);const [from,setFrom]=useState('');const [to,setTo]=useState('');const [qr,setQr]=useState(false);const [scan,setScan]=useState(false);const mutation=useHRMutation();const mine=d.employees.find(e=>e.user_id===session?.user.id);const staff=hasAny(['hr_admin','hr_officer','section_head']);
  const rows=d.attendance.filter(a=>(!from||String(a.attendance_date)>=from)&&(!to||String(a.attendance_date)<=to));const name=(id:string|null)=>d.employees.find(e=>e.id===id)?.full_name??'—';
