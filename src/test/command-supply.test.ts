@@ -44,7 +44,6 @@ beforeAll(async()=>{
  ALTER TABLE supply_requests ADD COLUMN requested_by_name text,ADD COLUMN priority text DEFAULT 'Normal',ADD COLUMN justification text;
  ALTER TABLE supply_requests ALTER COLUMN stage SET DEFAULT 1; ALTER TABLE supply_requests ALTER COLUMN approval_status SET DEFAULT 'Pending'; ALTER TABLE supply_requests ALTER COLUMN collection_status SET DEFAULT 'Not Ready';
  ALTER TABLE profiles ADD COLUMN unused text;
- ALTER TABLE inventory_items ADD COLUMN unit_cost numeric DEFAULT 2;
  CREATE TABLE reporting_lines(kind text,office_id uuid,officer_id uuid);
  CREATE TABLE user_roles(user_id uuid,role app_role);
  CREATE TABLE procurement_funding(id uuid PRIMARY KEY DEFAULT gen_random_uuid(),section_id uuid,item_description text,quantity integer,requested_by uuid,priority text,justification text,unit text,estimated_cost numeric NOT NULL,stage integer DEFAULT 0,status text DEFAULT 'Draft',CONSTRAINT procurement_funding_estimated_cost_check CHECK(estimated_cost>0));
