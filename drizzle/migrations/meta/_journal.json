@@ -218,6 +218,13 @@
       "when": 1792836986327,
       "tag": "0030_ict_record_validation",
       "breakpoints": true
+    },
+    {
+      "idx": 31,
+      "version": "7",
+      "when": 1792837145372,
+      "tag": "0031_ict_actor_identity",
+      "breakpoints": true
     }
   ]
 }

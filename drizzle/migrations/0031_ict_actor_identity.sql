@@ -1,0 +1,4 @@
+CREATE FUNCTION public.ict_history_actor() RETURNS trigger LANGUAGE plpgsql SECURITY DEFINER SET search_path=public AS $$ DECLARE actor uuid; BEGIN IF auth.uid() IS NOT NULL THEN SELECT id INTO actor FROM officers WHERE user_id=auth.uid() LIMIT 1; IF TG_TABLE_NAME='asset_assignments' THEN NEW.assigned_by:=actor; ELSE NEW.recorded_by:=actor; END IF; END IF; RETURN NEW; END $$;
+CREATE TRIGGER ict_assignment_actor BEFORE INSERT ON public.asset_assignments FOR EACH ROW EXECUTE FUNCTION public.ict_history_actor();
+CREATE TRIGGER ict_transfer_actor BEFORE INSERT ON public.asset_transfers FOR EACH ROW EXECUTE FUNCTION public.ict_history_actor();
+CREATE TRIGGER ict_maintenance_actor BEFORE INSERT ON public.asset_maintenance FOR EACH ROW EXECUTE FUNCTION public.ict_history_actor();
