@@ -29,7 +29,7 @@ function Manual() {
               <h2 className="text-xl font-semibold">{i + 1}. {s.title}</h2>
               <p className="text-xs text-muted-foreground mb-2">Who uses it: {s.who}</p>
               <p className="mb-3">{s.intro}</p>
-              <img src={`/manual/${s.image}.jpg`} alt={`${s.title} screen`} loading="lazy" className="w-full rounded border mb-3" />
+              {s.image && <img src={`/manual/${s.image}.jpg`} alt={`${s.title} screen`} loading="lazy" className="w-full rounded border mb-3" />}
               <ol className="list-decimal pl-5 space-y-1">{s.steps.map((t) => <li key={t}>{t}</li>)}</ol>
               {s.tips.length > 0 && <div className="mt-3 rounded bg-muted p-3 text-sm">{s.tips.map((t) => <p key={t}>Tip: {t}</p>)}</div>}
             </Card>
