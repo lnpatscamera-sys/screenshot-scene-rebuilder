@@ -7,13 +7,14 @@ const uid='00000000-0000-0000-0000-000000000001',other='00000000-0000-0000-0000-
 beforeAll(async()=>{
  await db.exec(`CREATE ROLE authenticated; CREATE ROLE anon; CREATE SCHEMA auth; CREATE SCHEMA storage;
  CREATE FUNCTION auth.uid() RETURNS uuid LANGUAGE sql AS $$ SELECT nullif(current_setting('test.uid',true),'')::uuid $$;
- CREATE TABLE user_roles(user_id uuid,role text); CREATE TABLE profiles(id uuid,email text);
- CREATE FUNCTION has_any_role(uuid,text[]) RETURNS boolean LANGUAGE sql AS $$ SELECT EXISTS(SELECT 1 FROM user_roles WHERE user_id=$1 AND (role='system_admin' OR role=ANY($2))) $$;
+ CREATE TYPE app_role AS ENUM('system_admin','hr_officer','hr_admin','commandant','officer');
+ CREATE TABLE user_roles(user_id uuid,role app_role); CREATE TABLE profiles(id uuid,email text);
+ CREATE FUNCTION has_any_role(uuid,app_role[]) RETURNS boolean LANGUAGE sql AS $$ SELECT EXISTS(SELECT 1 FROM user_roles WHERE user_id=$1 AND (role='system_admin' OR role=ANY($2))) $$;
  CREATE TABLE officers(id uuid PRIMARY KEY,full_name text,rank text,user_id uuid,section_id uuid,office_id uuid,supervisor_id uuid,employment_status text,updated_at timestamptz,photo_url text);
- CREATE FUNCTION hr_staff() RETURNS boolean LANGUAGE sql AS $$ SELECT has_any_role(auth.uid(),ARRAY['hr_admin','hr_officer']) $$;
+ CREATE FUNCTION hr_staff() RETURNS boolean LANGUAGE sql AS $$ SELECT has_any_role(auth.uid(),ARRAY['hr_admin','hr_officer']::app_role[]) $$;
  CREATE FUNCTION hr_owner(uuid) RETURNS boolean LANGUAGE sql AS $$ SELECT EXISTS(SELECT 1 FROM officers WHERE id=$1 AND user_id=auth.uid()) $$;
  CREATE FUNCTION hr_head(uuid) RETURNS boolean LANGUAGE sql AS $$ SELECT false $$;
- CREATE FUNCTION hr_reader(uuid) RETURNS boolean LANGUAGE sql AS $$ SELECT hr_staff() OR hr_owner($1) OR has_any_role(auth.uid(),ARRAY['commandant']) $$;
+ CREATE FUNCTION hr_reader(uuid) RETURNS boolean LANGUAGE sql AS $$ SELECT hr_staff() OR hr_owner($1) OR has_any_role(auth.uid(),ARRAY['commandant']::app_role[]) $$;
  CREATE TABLE sections(id uuid,office_id uuid);
  CREATE TABLE attendance(id uuid DEFAULT gen_random_uuid(),officer_id uuid,attendance_date date,status text,remarks text,check_in timestamptz,check_out timestamptz,method text,recorded_by uuid,created_at timestamptz DEFAULT now());
  CREATE TABLE promotions(id uuid DEFAULT gen_random_uuid(),officer_id uuid,previous_rank text,promoted_rank text,promotion_date date,remarks text,status text,details jsonb,history jsonb);
