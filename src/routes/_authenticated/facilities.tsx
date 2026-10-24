@@ -42,14 +42,14 @@ function FacilitiesPage() {
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     const { error } = await supabase.from("facility_work_orders").insert({ ...form, reporter_name: session?.user.email ?? null });
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     toast.success("Work order reported");
     setForm({ title: "", location: "", category: "General", priority: "Normal", description: "" });
     refresh();
   };
   const act = async (id: string, action: string, payload: Record<string, string> = {}) => {
     const { error } = await supabase.rpc("facility_action", { _id: id, _action: action, _payload: payload });
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     toast.success("Work order updated");
     refresh();
   };
@@ -79,8 +79,8 @@ function FacilitiesPage() {
         </CardContent>
       </Card>
       <div className="flex gap-2 flex-wrap">
-        {[["open", "Open"], ["completed", "Awaiting confirmation"], ["confirmed", "Confirmed"], ["all", "All"]].map(([v, l]) => (
-          <Button key={v} size="sm" variant={filter === v ? "default" : "outline"} onClick={() => setFilter(v)}>{l}</Button>
+        {([["open", "Open"], ["completed", "Awaiting confirmation"], ["confirmed", "Confirmed"], ["all", "All"]] as const).map(([v, l]) => (
+          <Button key={v} size="sm" variant={filter === v ? "default" : "outline"} onClick={() => setFilter(v as string)}>{l}</Button>
         ))}
       </div>
       <div className="space-y-3">
