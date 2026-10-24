@@ -23,6 +23,7 @@ import { Route as AuthenticatedIctRouteImport } from './routes/_authenticated/ic
 import { Route as AuthenticatedInventoryRouteImport } from './routes/_authenticated/inventory'
 import { Route as AuthenticatedIssuesRouteImport } from './routes/_authenticated/issues'
 import { Route as AuthenticatedLeaveRouteImport } from './routes/_authenticated/leave'
+import { Route as AuthenticatedManualRouteImport } from './routes/_authenticated/manual'
 import { Route as AuthenticatedOrganizationRouteImport } from './routes/_authenticated/organization'
 import { Route as AuthenticatedProcurementRouteImport } from './routes/_authenticated/procurement'
 import { Route as AuthenticatedReceiptsRouteImport } from './routes/_authenticated/receipts'
@@ -107,6 +108,11 @@ const AuthenticatedIssuesRoute = AuthenticatedIssuesRouteImport.update({
 const AuthenticatedLeaveRoute = AuthenticatedLeaveRouteImport.update({
   id: '/leave',
   path: '/leave',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedManualRoute = AuthenticatedManualRouteImport.update({
+  id: '/manual',
+  path: '/manual',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedOrganizationRoute =
@@ -206,6 +212,7 @@ export interface FileRoutesByFullPath {
   '/inventory': typeof AuthenticatedInventoryRoute
   '/issues': typeof AuthenticatedIssuesRoute
   '/leave': typeof AuthenticatedLeaveRoute
+  '/manual': typeof AuthenticatedManualRoute
   '/organization': typeof AuthenticatedOrganizationRoute
   '/procurement': typeof AuthenticatedProcurementRoute
   '/receipts': typeof AuthenticatedReceiptsRoute
@@ -236,6 +243,7 @@ export interface FileRoutesByTo {
   '/inventory': typeof AuthenticatedInventoryRoute
   '/issues': typeof AuthenticatedIssuesRoute
   '/leave': typeof AuthenticatedLeaveRoute
+  '/manual': typeof AuthenticatedManualRoute
   '/organization': typeof AuthenticatedOrganizationRoute
   '/procurement': typeof AuthenticatedProcurementRoute
   '/receipts': typeof AuthenticatedReceiptsRoute
@@ -268,6 +276,7 @@ export interface FileRoutesById {
   '/_authenticated/inventory': typeof AuthenticatedInventoryRoute
   '/_authenticated/issues': typeof AuthenticatedIssuesRoute
   '/_authenticated/leave': typeof AuthenticatedLeaveRoute
+  '/_authenticated/manual': typeof AuthenticatedManualRoute
   '/_authenticated/organization': typeof AuthenticatedOrganizationRoute
   '/_authenticated/procurement': typeof AuthenticatedProcurementRoute
   '/_authenticated/receipts': typeof AuthenticatedReceiptsRoute
@@ -300,6 +309,7 @@ export interface FileRouteTypes {
     | '/inventory'
     | '/issues'
     | '/leave'
+    | '/manual'
     | '/organization'
     | '/procurement'
     | '/receipts'
@@ -330,6 +340,7 @@ export interface FileRouteTypes {
     | '/inventory'
     | '/issues'
     | '/leave'
+    | '/manual'
     | '/organization'
     | '/procurement'
     | '/receipts'
@@ -361,6 +372,7 @@ export interface FileRouteTypes {
     | '/_authenticated/inventory'
     | '/_authenticated/issues'
     | '/_authenticated/leave'
+    | '/_authenticated/manual'
     | '/_authenticated/organization'
     | '/_authenticated/procurement'
     | '/_authenticated/receipts'
@@ -485,6 +497,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedLeaveRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/manual': {
+      id: '/_authenticated/manual'
+      path: '/manual'
+      fullPath: '/manual'
+      preLoaderRoute: typeof AuthenticatedManualRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/organization': {
       id: '/_authenticated/organization'
       path: '/organization'
@@ -605,6 +624,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedInventoryRoute: typeof AuthenticatedInventoryRoute
   AuthenticatedIssuesRoute: typeof AuthenticatedIssuesRoute
   AuthenticatedLeaveRoute: typeof AuthenticatedLeaveRoute
+  AuthenticatedManualRoute: typeof AuthenticatedManualRoute
   AuthenticatedOrganizationRoute: typeof AuthenticatedOrganizationRoute
   AuthenticatedProcurementRoute: typeof AuthenticatedProcurementRoute
   AuthenticatedReceiptsRoute: typeof AuthenticatedReceiptsRoute
@@ -633,6 +653,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedInventoryRoute: AuthenticatedInventoryRoute,
   AuthenticatedIssuesRoute: AuthenticatedIssuesRoute,
   AuthenticatedLeaveRoute: AuthenticatedLeaveRoute,
+  AuthenticatedManualRoute: AuthenticatedManualRoute,
   AuthenticatedOrganizationRoute: AuthenticatedOrganizationRoute,
   AuthenticatedProcurementRoute: AuthenticatedProcurementRoute,
   AuthenticatedReceiptsRoute: AuthenticatedReceiptsRoute,

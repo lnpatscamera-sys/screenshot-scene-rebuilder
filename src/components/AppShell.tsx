@@ -50,7 +50,7 @@ const NAV: { group: string; items: NavItem[] }[] = [
       { to: "/modules/$module", params: { module: "transport" }, label: "Transport", icon: Truck },
     ],
   },
-  { group: "Administration", items: [{ to: "/audit", label: "Audit Log", icon: ScrollText }, { to: "/admin/users", label: "Users & Roles", icon: ShieldCheck }] },
+  { group: "Administration", items: [{ to: "/audit", label: "Audit Log", icon: ScrollText }, { to: "/admin/users", label: "Users & Roles", icon: ShieldCheck }, { to: "/manual", label: "User Manual", icon: FileText }] },
 ];
 
 function SideNav({ onNav }: { onNav?: () => void }) {
