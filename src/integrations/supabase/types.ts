@@ -159,6 +159,13 @@ export type Database = {
             foreignKeyName: "asset_assignments_assigned_by_fkey"
             columns: ["assigned_by"]
             isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "asset_assignments_assigned_by_fkey"
+            columns: ["assigned_by"]
+            isOneToOne: false
             referencedRelation: "equipment_requests"
             referencedColumns: ["requested_by"]
           },
@@ -175,6 +182,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "approvals"
             referencedColumns: ["approver_id"]
+          },
+          {
+            foreignKeyName: "asset_assignments_officer_id_fkey"
+            columns: ["officer_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "asset_assignments_officer_id_fkey"
@@ -250,6 +264,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "approvals"
             referencedColumns: ["approver_id"]
+          },
+          {
+            foreignKeyName: "asset_maintenance_recorded_by_fkey"
+            columns: ["recorded_by"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "asset_maintenance_recorded_by_fkey"
@@ -337,6 +358,13 @@ export type Database = {
             foreignKeyName: "asset_transfers_from_officer_id_fkey"
             columns: ["from_officer_id"]
             isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "asset_transfers_from_officer_id_fkey"
+            columns: ["from_officer_id"]
+            isOneToOne: false
             referencedRelation: "equipment_requests"
             referencedColumns: ["requested_by"]
           },
@@ -365,6 +393,13 @@ export type Database = {
             foreignKeyName: "asset_transfers_recorded_by_fkey"
             columns: ["recorded_by"]
             isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "asset_transfers_recorded_by_fkey"
+            columns: ["recorded_by"]
+            isOneToOne: false
             referencedRelation: "equipment_requests"
             referencedColumns: ["requested_by"]
           },
@@ -381,6 +416,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "approvals"
             referencedColumns: ["approver_id"]
+          },
+          {
+            foreignKeyName: "asset_transfers_to_officer_id_fkey"
+            columns: ["to_officer_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "asset_transfers_to_officer_id_fkey"
@@ -448,6 +490,13 @@ export type Database = {
             foreignKeyName: "assets_assigned_to_fkey"
             columns: ["assigned_to"]
             isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "assets_assigned_to_fkey"
+            columns: ["assigned_to"]
+            isOneToOne: false
             referencedRelation: "equipment_requests"
             referencedColumns: ["requested_by"]
           },
@@ -463,22 +512,40 @@ export type Database = {
       attendance: {
         Row: {
           attendance_date: string | null
+          check_in: string | null
+          check_out: string | null
+          created_at: string
+          details: Json
           id: string
+          method: string
           officer_id: string | null
+          recorded_by: string | null
           remarks: string | null
           status: string | null
         }
         Insert: {
           attendance_date?: string | null
+          check_in?: string | null
+          check_out?: string | null
+          created_at?: string
+          details?: Json
           id?: string
+          method?: string
           officer_id?: string | null
+          recorded_by?: string | null
           remarks?: string | null
           status?: string | null
         }
         Update: {
           attendance_date?: string | null
+          check_in?: string | null
+          check_out?: string | null
+          created_at?: string
+          details?: Json
           id?: string
+          method?: string
           officer_id?: string | null
+          recorded_by?: string | null
           remarks?: string | null
           status?: string | null
         }
@@ -489,6 +556,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "approvals"
             referencedColumns: ["approver_id"]
+          },
+          {
+            foreignKeyName: "attendance_officer_id_fkey"
+            columns: ["officer_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "attendance_officer_id_fkey"
@@ -835,6 +909,13 @@ export type Database = {
             foreignKeyName: "cash_requests_officer_id_fkey"
             columns: ["officer_id"]
             isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "cash_requests_officer_id_fkey"
+            columns: ["officer_id"]
+            isOneToOne: false
             referencedRelation: "equipment_requests"
             referencedColumns: ["requested_by"]
           },
@@ -976,6 +1057,13 @@ export type Database = {
             foreignKeyName: "contracts_manager_id_fkey"
             columns: ["manager_id"]
             isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contracts_manager_id_fkey"
+            columns: ["manager_id"]
+            isOneToOne: false
             referencedRelation: "equipment_requests"
             referencedColumns: ["requested_by"]
           },
@@ -1083,6 +1171,13 @@ export type Database = {
             foreignKeyName: "correspondence_officer_id_fkey"
             columns: ["officer_id"]
             isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "correspondence_officer_id_fkey"
+            columns: ["officer_id"]
+            isOneToOne: false
             referencedRelation: "equipment_requests"
             referencedColumns: ["requested_by"]
           },
@@ -1143,30 +1238,45 @@ export type Database = {
       disciplinary_actions: {
         Row: {
           action_taken: string | null
+          attachments: Json
+          case_number: string | null
           created_at: string | null
+          details: Json
+          history: Json
           id: string
           incident_date: string | null
           offense: string | null
           officer_id: string | null
           recorded_by: string | null
+          status: string
         }
         Insert: {
           action_taken?: string | null
+          attachments?: Json
+          case_number?: string | null
           created_at?: string | null
+          details?: Json
+          history?: Json
           id?: string
           incident_date?: string | null
           offense?: string | null
           officer_id?: string | null
           recorded_by?: string | null
+          status?: string
         }
         Update: {
           action_taken?: string | null
+          attachments?: Json
+          case_number?: string | null
           created_at?: string | null
+          details?: Json
+          history?: Json
           id?: string
           incident_date?: string | null
           offense?: string | null
           officer_id?: string | null
           recorded_by?: string | null
+          status?: string
         }
         Relationships: [
           {
@@ -1175,6 +1285,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "approvals"
             referencedColumns: ["approver_id"]
+          },
+          {
+            foreignKeyName: "disciplinary_actions_officer_id_fkey"
+            columns: ["officer_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "disciplinary_actions_officer_id_fkey"
@@ -1196,6 +1313,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "approvals"
             referencedColumns: ["approver_id"]
+          },
+          {
+            foreignKeyName: "disciplinary_actions_recorded_by_fkey"
+            columns: ["recorded_by"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "disciplinary_actions_recorded_by_fkey"
@@ -1390,6 +1514,13 @@ export type Database = {
             foreignKeyName: "expenses_recorded_by_fkey"
             columns: ["recorded_by"]
             isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "expenses_recorded_by_fkey"
+            columns: ["recorded_by"]
+            isOneToOne: false
             referencedRelation: "equipment_requests"
             referencedColumns: ["requested_by"]
           },
@@ -1552,6 +1683,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "approvals"
             referencedColumns: ["approver_id"]
+          },
+          {
+            foreignKeyName: "fuel_logs_recorded_by_fkey"
+            columns: ["recorded_by"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "fuel_logs_recorded_by_fkey"
@@ -1724,6 +1862,68 @@ export type Database = {
           },
         ]
       }
+      hr_reports: {
+        Row: {
+          attachments: Json
+          created_at: string
+          created_by: string
+          details: Json
+          history: Json
+          id: string
+          officer_id: string | null
+          status: string
+        }
+        Insert: {
+          attachments?: Json
+          created_at?: string
+          created_by?: string
+          details?: Json
+          history?: Json
+          id?: string
+          officer_id?: string | null
+          status?: string
+        }
+        Update: {
+          attachments?: Json
+          created_at?: string
+          created_by?: string
+          details?: Json
+          history?: Json
+          id?: string
+          officer_id?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hr_reports_officer_id_fkey"
+            columns: ["officer_id"]
+            isOneToOne: false
+            referencedRelation: "approvals"
+            referencedColumns: ["approver_id"]
+          },
+          {
+            foreignKeyName: "hr_reports_officer_id_fkey"
+            columns: ["officer_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hr_reports_officer_id_fkey"
+            columns: ["officer_id"]
+            isOneToOne: false
+            referencedRelation: "equipment_requests"
+            referencedColumns: ["requested_by"]
+          },
+          {
+            foreignKeyName: "hr_reports_officer_id_fkey"
+            columns: ["officer_id"]
+            isOneToOne: false
+            referencedRelation: "officers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       incoming_mail: {
         Row: {
           assigned_to: string | null
@@ -1756,6 +1956,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "approvals"
             referencedColumns: ["approver_id"]
+          },
+          {
+            foreignKeyName: "incoming_mail_assigned_to_fkey"
+            columns: ["assigned_to"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "incoming_mail_assigned_to_fkey"
@@ -1814,6 +2021,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "approvals"
             referencedColumns: ["approver_id"]
+          },
+          {
+            foreignKeyName: "instructors_officer_id_fkey"
+            columns: ["officer_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "instructors_officer_id_fkey"
@@ -2007,6 +2221,13 @@ export type Database = {
             foreignKeyName: "inventory_movements_recorded_by_fkey"
             columns: ["recorded_by"]
             isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "inventory_movements_recorded_by_fkey"
+            columns: ["recorded_by"]
+            isOneToOne: false
             referencedRelation: "equipment_requests"
             referencedColumns: ["requested_by"]
           },
@@ -2121,6 +2342,13 @@ export type Database = {
             foreignKeyName: "leave_balances_officer_id_fkey"
             columns: ["officer_id"]
             isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "leave_balances_officer_id_fkey"
+            columns: ["officer_id"]
+            isOneToOne: false
             referencedRelation: "equipment_requests"
             referencedColumns: ["requested_by"]
           },
@@ -2148,11 +2376,14 @@ export type Database = {
           leave_type: string
           officer_id: string | null
           reason: string | null
+          recall_reason: string | null
+          recalled_at: string | null
           requested_by: string | null
           stage: number
           start_date: string
           status: string
           total_days: number | null
+          workflow_kind: string
         }
         Insert: {
           approval_status?: string | null
@@ -2168,11 +2399,14 @@ export type Database = {
           leave_type: string
           officer_id?: string | null
           reason?: string | null
+          recall_reason?: string | null
+          recalled_at?: string | null
           requested_by?: string | null
           stage?: number
           start_date: string
           status?: string
           total_days?: number | null
+          workflow_kind?: string
         }
         Update: {
           approval_status?: string | null
@@ -2188,11 +2422,14 @@ export type Database = {
           leave_type?: string
           officer_id?: string | null
           reason?: string | null
+          recall_reason?: string | null
+          recalled_at?: string | null
           requested_by?: string | null
           stage?: number
           start_date?: string
           status?: string
           total_days?: number | null
+          workflow_kind?: string
         }
         Relationships: [
           {
@@ -2201,6 +2438,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "approvals"
             referencedColumns: ["approver_id"]
+          },
+          {
+            foreignKeyName: "leave_requests_delegate_officer_id_fkey"
+            columns: ["delegate_officer_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "leave_requests_delegate_officer_id_fkey"
@@ -2222,6 +2466,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "approvals"
             referencedColumns: ["approver_id"]
+          },
+          {
+            foreignKeyName: "leave_requests_officer_id_fkey"
+            columns: ["officer_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "leave_requests_officer_id_fkey"
@@ -2286,6 +2537,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "approvals"
             referencedColumns: ["approver_id"]
+          },
+          {
+            foreignKeyName: "maintenance_logs_recorded_by_fkey"
+            columns: ["recorded_by"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "maintenance_logs_recorded_by_fkey"
@@ -2362,28 +2620,34 @@ export type Database = {
       }
       officer_documents: {
         Row: {
+          bucket_id: string
           document_name: string | null
           document_type: string | null
           file_url: string | null
           id: string
           officer_id: string | null
           upload_date: string | null
+          uploaded_by: string | null
         }
         Insert: {
+          bucket_id?: string
           document_name?: string | null
           document_type?: string | null
           file_url?: string | null
           id?: string
           officer_id?: string | null
           upload_date?: string | null
+          uploaded_by?: string | null
         }
         Update: {
+          bucket_id?: string
           document_name?: string | null
           document_type?: string | null
           file_url?: string | null
           id?: string
           officer_id?: string | null
           upload_date?: string | null
+          uploaded_by?: string | null
         }
         Relationships: [
           {
@@ -2392,6 +2656,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "approvals"
             referencedColumns: ["approver_id"]
+          },
+          {
+            foreignKeyName: "officer_documents_officer_id_fkey"
+            columns: ["officer_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "officer_documents_officer_id_fkey"
@@ -2424,7 +2695,9 @@ export type Database = {
           education: string | null
           email: string | null
           emergency_contact: string | null
+          employee_number: string | null
           employment_status: string
+          employment_type: string
           first_name: string | null
           full_name: string
           gender: string | null
@@ -2443,8 +2716,10 @@ export type Database = {
           profile_photo: string | null
           promotion_history: string | null
           rank: string
+          retirement_date: string | null
           section_id: string | null
           service_number: string
+          supervisor_id: string | null
           training_history: string | null
           updated_at: string
           user_id: string | null
@@ -2463,7 +2738,9 @@ export type Database = {
           education?: string | null
           email?: string | null
           emergency_contact?: string | null
+          employee_number?: string | null
           employment_status?: string
+          employment_type?: string
           first_name?: string | null
           full_name: string
           gender?: string | null
@@ -2482,8 +2759,10 @@ export type Database = {
           profile_photo?: string | null
           promotion_history?: string | null
           rank: string
+          retirement_date?: string | null
           section_id?: string | null
           service_number: string
+          supervisor_id?: string | null
           training_history?: string | null
           updated_at?: string
           user_id?: string | null
@@ -2502,7 +2781,9 @@ export type Database = {
           education?: string | null
           email?: string | null
           emergency_contact?: string | null
+          employee_number?: string | null
           employment_status?: string
+          employment_type?: string
           first_name?: string | null
           full_name?: string
           gender?: string | null
@@ -2521,8 +2802,10 @@ export type Database = {
           profile_photo?: string | null
           promotion_history?: string | null
           rank?: string
+          retirement_date?: string | null
           section_id?: string | null
           service_number?: string
+          supervisor_id?: string | null
           training_history?: string | null
           updated_at?: string
           user_id?: string | null
@@ -2540,6 +2823,34 @@ export type Database = {
             columns: ["section_id"]
             isOneToOne: false
             referencedRelation: "sections"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "officers_supervisor_id_fkey"
+            columns: ["supervisor_id"]
+            isOneToOne: false
+            referencedRelation: "approvals"
+            referencedColumns: ["approver_id"]
+          },
+          {
+            foreignKeyName: "officers_supervisor_id_fkey"
+            columns: ["supervisor_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "officers_supervisor_id_fkey"
+            columns: ["supervisor_id"]
+            isOneToOne: false
+            referencedRelation: "equipment_requests"
+            referencedColumns: ["requested_by"]
+          },
+          {
+            foreignKeyName: "officers_supervisor_id_fkey"
+            columns: ["supervisor_id"]
+            isOneToOne: false
+            referencedRelation: "officers"
             referencedColumns: ["id"]
           },
         ]
@@ -2619,12 +2930,143 @@ export type Database = {
             foreignKeyName: "outgoing_mail_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "outgoing_mail_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
             referencedRelation: "equipment_requests"
             referencedColumns: ["requested_by"]
           },
           {
             foreignKeyName: "outgoing_mail_created_by_fkey"
             columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "officers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payroll_records: {
+        Row: {
+          attachments: Json
+          created_at: string
+          created_by: string
+          details: Json
+          history: Json
+          id: string
+          officer_id: string | null
+          status: string
+        }
+        Insert: {
+          attachments?: Json
+          created_at?: string
+          created_by?: string
+          details?: Json
+          history?: Json
+          id?: string
+          officer_id?: string | null
+          status?: string
+        }
+        Update: {
+          attachments?: Json
+          created_at?: string
+          created_by?: string
+          details?: Json
+          history?: Json
+          id?: string
+          officer_id?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payroll_records_officer_id_fkey"
+            columns: ["officer_id"]
+            isOneToOne: false
+            referencedRelation: "approvals"
+            referencedColumns: ["approver_id"]
+          },
+          {
+            foreignKeyName: "payroll_records_officer_id_fkey"
+            columns: ["officer_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payroll_records_officer_id_fkey"
+            columns: ["officer_id"]
+            isOneToOne: false
+            referencedRelation: "equipment_requests"
+            referencedColumns: ["requested_by"]
+          },
+          {
+            foreignKeyName: "payroll_records_officer_id_fkey"
+            columns: ["officer_id"]
+            isOneToOne: false
+            referencedRelation: "officers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      performance_appraisals: {
+        Row: {
+          attachments: Json
+          created_at: string
+          created_by: string
+          details: Json
+          history: Json
+          id: string
+          officer_id: string | null
+          status: string
+        }
+        Insert: {
+          attachments?: Json
+          created_at?: string
+          created_by?: string
+          details?: Json
+          history?: Json
+          id?: string
+          officer_id?: string | null
+          status?: string
+        }
+        Update: {
+          attachments?: Json
+          created_at?: string
+          created_by?: string
+          details?: Json
+          history?: Json
+          id?: string
+          officer_id?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "performance_appraisals_officer_id_fkey"
+            columns: ["officer_id"]
+            isOneToOne: false
+            referencedRelation: "approvals"
+            referencedColumns: ["approver_id"]
+          },
+          {
+            foreignKeyName: "performance_appraisals_officer_id_fkey"
+            columns: ["officer_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "performance_appraisals_officer_id_fkey"
+            columns: ["officer_id"]
+            isOneToOne: false
+            referencedRelation: "equipment_requests"
+            referencedColumns: ["requested_by"]
+          },
+          {
+            foreignKeyName: "performance_appraisals_officer_id_fkey"
+            columns: ["officer_id"]
             isOneToOne: false
             referencedRelation: "officers"
             referencedColumns: ["id"]
@@ -2828,28 +3270,40 @@ export type Database = {
       }
       promotions: {
         Row: {
+          created_at: string
+          details: Json
+          history: Json
           id: string
           officer_id: string | null
           previous_rank: string | null
           promoted_rank: string | null
           promotion_date: string | null
           remarks: string | null
+          status: string
         }
         Insert: {
+          created_at?: string
+          details?: Json
+          history?: Json
           id?: string
           officer_id?: string | null
           previous_rank?: string | null
           promoted_rank?: string | null
           promotion_date?: string | null
           remarks?: string | null
+          status?: string
         }
         Update: {
+          created_at?: string
+          details?: Json
+          history?: Json
           id?: string
           officer_id?: string | null
           previous_rank?: string | null
           promoted_rank?: string | null
           promotion_date?: string | null
           remarks?: string | null
+          status?: string
         }
         Relationships: [
           {
@@ -2858,6 +3312,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "approvals"
             referencedColumns: ["approver_id"]
+          },
+          {
+            foreignKeyName: "promotions_officer_id_fkey"
+            columns: ["officer_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "promotions_officer_id_fkey"
@@ -3063,6 +3524,13 @@ export type Database = {
             foreignKeyName: "purchase_requests_requested_by_fkey"
             columns: ["requested_by"]
             isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "purchase_requests_requested_by_fkey"
+            columns: ["requested_by"]
+            isOneToOne: false
             referencedRelation: "equipment_requests"
             referencedColumns: ["requested_by"]
           },
@@ -3203,6 +3671,130 @@ export type Database = {
           },
         ]
       }
+      recruitment_applicants: {
+        Row: {
+          attachments: Json
+          created_at: string
+          created_by: string
+          details: Json
+          history: Json
+          id: string
+          officer_id: string | null
+          status: string
+        }
+        Insert: {
+          attachments?: Json
+          created_at?: string
+          created_by?: string
+          details?: Json
+          history?: Json
+          id?: string
+          officer_id?: string | null
+          status?: string
+        }
+        Update: {
+          attachments?: Json
+          created_at?: string
+          created_by?: string
+          details?: Json
+          history?: Json
+          id?: string
+          officer_id?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "recruitment_applicants_officer_id_fkey"
+            columns: ["officer_id"]
+            isOneToOne: false
+            referencedRelation: "approvals"
+            referencedColumns: ["approver_id"]
+          },
+          {
+            foreignKeyName: "recruitment_applicants_officer_id_fkey"
+            columns: ["officer_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "recruitment_applicants_officer_id_fkey"
+            columns: ["officer_id"]
+            isOneToOne: false
+            referencedRelation: "equipment_requests"
+            referencedColumns: ["requested_by"]
+          },
+          {
+            foreignKeyName: "recruitment_applicants_officer_id_fkey"
+            columns: ["officer_id"]
+            isOneToOne: false
+            referencedRelation: "officers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      recruitment_vacancies: {
+        Row: {
+          attachments: Json
+          created_at: string
+          created_by: string
+          details: Json
+          history: Json
+          id: string
+          officer_id: string | null
+          status: string
+        }
+        Insert: {
+          attachments?: Json
+          created_at?: string
+          created_by?: string
+          details?: Json
+          history?: Json
+          id?: string
+          officer_id?: string | null
+          status?: string
+        }
+        Update: {
+          attachments?: Json
+          created_at?: string
+          created_by?: string
+          details?: Json
+          history?: Json
+          id?: string
+          officer_id?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "recruitment_vacancies_officer_id_fkey"
+            columns: ["officer_id"]
+            isOneToOne: false
+            referencedRelation: "approvals"
+            referencedColumns: ["approver_id"]
+          },
+          {
+            foreignKeyName: "recruitment_vacancies_officer_id_fkey"
+            columns: ["officer_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "recruitment_vacancies_officer_id_fkey"
+            columns: ["officer_id"]
+            isOneToOne: false
+            referencedRelation: "equipment_requests"
+            referencedColumns: ["requested_by"]
+          },
+          {
+            foreignKeyName: "recruitment_vacancies_officer_id_fkey"
+            columns: ["officer_id"]
+            isOneToOne: false
+            referencedRelation: "officers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       registry_counters: {
         Row: {
           direction: string
@@ -3308,6 +3900,13 @@ export type Database = {
             foreignKeyName: "revenues_received_by_fkey"
             columns: ["received_by"]
             isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "revenues_received_by_fkey"
+            columns: ["received_by"]
+            isOneToOne: false
             referencedRelation: "equipment_requests"
             referencedColumns: ["requested_by"]
           },
@@ -3359,6 +3958,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "approvals"
             referencedColumns: ["approver_id"]
+          },
+          {
+            foreignKeyName: "sections_section_head_fkey"
+            columns: ["section_head"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "sections_section_head_fkey"
@@ -3467,6 +4073,13 @@ export type Database = {
             foreignKeyName: "stock_reconciliation_counted_by_fkey"
             columns: ["counted_by"]
             isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "stock_reconciliation_counted_by_fkey"
+            columns: ["counted_by"]
+            isOneToOne: false
             referencedRelation: "equipment_requests"
             referencedColumns: ["requested_by"]
           },
@@ -3497,6 +4110,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "approvals"
             referencedColumns: ["approver_id"]
+          },
+          {
+            foreignKeyName: "stock_reconciliation_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "stock_reconciliation_reviewed_by_fkey"
@@ -3653,6 +4273,13 @@ export type Database = {
             foreignKeyName: "store_issues_issued_by_fkey"
             columns: ["issued_by"]
             isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "store_issues_issued_by_fkey"
+            columns: ["issued_by"]
+            isOneToOne: false
             referencedRelation: "equipment_requests"
             referencedColumns: ["requested_by"]
           },
@@ -3669,6 +4296,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "approvals"
             referencedColumns: ["approver_id"]
+          },
+          {
+            foreignKeyName: "store_issues_issued_to_fkey"
+            columns: ["issued_to"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "store_issues_issued_to_fkey"
@@ -3832,6 +4466,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "approvals"
             referencedColumns: ["approver_id"]
+          },
+          {
+            foreignKeyName: "store_receipts_received_by_fkey"
+            columns: ["received_by"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "store_receipts_received_by_fkey"
@@ -4071,6 +4712,13 @@ export type Database = {
             foreignKeyName: "tickets_assigned_to_fkey"
             columns: ["assigned_to"]
             isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tickets_assigned_to_fkey"
+            columns: ["assigned_to"]
+            isOneToOne: false
             referencedRelation: "equipment_requests"
             referencedColumns: ["requested_by"]
           },
@@ -4087,6 +4735,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "approvals"
             referencedColumns: ["approver_id"]
+          },
+          {
+            foreignKeyName: "tickets_reported_by_fkey"
+            columns: ["reported_by"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "tickets_reported_by_fkey"
@@ -4153,12 +4808,143 @@ export type Database = {
             foreignKeyName: "training_programs_coordinator_fkey"
             columns: ["coordinator"]
             isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "training_programs_coordinator_fkey"
+            columns: ["coordinator"]
+            isOneToOne: false
             referencedRelation: "equipment_requests"
             referencedColumns: ["requested_by"]
           },
           {
             foreignKeyName: "training_programs_coordinator_fkey"
             columns: ["coordinator"]
+            isOneToOne: false
+            referencedRelation: "officers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      training_records: {
+        Row: {
+          attachments: Json
+          created_at: string
+          created_by: string
+          details: Json
+          history: Json
+          id: string
+          officer_id: string | null
+          status: string
+        }
+        Insert: {
+          attachments?: Json
+          created_at?: string
+          created_by?: string
+          details?: Json
+          history?: Json
+          id?: string
+          officer_id?: string | null
+          status?: string
+        }
+        Update: {
+          attachments?: Json
+          created_at?: string
+          created_by?: string
+          details?: Json
+          history?: Json
+          id?: string
+          officer_id?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "training_records_officer_id_fkey"
+            columns: ["officer_id"]
+            isOneToOne: false
+            referencedRelation: "approvals"
+            referencedColumns: ["approver_id"]
+          },
+          {
+            foreignKeyName: "training_records_officer_id_fkey"
+            columns: ["officer_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "training_records_officer_id_fkey"
+            columns: ["officer_id"]
+            isOneToOne: false
+            referencedRelation: "equipment_requests"
+            referencedColumns: ["requested_by"]
+          },
+          {
+            foreignKeyName: "training_records_officer_id_fkey"
+            columns: ["officer_id"]
+            isOneToOne: false
+            referencedRelation: "officers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      transfers: {
+        Row: {
+          attachments: Json
+          created_at: string
+          created_by: string
+          details: Json
+          history: Json
+          id: string
+          officer_id: string | null
+          status: string
+        }
+        Insert: {
+          attachments?: Json
+          created_at?: string
+          created_by?: string
+          details?: Json
+          history?: Json
+          id?: string
+          officer_id?: string | null
+          status?: string
+        }
+        Update: {
+          attachments?: Json
+          created_at?: string
+          created_by?: string
+          details?: Json
+          history?: Json
+          id?: string
+          officer_id?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "transfers_officer_id_fkey"
+            columns: ["officer_id"]
+            isOneToOne: false
+            referencedRelation: "approvals"
+            referencedColumns: ["approver_id"]
+          },
+          {
+            foreignKeyName: "transfers_officer_id_fkey"
+            columns: ["officer_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "transfers_officer_id_fkey"
+            columns: ["officer_id"]
+            isOneToOne: false
+            referencedRelation: "equipment_requests"
+            referencedColumns: ["requested_by"]
+          },
+          {
+            foreignKeyName: "transfers_officer_id_fkey"
+            columns: ["officer_id"]
             isOneToOne: false
             referencedRelation: "officers"
             referencedColumns: ["id"]
@@ -4238,6 +5024,13 @@ export type Database = {
             foreignKeyName: "vehicle_bookings_driver_id_fkey"
             columns: ["driver_id"]
             isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vehicle_bookings_driver_id_fkey"
+            columns: ["driver_id"]
+            isOneToOne: false
             referencedRelation: "equipment_requests"
             referencedColumns: ["requested_by"]
           },
@@ -4254,6 +5047,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "approvals"
             referencedColumns: ["approver_id"]
+          },
+          {
+            foreignKeyName: "vehicle_bookings_requested_by_fkey"
+            columns: ["requested_by"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "vehicle_bookings_requested_by_fkey"
@@ -4320,6 +5120,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "approvals"
             referencedColumns: ["approver_id"]
+          },
+          {
+            foreignKeyName: "vehicles_assigned_driver_fkey"
+            columns: ["assigned_driver"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "vehicles_assigned_driver_fkey"
@@ -4512,6 +5319,181 @@ export type Database = {
           },
         ]
       }
+      employees: {
+        Row: {
+          address: string | null
+          blood_group: string | null
+          commendations: string | null
+          county: string | null
+          created_at: string | null
+          current_assignment: string | null
+          date_joined: string | null
+          date_of_birth: string | null
+          designation: string | null
+          disciplinary_actions: string | null
+          education: string | null
+          email: string | null
+          emergency_contact: string | null
+          employee_number: string | null
+          employment_status: string | null
+          employment_type: string | null
+          first_name: string | null
+          full_name: string | null
+          gender: string | null
+          id: string | null
+          last_name: string | null
+          marital_status: string | null
+          medical_info: string | null
+          middle_name: string | null
+          nationality: string | null
+          next_of_kin: string | null
+          next_of_kin_phone: string | null
+          office_id: string | null
+          phone: string | null
+          photo_url: string | null
+          position: string | null
+          profile_photo: string | null
+          promotion_history: string | null
+          rank: string | null
+          retirement_date: string | null
+          section_id: string | null
+          service_number: string | null
+          supervisor_id: string | null
+          training_history: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          address?: string | null
+          blood_group?: string | null
+          commendations?: string | null
+          county?: string | null
+          created_at?: string | null
+          current_assignment?: string | null
+          date_joined?: string | null
+          date_of_birth?: string | null
+          designation?: string | null
+          disciplinary_actions?: string | null
+          education?: string | null
+          email?: string | null
+          emergency_contact?: string | null
+          employee_number?: string | null
+          employment_status?: string | null
+          employment_type?: string | null
+          first_name?: string | null
+          full_name?: string | null
+          gender?: string | null
+          id?: string | null
+          last_name?: string | null
+          marital_status?: string | null
+          medical_info?: string | null
+          middle_name?: string | null
+          nationality?: string | null
+          next_of_kin?: string | null
+          next_of_kin_phone?: string | null
+          office_id?: string | null
+          phone?: string | null
+          photo_url?: string | null
+          position?: string | null
+          profile_photo?: string | null
+          promotion_history?: string | null
+          rank?: string | null
+          retirement_date?: string | null
+          section_id?: string | null
+          service_number?: string | null
+          supervisor_id?: string | null
+          training_history?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          address?: string | null
+          blood_group?: string | null
+          commendations?: string | null
+          county?: string | null
+          created_at?: string | null
+          current_assignment?: string | null
+          date_joined?: string | null
+          date_of_birth?: string | null
+          designation?: string | null
+          disciplinary_actions?: string | null
+          education?: string | null
+          email?: string | null
+          emergency_contact?: string | null
+          employee_number?: string | null
+          employment_status?: string | null
+          employment_type?: string | null
+          first_name?: string | null
+          full_name?: string | null
+          gender?: string | null
+          id?: string | null
+          last_name?: string | null
+          marital_status?: string | null
+          medical_info?: string | null
+          middle_name?: string | null
+          nationality?: string | null
+          next_of_kin?: string | null
+          next_of_kin_phone?: string | null
+          office_id?: string | null
+          phone?: string | null
+          photo_url?: string | null
+          position?: string | null
+          profile_photo?: string | null
+          promotion_history?: string | null
+          rank?: string | null
+          retirement_date?: string | null
+          section_id?: string | null
+          service_number?: string | null
+          supervisor_id?: string | null
+          training_history?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "officers_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "offices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "officers_section_id_fkey"
+            columns: ["section_id"]
+            isOneToOne: false
+            referencedRelation: "sections"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "officers_supervisor_id_fkey"
+            columns: ["supervisor_id"]
+            isOneToOne: false
+            referencedRelation: "approvals"
+            referencedColumns: ["approver_id"]
+          },
+          {
+            foreignKeyName: "officers_supervisor_id_fkey"
+            columns: ["supervisor_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "officers_supervisor_id_fkey"
+            columns: ["supervisor_id"]
+            isOneToOne: false
+            referencedRelation: "equipment_requests"
+            referencedColumns: ["requested_by"]
+          },
+          {
+            foreignKeyName: "officers_supervisor_id_fkey"
+            columns: ["supervisor_id"]
+            isOneToOne: false
+            referencedRelation: "officers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       equipment_request_items: {
         Row: {
           description: string | null
@@ -4652,6 +5634,16 @@ export type Database = {
         }
         Returns: boolean
       }
+      hr_action: {
+        Args: { _action: string; _id: string; _module: string; _payload?: Json }
+        Returns: string
+      }
+      hr_file_access: { Args: { _path: string }; Returns: boolean }
+      hr_head: { Args: { _officer: string }; Returns: boolean }
+      hr_owner: { Args: { _officer: string }; Returns: boolean }
+      hr_reader: { Args: { _officer: string }; Returns: boolean }
+      hr_staff: { Args: never; Returns: boolean }
+      hr_validate_files: { Args: { _files: Json }; Returns: undefined }
       leave_stage_role: {
         Args: { _stage: number }
         Returns: Database["public"]["Enums"]["app_role"][]
@@ -4742,6 +5734,7 @@ export type Database = {
         | "auditor"
         | "procurement_officer"
         | "procurement_admin"
+        | "hr_admin"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -4887,6 +5880,7 @@ export const Constants = {
         "auditor",
         "procurement_officer",
         "procurement_admin",
+        "hr_admin",
       ],
     },
   },

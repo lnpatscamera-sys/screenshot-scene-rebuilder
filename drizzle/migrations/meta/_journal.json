@@ -148,6 +148,55 @@
       "when": 1792834630337,
       "tag": "0020_procurement_admin_workflow_access",
       "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1792835506480,
+      "tag": "0021_hr_administrator_role",
+      "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "7",
+      "when": 1792835630161,
+      "tag": "0022_hr_personnel_records",
+      "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "7",
+      "when": 1792835670871,
+      "tag": "0023_hr_authorized_actions",
+      "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1792835834850,
+      "tag": "0024_hr_personnel_privacy",
+      "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1792835959393,
+      "tag": "0025_hr_workflow_validation",
+      "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "7",
+      "when": 1792836090410,
+      "tag": "0026_hr_decision_payload_guard",
+      "breakpoints": true
+    },
+    {
+      "idx": 27,
+      "version": "7",
+      "when": 1792836273003,
+      "tag": "0027_hr_personnel_retention_guard",
+      "breakpoints": true
     }
   ]
 }

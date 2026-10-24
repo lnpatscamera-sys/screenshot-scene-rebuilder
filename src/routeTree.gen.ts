@@ -18,6 +18,7 @@ import { Route as AuthenticatedDashboardRouteImport } from './routes/_authentica
 import { Route as AuthenticatedDocumentsRouteImport } from './routes/_authenticated/documents'
 import { Route as AuthenticatedEquipmentRequestsRouteImport } from './routes/_authenticated/equipment-requests'
 import { Route as AuthenticatedFinanceRouteImport } from './routes/_authenticated/finance'
+import { Route as AuthenticatedHrRouteImport } from './routes/_authenticated/hr'
 import { Route as AuthenticatedInventoryRouteImport } from './routes/_authenticated/inventory'
 import { Route as AuthenticatedIssuesRouteImport } from './routes/_authenticated/issues'
 import { Route as AuthenticatedLeaveRouteImport } from './routes/_authenticated/leave'
@@ -80,6 +81,11 @@ const AuthenticatedEquipmentRequestsRoute =
 const AuthenticatedFinanceRoute = AuthenticatedFinanceRouteImport.update({
   id: '/finance',
   path: '/finance',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedHrRoute = AuthenticatedHrRouteImport.update({
+  id: '/hr',
+  path: '/hr',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedInventoryRoute = AuthenticatedInventoryRouteImport.update({
@@ -189,6 +195,7 @@ export interface FileRoutesByFullPath {
   '/documents': typeof AuthenticatedDocumentsRoute
   '/equipment-requests': typeof AuthenticatedEquipmentRequestsRoute
   '/finance': typeof AuthenticatedFinanceRoute
+  '/hr': typeof AuthenticatedHrRoute
   '/inventory': typeof AuthenticatedInventoryRoute
   '/issues': typeof AuthenticatedIssuesRoute
   '/leave': typeof AuthenticatedLeaveRoute
@@ -217,6 +224,7 @@ export interface FileRoutesByTo {
   '/documents': typeof AuthenticatedDocumentsRoute
   '/equipment-requests': typeof AuthenticatedEquipmentRequestsRoute
   '/finance': typeof AuthenticatedFinanceRoute
+  '/hr': typeof AuthenticatedHrRoute
   '/inventory': typeof AuthenticatedInventoryRoute
   '/issues': typeof AuthenticatedIssuesRoute
   '/leave': typeof AuthenticatedLeaveRoute
@@ -247,6 +255,7 @@ export interface FileRoutesById {
   '/_authenticated/documents': typeof AuthenticatedDocumentsRoute
   '/_authenticated/equipment-requests': typeof AuthenticatedEquipmentRequestsRoute
   '/_authenticated/finance': typeof AuthenticatedFinanceRoute
+  '/_authenticated/hr': typeof AuthenticatedHrRoute
   '/_authenticated/inventory': typeof AuthenticatedInventoryRoute
   '/_authenticated/issues': typeof AuthenticatedIssuesRoute
   '/_authenticated/leave': typeof AuthenticatedLeaveRoute
@@ -277,6 +286,7 @@ export interface FileRouteTypes {
     | '/documents'
     | '/equipment-requests'
     | '/finance'
+    | '/hr'
     | '/inventory'
     | '/issues'
     | '/leave'
@@ -305,6 +315,7 @@ export interface FileRouteTypes {
     | '/documents'
     | '/equipment-requests'
     | '/finance'
+    | '/hr'
     | '/inventory'
     | '/issues'
     | '/leave'
@@ -334,6 +345,7 @@ export interface FileRouteTypes {
     | '/_authenticated/documents'
     | '/_authenticated/equipment-requests'
     | '/_authenticated/finance'
+    | '/_authenticated/hr'
     | '/_authenticated/inventory'
     | '/_authenticated/issues'
     | '/_authenticated/leave'
@@ -424,6 +436,13 @@ declare module '@tanstack/react-router' {
       path: '/finance'
       fullPath: '/finance'
       preLoaderRoute: typeof AuthenticatedFinanceRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/hr': {
+      id: '/_authenticated/hr'
+      path: '/hr'
+      fullPath: '/hr'
+      preLoaderRoute: typeof AuthenticatedHrRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/inventory': {
@@ -562,6 +581,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedDocumentsRoute: typeof AuthenticatedDocumentsRoute
   AuthenticatedEquipmentRequestsRoute: typeof AuthenticatedEquipmentRequestsRoute
   AuthenticatedFinanceRoute: typeof AuthenticatedFinanceRoute
+  AuthenticatedHrRoute: typeof AuthenticatedHrRoute
   AuthenticatedInventoryRoute: typeof AuthenticatedInventoryRoute
   AuthenticatedIssuesRoute: typeof AuthenticatedIssuesRoute
   AuthenticatedLeaveRoute: typeof AuthenticatedLeaveRoute
@@ -588,6 +608,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDocumentsRoute: AuthenticatedDocumentsRoute,
   AuthenticatedEquipmentRequestsRoute: AuthenticatedEquipmentRequestsRoute,
   AuthenticatedFinanceRoute: AuthenticatedFinanceRoute,
+  AuthenticatedHrRoute: AuthenticatedHrRoute,
   AuthenticatedInventoryRoute: AuthenticatedInventoryRoute,
   AuthenticatedIssuesRoute: AuthenticatedIssuesRoute,
   AuthenticatedLeaveRoute: AuthenticatedLeaveRoute,

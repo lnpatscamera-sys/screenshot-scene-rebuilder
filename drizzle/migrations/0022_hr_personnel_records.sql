@@ -1,0 +1,85 @@
+CREATE SEQUENCE public.employee_number_seq;
+ALTER TABLE public.officers ADD COLUMN employee_number text DEFAULT ('LNPATS-EMP-'||lpad(nextval('public.employee_number_seq')::text,6,'0')) UNIQUE, ADD COLUMN employment_type text NOT NULL DEFAULT 'Police', ADD COLUMN retirement_date date, ADD COLUMN supervisor_id uuid REFERENCES public.officers(id);
+CREATE OR REPLACE FUNCTION public.hr_staff() RETURNS boolean LANGUAGE sql STABLE SECURITY DEFINER SET search_path=public AS $$ SELECT public.has_any_role(auth.uid(),ARRAY['hr_admin','hr_officer']::public.app_role[]) $$;
+CREATE OR REPLACE FUNCTION public.hr_owner(_officer uuid) RETURNS boolean LANGUAGE sql STABLE SECURITY DEFINER SET search_path=public AS $$ SELECT EXISTS(SELECT 1 FROM officers WHERE id=_officer AND user_id=auth.uid()) $$;
+CREATE OR REPLACE FUNCTION public.hr_head(_officer uuid) RETURNS boolean LANGUAGE sql STABLE SECURITY DEFINER SET search_path=public AS $$ SELECT public.has_any_role(auth.uid(),ARRAY['section_head']::public.app_role[]) AND EXISTS(SELECT 1 FROM officers o WHERE o.id=_officer AND o.section_id=public.my_section()) $$;
+CREATE OR REPLACE FUNCTION public.hr_reader(_officer uuid) RETURNS boolean LANGUAGE sql STABLE SECURITY DEFINER SET search_path=public AS $$ SELECT public.hr_staff() OR public.has_any_role(auth.uid(),ARRAY['commandant']::public.app_role[]) OR public.hr_owner(_officer) $$;
+CREATE POLICY hr_officers_insert ON officers FOR INSERT TO authenticated WITH CHECK(public.hr_staff());
+CREATE POLICY hr_officers_update ON officers FOR UPDATE TO authenticated USING(public.hr_staff()) WITH CHECK(public.hr_staff());
+ALTER TABLE public.officer_documents ADD COLUMN bucket_id text NOT NULL DEFAULT 'officer-files', ADD COLUMN uploaded_by uuid;
+DROP POLICY "admin manages officer documents" ON public.officer_documents;
+CREATE POLICY hr_document_read ON public.officer_documents FOR SELECT TO authenticated USING(public.hr_reader(officer_id));
+CREATE POLICY hr_document_insert ON public.officer_documents FOR INSERT TO authenticated WITH CHECK(public.hr_staff() AND bucket_id='hr-files' AND uploaded_by=auth.uid());
+ALTER TABLE public.attendance ADD COLUMN check_in timestamptz, ADD COLUMN check_out timestamptz, ADD COLUMN method text NOT NULL DEFAULT 'Manual', ADD COLUMN recorded_by uuid, ADD COLUMN details jsonb NOT NULL DEFAULT '{}', ADD COLUMN created_at timestamptz NOT NULL DEFAULT now();
+ALTER TABLE public.promotions ADD COLUMN status text NOT NULL DEFAULT 'Pending', ADD COLUMN details jsonb NOT NULL DEFAULT '{}', ADD COLUMN history jsonb NOT NULL DEFAULT '[]', ADD COLUMN created_at timestamptz NOT NULL DEFAULT now();
+ALTER TABLE public.disciplinary_actions ADD COLUMN case_number text, ADD COLUMN status text NOT NULL DEFAULT 'Open', ADD COLUMN details jsonb NOT NULL DEFAULT '{}', ADD COLUMN attachments jsonb NOT NULL DEFAULT '[]', ADD COLUMN history jsonb NOT NULL DEFAULT '[]';
+DROP POLICY "admin manages promotions" ON promotions;
+DROP POLICY "admin manages disciplinary actions" ON disciplinary_actions;
+DROP POLICY "admin manages attendance" ON attendance;
+REVOKE INSERT,UPDATE,DELETE ON public.attendance,public.promotions,public.disciplinary_actions FROM authenticated;
+CREATE POLICY hr_attendance_read ON attendance FOR SELECT TO authenticated USING(public.hr_reader(officer_id) OR public.hr_head(officer_id));
+CREATE POLICY hr_promotion_read ON promotions FOR SELECT TO authenticated USING(public.hr_reader(officer_id));
+CREATE POLICY hr_discipline_read ON disciplinary_actions FOR SELECT TO authenticated USING(public.hr_reader(officer_id));
+CREATE TABLE public.recruitment_vacancies(id uuid PRIMARY KEY DEFAULT gen_random_uuid(),officer_id uuid REFERENCES public.officers(id),status text NOT NULL DEFAULT 'Draft',details jsonb NOT NULL DEFAULT '{}',attachments jsonb NOT NULL DEFAULT '[]',history jsonb NOT NULL DEFAULT '[]',created_by uuid NOT NULL DEFAULT auth.uid(),created_at timestamptz NOT NULL DEFAULT now());
+GRANT SELECT ON public.recruitment_vacancies TO authenticated; GRANT ALL ON public.recruitment_vacancies TO service_role;
+ALTER TABLE public.recruitment_vacancies ENABLE ROW LEVEL SECURITY;
+CREATE POLICY hr_read ON public.recruitment_vacancies FOR SELECT TO authenticated USING(public.hr_reader(officer_id));
+CREATE TRIGGER audit_recruitment_vacancies AFTER INSERT OR UPDATE OR DELETE ON public.recruitment_vacancies FOR EACH ROW EXECUTE FUNCTION public.audit_trigger();
+CREATE TABLE public.recruitment_applicants(id uuid PRIMARY KEY DEFAULT gen_random_uuid(),officer_id uuid REFERENCES public.officers(id),status text NOT NULL DEFAULT 'Draft',details jsonb NOT NULL DEFAULT '{}',attachments jsonb NOT NULL DEFAULT '[]',history jsonb NOT NULL DEFAULT '[]',created_by uuid NOT NULL DEFAULT auth.uid(),created_at timestamptz NOT NULL DEFAULT now());
+GRANT SELECT ON public.recruitment_applicants TO authenticated; GRANT ALL ON public.recruitment_applicants TO service_role;
+ALTER TABLE public.recruitment_applicants ENABLE ROW LEVEL SECURITY;
+CREATE POLICY hr_read ON public.recruitment_applicants FOR SELECT TO authenticated USING(public.hr_reader(officer_id));
+CREATE TRIGGER audit_recruitment_applicants AFTER INSERT OR UPDATE OR DELETE ON public.recruitment_applicants FOR EACH ROW EXECUTE FUNCTION public.audit_trigger();
+CREATE TABLE public.performance_appraisals(id uuid PRIMARY KEY DEFAULT gen_random_uuid(),officer_id uuid REFERENCES public.officers(id),status text NOT NULL DEFAULT 'Draft',details jsonb NOT NULL DEFAULT '{}',attachments jsonb NOT NULL DEFAULT '[]',history jsonb NOT NULL DEFAULT '[]',created_by uuid NOT NULL DEFAULT auth.uid(),created_at timestamptz NOT NULL DEFAULT now());
+GRANT SELECT ON public.performance_appraisals TO authenticated; GRANT ALL ON public.performance_appraisals TO service_role;
+ALTER TABLE public.performance_appraisals ENABLE ROW LEVEL SECURITY;
+CREATE POLICY hr_read ON public.performance_appraisals FOR SELECT TO authenticated USING(public.hr_reader(officer_id) OR public.hr_head(officer_id));
+CREATE TRIGGER audit_performance_appraisals AFTER INSERT OR UPDATE OR DELETE ON public.performance_appraisals FOR EACH ROW EXECUTE FUNCTION public.audit_trigger();
+CREATE TABLE public.transfers(id uuid PRIMARY KEY DEFAULT gen_random_uuid(),officer_id uuid REFERENCES public.officers(id),status text NOT NULL DEFAULT 'Draft',details jsonb NOT NULL DEFAULT '{}',attachments jsonb NOT NULL DEFAULT '[]',history jsonb NOT NULL DEFAULT '[]',created_by uuid NOT NULL DEFAULT auth.uid(),created_at timestamptz NOT NULL DEFAULT now());
+GRANT SELECT ON public.transfers TO authenticated; GRANT ALL ON public.transfers TO service_role;
+ALTER TABLE public.transfers ENABLE ROW LEVEL SECURITY;
+CREATE POLICY hr_read ON public.transfers FOR SELECT TO authenticated USING(public.hr_reader(officer_id));
+CREATE TRIGGER audit_transfers AFTER INSERT OR UPDATE OR DELETE ON public.transfers FOR EACH ROW EXECUTE FUNCTION public.audit_trigger();
+CREATE TABLE public.training_records(id uuid PRIMARY KEY DEFAULT gen_random_uuid(),officer_id uuid REFERENCES public.officers(id),status text NOT NULL DEFAULT 'Draft',details jsonb NOT NULL DEFAULT '{}',attachments jsonb NOT NULL DEFAULT '[]',history jsonb NOT NULL DEFAULT '[]',created_by uuid NOT NULL DEFAULT auth.uid(),created_at timestamptz NOT NULL DEFAULT now());
+GRANT SELECT ON public.training_records TO authenticated; GRANT ALL ON public.training_records TO service_role;
+ALTER TABLE public.training_records ENABLE ROW LEVEL SECURITY;
+CREATE POLICY hr_read ON public.training_records FOR SELECT TO authenticated USING(public.hr_reader(officer_id));
+CREATE TRIGGER audit_training_records AFTER INSERT OR UPDATE OR DELETE ON public.training_records FOR EACH ROW EXECUTE FUNCTION public.audit_trigger();
+CREATE TABLE public.payroll_records(id uuid PRIMARY KEY DEFAULT gen_random_uuid(),officer_id uuid REFERENCES public.officers(id),status text NOT NULL DEFAULT 'Draft',details jsonb NOT NULL DEFAULT '{}',attachments jsonb NOT NULL DEFAULT '[]',history jsonb NOT NULL DEFAULT '[]',created_by uuid NOT NULL DEFAULT auth.uid(),created_at timestamptz NOT NULL DEFAULT now());
+GRANT SELECT ON public.payroll_records TO authenticated; GRANT ALL ON public.payroll_records TO service_role;
+ALTER TABLE public.payroll_records ENABLE ROW LEVEL SECURITY;
+CREATE POLICY hr_read ON public.payroll_records FOR SELECT TO authenticated USING(public.hr_reader(officer_id));
+CREATE TRIGGER audit_payroll_records AFTER INSERT OR UPDATE OR DELETE ON public.payroll_records FOR EACH ROW EXECUTE FUNCTION public.audit_trigger();
+CREATE TABLE public.hr_reports(id uuid PRIMARY KEY DEFAULT gen_random_uuid(),officer_id uuid REFERENCES public.officers(id),status text NOT NULL DEFAULT 'Draft',details jsonb NOT NULL DEFAULT '{}',attachments jsonb NOT NULL DEFAULT '[]',history jsonb NOT NULL DEFAULT '[]',created_by uuid NOT NULL DEFAULT auth.uid(),created_at timestamptz NOT NULL DEFAULT now());
+GRANT SELECT ON public.hr_reports TO authenticated; GRANT ALL ON public.hr_reports TO service_role;
+ALTER TABLE public.hr_reports ENABLE ROW LEVEL SECURITY;
+CREATE POLICY hr_read ON public.hr_reports FOR SELECT TO authenticated USING(public.hr_reader(officer_id));
+CREATE TRIGGER audit_hr_reports AFTER INSERT OR UPDATE OR DELETE ON public.hr_reports FOR EACH ROW EXECUTE FUNCTION public.audit_trigger();
+CREATE VIEW public.employees WITH(security_invoker=true) AS SELECT * FROM public.officers;
+GRANT SELECT ON public.employees TO authenticated; GRANT ALL ON public.employees TO service_role;
+COMMENT ON VIEW public.employees IS 'Read-only HR projection of canonical officers; never duplicate personnel identities.';
+CREATE POLICY hr_balances_read ON leave_balances FOR SELECT TO authenticated USING(public.hr_reader(officer_id));
+CREATE POLICY hr_leave_read ON leave_requests FOR SELECT TO authenticated USING(public.hr_reader(officer_id));
+ALTER TABLE leave_requests ADD COLUMN workflow_kind text NOT NULL DEFAULT 'Academy',ADD COLUMN recalled_at timestamptz,ADD COLUMN recall_reason text;
+ALTER TABLE leave_requests DROP CONSTRAINT leave_requests_leave_type_check;
+ALTER TABLE leave_requests ADD CONSTRAINT leave_requests_leave_type_check CHECK(leave_type IN ('Annual','Sick','Emergency','Maternity','Special','Study','Compassionate','Paternity'));
+ALTER TABLE leave_requests ADD CONSTRAINT leave_workflow_kind CHECK(workflow_kind IN ('Academy','HR'));
+DROP POLICY "submit leave" ON leave_requests;
+CREATE POLICY "submit leave" ON leave_requests FOR INSERT TO authenticated WITH CHECK(requested_by=auth.uid() AND stage=1 AND status='Pending' AND history='[]'::jsonb AND hr_processed_at IS NULL AND recalled_at IS NULL AND recall_reason IS NULL AND (public.hr_owner(officer_id) OR public.hr_staff() OR public.has_any_role(auth.uid(),ARRAY['commandant']::public.app_role[])));
+CREATE OR REPLACE FUNCTION public.hr_file_access(_path text) RETURNS boolean LANGUAGE sql STABLE SECURITY DEFINER SET search_path=public AS $$ SELECT
+ EXISTS(SELECT 1 FROM officer_documents d WHERE d.bucket_id='hr-files' AND d.file_url=_path AND public.hr_reader(d.officer_id))
+ OR EXISTS(SELECT 1 FROM disciplinary_actions r CROSS JOIN LATERAL jsonb_array_elements(r.attachments) a WHERE a->>'path'=_path AND public.hr_reader(r.officer_id))
+ OR EXISTS(SELECT 1 FROM training_records r CROSS JOIN LATERAL jsonb_array_elements(r.attachments) a WHERE a->>'path'=_path AND public.hr_reader(r.officer_id))
+ OR EXISTS(SELECT 1 FROM recruitment_applicants r CROSS JOIN LATERAL jsonb_array_elements(r.attachments) a WHERE a->>'path'=_path AND public.hr_staff())
+ OR EXISTS(SELECT 1 FROM leave_requests r CROSS JOIN LATERAL jsonb_array_elements(r.attachments) a WHERE a->>'path'=_path AND r.workflow_kind='HR' AND (public.hr_reader(r.officer_id) OR public.hr_head(r.officer_id))) $$;
+CREATE POLICY hr_file_insert ON storage.objects FOR INSERT TO authenticated WITH CHECK(bucket_id='hr-files' AND (storage.foldername(name))[1]=auth.uid()::text);
+CREATE POLICY hr_file_read ON storage.objects FOR SELECT TO authenticated USING(bucket_id='hr-files' AND public.hr_file_access(name));
+CREATE OR REPLACE FUNCTION public.validate_hr_document() RETURNS trigger LANGUAGE plpgsql SECURITY DEFINER SET search_path=public AS $$ BEGIN
+ IF NEW.bucket_id='hr-files' AND (NEW.uploaded_by IS DISTINCT FROM auth.uid() OR split_part(NEW.file_url,'/',1)<>auth.uid()::text OR NOT EXISTS(SELECT 1 FROM storage.objects WHERE bucket_id='hr-files' AND name=NEW.file_url)) THEN RAISE EXCEPTION 'Invalid personnel file'; END IF;
+ RETURN NEW; END $$;
+CREATE TRIGGER validate_hr_document BEFORE INSERT ON officer_documents FOR EACH ROW EXECUTE FUNCTION public.validate_hr_document();
+CREATE OR REPLACE FUNCTION public.hr_validate_files(_files jsonb) RETURNS void LANGUAGE plpgsql SECURITY DEFINER SET search_path=public AS $$ DECLARE f jsonb; BEGIN
+ IF jsonb_typeof(_files)<>'array' THEN RAISE EXCEPTION 'Invalid files'; END IF;
+ FOR f IN SELECT value FROM jsonb_array_elements(_files) LOOP IF split_part(f->>'path','/',1)<>auth.uid()::text OR NOT EXISTS(SELECT 1 FROM storage.objects WHERE bucket_id='hr-files' AND name=f->>'path') THEN RAISE EXCEPTION 'Invalid file ownership'; END IF; END LOOP;
+END $$;
+REVOKE ALL ON FUNCTION public.hr_validate_files(jsonb) FROM PUBLIC,anon;
