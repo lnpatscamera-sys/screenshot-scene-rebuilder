@@ -25,6 +25,8 @@ const NAV: { group: string; items: NavItem[] }[] = [
       { to: "/hr", label: "Human Resources", icon: Briefcase },
       { to: "/ict", label: "ICT Helpdesk", icon: LifeBuoy },
       { to: "/command", label: "Command & Daily Reports", icon: FileText },
+      { to: "/facilities", label: "Facility Management", icon: Building2 },
+      { to: "/security", label: "Internal Security (ISS)", icon: ShieldCheck },
       { to: "/notifications", label: "Notification Center", icon: Bell },
       { to: "/leave", label: "Leave", icon: CalendarDays },
       { to: "/supplies", label: "Supply Requests", icon: PackageSearch },

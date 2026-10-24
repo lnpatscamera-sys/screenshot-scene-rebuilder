@@ -281,6 +281,20 @@
       "when": 1792841242999,
       "tag": "0039_command_draft_procurement_estimate",
       "breakpoints": true
+    },
+    {
+      "idx": 40,
+      "version": "7",
+      "when": 1792845888910,
+      "tag": "0040_facility_iss_roles",
+      "breakpoints": true
+    },
+    {
+      "idx": 41,
+      "version": "7",
+      "when": 1792845924725,
+      "tag": "0041_facility_iss_module",
+      "breakpoints": true
     }
   ]
 }
