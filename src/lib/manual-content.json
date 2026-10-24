@@ -1,21 +1,316 @@
 [
-  {"id":"getting-started","title":"Getting started & signing in","image":"auth","who":"Everyone","intro":"Open the LNPATS ERP in your web browser and sign in with your official email and password, or with Google.","steps":["Go to the LNPATS ERP web address.","Enter your email and password and press Sign in, or choose Continue with Google.","New accounts start as Officer. The System Administrator assigns extra roles in Users & Roles.","Use the moon icon at the top right to switch between light and dark display, and the arrow icon to sign out."],"tips":["Never share your password. Sign out when using a shared computer."]},
-  {"id":"dashboard","title":"Dashboard & navigation","image":"dashboard","who":"Everyone","intro":"The Dashboard summarises personnel, pending approvals, stock alerts and recent activity. The left menu lists every module you have access to.","steps":["Use the left menu to open any module (Overview, Operations, Logistics, Administration).","Click the bell icon to see notifications about requests waiting for you.","On a phone or small screen, open the menu with the button at the top left."],"tips":["Menu items you are not authorised to use show an access notice instead of data."]},
-  {"id":"organization","title":"Organization structure","image":"organization","who":"System Administrator","intro":"Lists LNPATS offices and their sections, used throughout HR, Finance, Leave and Procurement.","steps":["Open Organization from the menu.","Review offices and the sections under each.","Administrators can add or rename sections."],"tips":[]},
-  {"id":"officers","title":"Officers registry","image":"officers","who":"HR, Administrators","intro":"The master list of officers with service numbers, rank, section and ID card details.","steps":["Open Officers and search by name, number or rank.","Press New officer to register a person and fill in the form.","Click an officer to open the profile, upload documents and print the ID card."],"tips":["Service numbers and employee numbers are permanent and cannot be changed."]},
-  {"id":"leave","title":"Leave management","image":"leave","who":"All officers; approvers by stage","intro":"Apply for leave and track it through the Academy approval chain: Section Head → Assistant Commissioner → Deputy Commissioner → Commandant → HR processing.","steps":["Open Leave and press New request.","Choose the leave type, dates and reason; attach supporting files if needed.","Submit. The request moves stage by stage; each approver sees it in their queue.","When fully approved, download the approval letter from the request."],"tips":["Your remaining annual balance is shown before you submit."]},
-  {"id":"hr","title":"Human Resources","image":"hr","who":"HR Officer, HR Administrator, Commandant","intro":"Employee records, attendance, HR leave, recruitment, appraisals, promotions, transfers, discipline, training records, payroll summaries and reports.","steps":["Open Human Resources and choose a tab (Employees, Attendance, Leave, Recruitment, etc.).","Register employees and upload private personnel documents.","Record attendance manually or scan an officer's QR code with the camera.","Create promotions, transfers or disciplinary cases; approvers act with Approve / Reject.","Use Reports to download PDF or Excel summaries."],"tips":["Personnel files are private — only authorised HR staff and the record owner can open them.","Payroll here is a salary summary; it does not pay anyone."]},
-  {"id":"training","title":"Training (Academy)","image":"training","who":"DC Academy, Section Heads, Commandant","intro":"Cadet registration, programs, courses, instructors, enrolment, attendance, assessments, graduation and certificates.","steps":["Register cadets and create programs, courses and instructors.","Enrol cadets into courses.","Section Heads record attendance and assessment results; grades are calculated automatically.","DC Academy or the Commandant approves graduation, which issues a certificate with a QR verification code."],"tips":["Anyone can verify a certificate by its number or QR code."]},
-  {"id":"finance","title":"Finance management","image":"finance","who":"Finance Administrator, Department Heads, Commandant, Auditor","intro":"Budgets, monitoring, expenses, revenue, cash requests, procurement funding, reports and audit.","steps":["Create a budget for your section and submit it.","Approvers see items waiting for them and press Approve or Reject with a comment.","Record expenses against approved budgets; the system tracks remaining balance.","Expenses above $10,000 also require Commandant approval.","Download reports from the Reports tab."],"tips":["A warning appears when a budget is 80% spent."]},
-  {"id":"procurement","title":"Procurement","image":"procurement","who":"Procurement Officer/Admin, Finance, Commandant, Storekeeper","intro":"Vendors, purchase requests, quotations (RFQ), purchase orders, goods received notes, contracts and supplier ratings.","steps":["Register vendors with their category and documents.","Raise a purchase request with item lines; it follows Department Head → Procurement → Finance → Commandant (plus Chief of ICT for ICT items).","Send RFQs, record quotations and select the winning bidder.","Create, approve and send the purchase order to the vendor.","The Storekeeper approves the goods received note, which adds stock to inventory."],"tips":["Contracts nearing expiry are highlighted for renewal."]},
-  {"id":"inventory","title":"Inventory & warehouses","image":"inventory","who":"Storekeeper, Logistics","intro":"All stock items with codes, categories, warehouses, reorder levels and values.","steps":["Open Inventory Items to view stock by warehouse with filters.","Register a new item; its opening stock is recorded as a receipt.","Use Transfer to move stock between warehouses.","Export the list to PDF or Excel."],"tips":["Quantities change only through receipts, issues, transfers and reconciliations — never by editing."]},
-  {"id":"stock","title":"Receipts, issues & stock movements","image":"stock-movements","who":"Storekeeper","intro":"Every change to stock is logged as a movement linked to its source document.","steps":["Store Receipts: record goods coming in.","Store Issues: record goods going out; shortages are refused.","Stock Movements: review the full history, including reconciliation adjustments.","Use the AI discrepancy analyser on an item to get suggested causes for a stock difference — it only advises and never changes stock."],"tips":[]},
-  {"id":"supplies","title":"Supply & equipment requests","image":"supplies","who":"All officers; approvers","intro":"Request supplies or equipment and track approval through to collection.","steps":["Open Supply Requests and press New request.","Add items and quantities and submit.","Approvers move it forward; once approved, the Storekeeper issues it on collection.","Equipment Requests shows the same requests for equipment items."],"tips":[]},
-  {"id":"logistics","title":"Suppliers, assets & vehicle bookings","image":"assets","who":"Logistics, System Administrator","intro":"Registers of suppliers, academy assets and vehicle reservations.","steps":["Suppliers: view and update vendor contact details.","Assets: record equipment, assignments and maintenance.","Vehicle Bookings: reserve a vehicle for a date and purpose."],"tips":[]},
-  {"id":"ict","title":"ICT Helpdesk","image":"ict","who":"All officers; ICT staff","intro":"Report IT problems, request services and manage ICT equipment and network records.","steps":["Open ICT Helpdesk and press New ticket; describe the problem and priority.","ICT staff assign, update and resolve tickets.","Track ICT assets, assignments and maintenance in their tabs.","Download helpdesk reports."],"tips":[]},
-  {"id":"registry","title":"Registry (correspondence)","image":"registry","who":"Registry Officer, Commandant","intro":"Incoming and outgoing letters, numbered automatically as LNPATS/IN/YYYY/0001 or LNPATS/OUT/YYYY/0001.","steps":["Register a new incoming or outgoing item and attach the scanned letter.","Route it for review, action and response through each workflow step.","Archive when complete; the full history is preserved."],"tips":[]},
-  {"id":"documents","title":"Documents","image":"documents","who":"All staff; approvers","intro":"Official documents with categories, versions, approvals and publishing.","steps":["Upload a document and choose its category.","Submit for approval; approvers sign off by name.","Publish once approved. Upload a new version or roll back to an earlier one when needed."],"tips":[]},
-  {"id":"search","title":"Global search","image":"search","who":"Everyone","intro":"Find officers, requests, correspondence and documents from one place.","steps":["Open Global Search, type a name, number or reference, and open a result."],"tips":["You only see results you are allowed to access."]},
-  {"id":"audit","title":"Audit log","image":"audit","who":"System Administrator, Auditor","intro":"Every create, update and delete is recorded automatically with who did it and when.","steps":["Open Audit Log and filter by user, action or area.","Export to CSV, PDF or Excel for review."],"tips":["Audit records are permanent and cannot be edited."]},
-  {"id":"users","title":"Users & roles","image":"admin-users","who":"System Administrator","intro":"Assign roles that control what each person can see and approve.","steps":["Open Users & Roles and find the person.","Tick the roles they need (e.g. Commandant, HR Officer, Finance Administrator, Storekeeper, Registry Officer, ICT Administrator).","Changes take effect the next time they open a page."],"tips":["Give each person only the roles their job requires."]}
+ {
+  "id": "getting-started",
+  "title": "Getting started & signing in",
+  "image": "auth",
+  "who": "Everyone",
+  "intro": "Open the LNPATS ERP in your web browser and sign in with your official email and password, or with Google.",
+  "steps": [
+   "Go to the LNPATS ERP web address.",
+   "Enter your email and password and press Sign in, or choose Continue with Google.",
+   "New accounts start as Officer. The System Administrator assigns extra roles in Users & Roles.",
+   "Use the moon icon at the top right to switch between light and dark display, and the arrow icon to sign out."
+  ],
+  "tips": [
+   "Never share your password. Sign out when using a shared computer."
+  ]
+ },
+ {
+  "id": "dashboard",
+  "title": "Dashboard & navigation",
+  "image": "dashboard",
+  "who": "Everyone",
+  "intro": "The Dashboard summarises personnel, pending approvals, stock alerts and recent activity. The left menu lists every module you have access to.",
+  "steps": [
+   "Use the left menu to open any module (Overview, Operations, Logistics, Administration).",
+   "Click the bell icon to see notifications about requests waiting for you.",
+   "On a phone or small screen, open the menu with the button at the top left."
+  ],
+  "tips": [
+   "Menu items you are not authorised to use show an access notice instead of data."
+  ]
+ },
+ {
+  "id": "organization",
+  "title": "Organization structure",
+  "image": "organization",
+  "who": "System Administrator",
+  "intro": "Lists LNPATS offices and their sections, used throughout HR, Finance, Leave and Procurement.",
+  "steps": [
+   "Open Organization from the menu.",
+   "Review offices and the sections under each.",
+   "Administrators can add or rename sections."
+  ],
+  "tips": []
+ },
+ {
+  "id": "officers",
+  "title": "Officers registry",
+  "image": "officers",
+  "who": "HR, Administrators",
+  "intro": "The master list of officers with service numbers, rank, section and ID card details.",
+  "steps": [
+   "Open Officers and search by name, number or rank.",
+   "Press New officer to register a person and fill in the form.",
+   "Click an officer to open the profile, upload documents and print the ID card."
+  ],
+  "tips": [
+   "Service numbers and employee numbers are permanent and cannot be changed.",
+   "Ranks follow the official order: DIGP, Comm., DCP, ACP, CSP, SUPT., CIP, Insp., SGT., Cpl."
+  ]
+ },
+ {
+  "id": "leave",
+  "title": "Leave management",
+  "image": "leave",
+  "who": "All officers; approvers by stage",
+  "intro": "Apply for leave and track it through the Academy approval chain: Section Head → Assistant Commissioner → Deputy Commissioner → Commandant → HR processing.",
+  "steps": [
+   "Open Leave and press New request.",
+   "Choose the leave type, dates and reason; attach supporting files if needed.",
+   "Submit. The request moves stage by stage; each approver sees it in their queue.",
+   "When fully approved, download the approval letter from the request."
+  ],
+  "tips": [
+   "Your remaining annual balance is shown before you submit."
+  ]
+ },
+ {
+  "id": "hr",
+  "title": "Human Resources",
+  "image": "hr",
+  "who": "HR Officer, HR Administrator, Commandant",
+  "intro": "Employee records, attendance, HR leave, recruitment, appraisals, promotions, transfers, discipline, training records, payroll summaries and reports.",
+  "steps": [
+   "Open Human Resources and choose a tab (Employees, Attendance, Leave, Recruitment, etc.).",
+   "Register employees and upload private personnel documents.",
+   "Record attendance manually or scan an officer's QR code with the camera.",
+   "Create promotions, transfers or disciplinary cases; approvers act with Approve / Reject.",
+   "Use Reports to download PDF or Excel summaries."
+  ],
+  "tips": [
+   "Personnel files are private — only authorised HR staff and the record owner can open them.",
+   "Payroll here is a salary summary; it does not pay anyone."
+  ]
+ },
+ {
+  "id": "training",
+  "title": "Training (Academy)",
+  "image": "training",
+  "who": "DC Academy, Section Heads, Commandant",
+  "intro": "Cadet registration, programs, courses, instructors, enrolment, attendance, assessments, graduation and certificates.",
+  "steps": [
+   "Register cadets and create programs, courses and instructors.",
+   "Enrol cadets into courses.",
+   "Section Heads record attendance and assessment results; grades are calculated automatically.",
+   "DC Academy or the Commandant approves graduation, which issues a certificate with a QR verification code."
+  ],
+  "tips": [
+   "Anyone can verify a certificate by its number or QR code."
+  ]
+ },
+ {
+  "id": "finance",
+  "title": "Finance management",
+  "image": "finance",
+  "who": "Finance Administrator, Department Heads, Commandant, Auditor",
+  "intro": "Budgets, monitoring, expenses, revenue, cash requests, procurement funding, reports and audit.",
+  "steps": [
+   "Create a budget for your section and submit it.",
+   "Approvers see items waiting for them and press Approve or Reject with a comment.",
+   "Record expenses against approved budgets; the system tracks remaining balance.",
+   "Expenses above $10,000 also require Commandant approval.",
+   "Download reports from the Reports tab."
+  ],
+  "tips": [
+   "A warning appears when a budget is 80% spent."
+  ]
+ },
+ {
+  "id": "procurement",
+  "title": "Procurement",
+  "image": "procurement",
+  "who": "Procurement Officer/Admin, Finance, Commandant, Storekeeper",
+  "intro": "Vendors, purchase requests, quotations (RFQ), purchase orders, goods received notes, contracts and supplier ratings.",
+  "steps": [
+   "Register vendors with their category and documents.",
+   "Raise a purchase request with item lines; it follows Department Head → Procurement → Finance → Commandant (plus Chief of ICT for ICT items).",
+   "Send RFQs, record quotations and select the winning bidder.",
+   "Create, approve and send the purchase order to the vendor.",
+   "The Storekeeper approves the goods received note, which adds stock to inventory."
+  ],
+  "tips": [
+   "Contracts nearing expiry are highlighted for renewal."
+  ]
+ },
+ {
+  "id": "inventory",
+  "title": "Inventory & warehouses",
+  "image": "inventory",
+  "who": "Storekeeper, Logistics",
+  "intro": "All stock items with codes, categories, warehouses, reorder levels and values.",
+  "steps": [
+   "Open Inventory Items to view stock by warehouse with filters.",
+   "Register a new item; its opening stock is recorded as a receipt.",
+   "Use Transfer to move stock between warehouses.",
+   "Export the list to PDF or Excel."
+  ],
+  "tips": [
+   "Quantities change only through receipts, issues, transfers and reconciliations — never by editing."
+  ]
+ },
+ {
+  "id": "stock",
+  "title": "Receipts, issues & stock movements",
+  "image": "stock-movements",
+  "who": "Storekeeper",
+  "intro": "Every change to stock is logged as a movement linked to its source document.",
+  "steps": [
+   "Store Receipts: record goods coming in.",
+   "Store Issues: record goods going out; shortages are refused.",
+   "Stock Movements: review the full history, including reconciliation adjustments.",
+   "Use the AI discrepancy analyser on an item to get suggested causes for a stock difference — it only advises and never changes stock."
+  ],
+  "tips": []
+ },
+ {
+  "id": "supplies",
+  "title": "Supply & equipment requests",
+  "image": "supplies",
+  "who": "All officers; approvers",
+  "intro": "Request supplies or equipment and track approval through to collection.",
+  "steps": [
+   "Open Supply Requests and press New request.",
+   "Add items and quantities and submit.",
+   "Approvers move it forward; once approved, the Storekeeper issues it on collection.",
+   "Equipment Requests shows the same requests for equipment items."
+  ],
+  "tips": []
+ },
+ {
+  "id": "logistics",
+  "title": "Suppliers, assets & vehicle bookings",
+  "image": "assets",
+  "who": "Logistics, System Administrator",
+  "intro": "Registers of suppliers, academy assets and vehicle reservations.",
+  "steps": [
+   "Suppliers: view and update vendor contact details.",
+   "Assets: record equipment, assignments and maintenance.",
+   "Vehicle Bookings: reserve a vehicle for a date and purpose."
+  ],
+  "tips": []
+ },
+ {
+  "id": "ict",
+  "title": "ICT Helpdesk",
+  "image": "ict",
+  "who": "All officers; ICT staff",
+  "intro": "Report IT problems, request services and manage ICT equipment and network records.",
+  "steps": [
+   "Open ICT Helpdesk and press New ticket; describe the problem and priority.",
+   "ICT staff assign, update and resolve tickets.",
+   "Track ICT assets, assignments and maintenance in their tabs.",
+   "Download helpdesk reports."
+  ],
+  "tips": []
+ },
+ {
+  "id": "command",
+  "title": "Command chain reports & supplies",
+  "image": "",
+  "who": "All officers; supervisors, section heads, Commandant",
+  "intro": "Submit daily reports up the reporting line and request command supplies that pass a five-stage approval before Logistics issues stock.",
+  "steps": [
+   "Open Command and choose Daily Reports. Write your report and press Submit before the afternoon deadline (weekdays, Liberia time).",
+   "Your supervisor reviews it; it can be approved upward or returned for correction.",
+   "Section heads compile approved reports and can download them as Word documents.",
+   "For supplies, open Command Supplies, list the items and submit. After final approval, stock is reserved.",
+   "When Logistics marks the order ready, sign for pickup; Logistics then confirms collection and stock is deducted once."
+  ],
+  "tips": [
+   "Alerts appear in the Notification Center from 3 pm to 6 pm if a report is overdue.",
+   "HR must link your account and assign your supervisor before you can report."
+  ]
+ },
+ {
+  "id": "notifications",
+  "title": "Notification Center",
+  "image": "",
+  "who": "Everyone",
+  "intro": "All alerts about approvals waiting for you, returned items and overdue reports in one place.",
+  "steps": [
+   "Click Notification Center in the menu or the bell icon.",
+   "Use the Unread filter to see only new alerts.",
+   "Open an alert to go straight to the record."
+  ],
+  "tips": []
+ },
+ {
+  "id": "registry",
+  "title": "Registry (correspondence)",
+  "image": "registry",
+  "who": "Registry Officer, Commandant",
+  "intro": "Incoming and outgoing letters, numbered automatically as LNPATS/IN/YYYY/0001 or LNPATS/OUT/YYYY/0001.",
+  "steps": [
+   "Register a new incoming or outgoing item and attach the scanned letter.",
+   "Route it for review, action and response through each workflow step.",
+   "Archive when complete; the full history is preserved."
+  ],
+  "tips": []
+ },
+ {
+  "id": "documents",
+  "title": "Documents",
+  "image": "documents",
+  "who": "All staff; approvers",
+  "intro": "Official documents with categories, versions, approvals and publishing.",
+  "steps": [
+   "Upload a document and choose its category.",
+   "Submit for approval; approvers sign off by name.",
+   "Publish once approved. Upload a new version or roll back to an earlier one when needed."
+  ],
+  "tips": []
+ },
+ {
+  "id": "search",
+  "title": "Global search",
+  "image": "search",
+  "who": "Everyone",
+  "intro": "Find officers, requests, correspondence and documents from one place.",
+  "steps": [
+   "Open Global Search, type a name, number or reference, and open a result."
+  ],
+  "tips": [
+   "You only see results you are allowed to access."
+  ]
+ },
+ {
+  "id": "audit",
+  "title": "Audit log",
+  "image": "audit",
+  "who": "System Administrator, Auditor",
+  "intro": "Every create, update and delete is recorded automatically with who did it and when.",
+  "steps": [
+   "Open Audit Log and filter by user, action or area.",
+   "Export to CSV, PDF or Excel for review."
+  ],
+  "tips": [
+   "Audit records are permanent and cannot be edited."
+  ]
+ },
+ {
+  "id": "users",
+  "title": "Users & roles",
+  "image": "admin-users",
+  "who": "System Administrator",
+  "intro": "Assign roles that control what each person can see and approve.",
+  "steps": [
+   "Open Users & Roles and find the person.",
+   "Tick the roles they need (e.g. Commandant, HR Officer, Finance Administrator, Storekeeper, Registry Officer, ICT Administrator).",
+   "Changes take effect the next time they open a page."
+  ],
+  "tips": [
+   "Give each person only the roles their job requires."
+  ]
+ }
 ]
