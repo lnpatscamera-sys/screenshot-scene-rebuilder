@@ -24,6 +24,8 @@ const NAV: { group: string; items: NavItem[] }[] = [
       { to: "/procurement", label: "Procurement", icon: ShoppingCart },
       { to: "/hr", label: "Human Resources", icon: Briefcase },
       { to: "/ict", label: "ICT Helpdesk", icon: LifeBuoy },
+      { to: "/command", label: "Command & Daily Reports", icon: FileText },
+      { to: "/notifications", label: "Notification Center", icon: Bell },
       { to: "/leave", label: "Leave", icon: CalendarDays },
       { to: "/supplies", label: "Supply Requests", icon: PackageSearch },
       { to: "/inventory", label: "Inventory Items", icon: Boxes },
@@ -36,6 +38,7 @@ const NAV: { group: string; items: NavItem[] }[] = [
     group: "Logistics",
     items: [
       { to: "/stock-movements", label: "Stock Movements", icon: ScrollText },
+      { to: "/command-inventory", label: "Command Inventory", icon: Boxes },
       { to: "/equipment-requests", label: "Equipment Requests", icon: PackageSearch },
       { to: "/receipts", label: "Store Receipts", icon: Boxes },
       { to: "/issues", label: "Store Issues", icon: Boxes },
@@ -54,6 +57,7 @@ const NAV: { group: string; items: NavItem[] }[] = [
 ];
 
 function SideNav({ onNav }: { onNav?: () => void }) {
+  const { hasAny } = useAuth();
   return (
     <nav className="flex flex-col gap-6 p-4 text-sm">
       <div className="flex items-center gap-3 px-2">
@@ -66,7 +70,7 @@ function SideNav({ onNav }: { onNav?: () => void }) {
       {NAV.map((g) => (
         <div key={g.group}>
           <div className="px-2 mb-1 text-[10px] uppercase tracking-widest text-sidebar-foreground/50">{g.group}</div>
-          {g.items.map((i) => (
+          {g.items.filter(i => i.to !== '/command-inventory' || hasAny(['commandant','dc_admin','storekeeper'])).map((i) => (
             <Link
               key={i.label}
               to={i.to as "/dashboard"}
@@ -106,7 +110,7 @@ function Notifications() {
         </Button>
       </PopoverTrigger>
       <PopoverContent align="end" className="w-80 p-0">
-        <div className="px-4 py-2 border-b font-medium text-sm">Notifications</div>
+        <div className="px-4 py-2 border-b font-medium text-sm"><Link to="/notifications">Notification Center</Link></div>
         <div className="max-h-80 overflow-auto">
           {(data ?? []).length === 0 && <p className="p-4 text-sm text-muted-foreground">No notifications yet.</p>}
           {(data ?? []).map((n) => (

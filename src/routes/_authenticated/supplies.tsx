@@ -14,6 +14,7 @@ import { PageHeader, StatusBadge } from "@/components/AppShell";
 import { useAuth } from "@/lib/auth";
 import { SUPPLY_ACTION_LABEL, SUPPLY_STAGES, SUPPLY_STAGE_ROLES } from "@/lib/workflow";
 import { exportCsv } from "@/lib/export";
+import { CommandSupplies } from "@/components/CommandSupplies";
 
 export const Route = createFileRoute("/_authenticated/supplies")({
   head: () => ({ meta: [{ title: "Supply Requests — LNPATS ERP" }, { name: "description", content: "Track LNPATS equipment requests from approval through collection." }, { property: "og:title", content: "Supply Requests — LNPATS ERP" }, { property: "og:description", content: "Track LNPATS equipment requests from approval through collection." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
@@ -64,6 +65,8 @@ export function Supplies() {
   };
 
   let reqs = data?.reqs ?? [];
+  const commandRequests = reqs.filter(r => r.workflow_kind === 'Command');
+  reqs = reqs.filter(r => r.workflow_kind !== 'Command');
   if (filter === "mine") reqs = reqs.filter((r) => r.approval_status !== "Rejected" && r.stage < 8 && hasAny(SUPPLY_STAGE_ROLES[r.stage] ?? []));
   if (filter === "open") reqs = reqs.filter((r) => r.approval_status !== "Rejected" && r.stage < 8);
 
@@ -102,6 +105,8 @@ export function Supplies() {
           </>
         }
       />
+      <CommandSupplies requests={commandRequests} />
+      <h2 className="font-semibold text-lg mt-8 mb-3">Existing section requests</h2>
       <div className="flex gap-2 mb-4">
         {(["all", "open", "mine"] as const).map((f) => (
           <Button key={f} size="sm" variant={filter === f ? "default" : "outline"} onClick={() => setFilter(f)}>{f === "mine" ? "Awaiting me" : f === "open" ? "Open" : "All"}</Button>

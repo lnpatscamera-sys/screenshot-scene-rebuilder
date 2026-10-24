@@ -11,6 +11,9 @@ import { useAuth } from "@/lib/auth";
 import { LEAVE_STAGE_ROLES, SUPPLY_STAGE_ROLES } from "@/lib/workflow";
 import { phase2Options } from "@/lib/phase2-data";
 import { DOCUMENT_ROLES, REGISTRY_ROLES } from "@/lib/phase2";
+import { Button } from '@/components/ui/button';
+import { commandOptions } from '@/lib/command';
+import { reportAlertHour } from '@/lib/command-rules';
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({ meta: [{ title: "Dashboard — LNPATS ERP" }, { name: "description", content: "Command overview of LNPATS officers, leave, supply requests, and inventory." }, { property: "og:title", content: "Dashboard — LNPATS ERP" }, { property: "og:description", content: "Command overview of LNPATS officers, leave, supply requests, and inventory." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
@@ -23,6 +26,7 @@ function Dashboard() {
   const { hasAny } = useAuth();
   const qc = useQueryClient();
   const phase = useQuery(phase2Options);
+  const command = useQuery(commandOptions);
   const { data } = useQuery({
     queryKey: ["dashboard"],
     queryFn: async () => {
@@ -66,7 +70,8 @@ function Dashboard() {
 
   return (
     <div>
-      <PageHeader title="Command Dashboard" subtitle="Live overview of the Academy — updates automatically" />
+      <PageHeader title="Command Dashboard" subtitle="Live overview of the Academy — updates automatically" actions={<><Button asChild><Link to="/command">Daily Report</Link></Button><Button asChild variant="outline"><Link to="/supplies">Request Supply</Link></Button></>} />
+      {command.data && <section className="border-y py-4 mb-5"><div className="flex flex-wrap gap-8 text-sm"><div>Reports submitted<strong className="block text-2xl">{command.data.summary.submitted}</strong></div><div>Outstanding reports<strong className="block text-2xl">{command.data.summary.expected-command.data.summary.submitted}</strong></div><Button variant="link" asChild><Link to="/command">Command reporting</Link></Button>{hasAny(['commandant','dc_admin','storekeeper'])&&<Button variant="link" asChild><Link to="/command-inventory">Command Inventory Overview</Link></Button>}</div>{reportAlertHour(new Date()) !== null && Number(reportAlertHour(new Date()))>=17&&command.data.summary.missing.length>0&&<div className="mt-3"><h2 className="text-sm font-semibold">OFFICERS WHO FAILED TO REPORT TODAY</h2><ul className="text-sm mt-2">{command.data.summary.missing.map(o=><li key={o.id}>{o.name} · {o.employee_number}</li>)}</ul></div>}</section>}
       <div className="flex flex-wrap gap-4 border-y py-4 mb-5 text-sm"><Link to="/registry" className="flex-1 min-w-40"><span className="text-muted-foreground">Registry pending</span><strong className="block text-2xl">{phase.data?.registry.filter(r=>r.stage<6).length ?? 0}</strong><span className="text-xs text-muted-foreground">{phase.data?.registry.filter(r=>r.stage<7&&hasAny([...(REGISTRY_ROLES[r.stage]??[]),"commandant","ict_admin"])).length ?? 0} awaiting you</span></Link><Link to="/documents" className="flex-1 min-w-40"><span className="text-muted-foreground">Document approvals</span><strong className="block text-2xl">{phase.data?.documents.filter(d=>d.status==='Pending'&&hasAny([...(DOCUMENT_ROLES[d.stage]??[]),"commandant","ict_admin"])).length ?? 0}</strong><span className="text-xs text-muted-foreground">Awaiting your review</span></Link><Link to="/leave" className="flex-1 min-w-40"><span className="text-muted-foreground">HR processing</span><strong className="block text-2xl">{phase.data?.leave.filter(l=>l.stage===5&&l.status==='Pending').length ?? 0}</strong><span className="text-xs text-muted-foreground">Leave awaiting final processing</span></Link><Link to="/search" className="self-center text-primary font-medium">Search records →</Link></div>
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {kpis.map((k) => (

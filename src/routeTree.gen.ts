@@ -14,6 +14,8 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedAssetsRouteImport } from './routes/_authenticated/assets'
 import { Route as AuthenticatedAuditRouteImport } from './routes/_authenticated/audit'
+import { Route as AuthenticatedCommandRouteImport } from './routes/_authenticated/command'
+import { Route as AuthenticatedCommandInventoryRouteImport } from './routes/_authenticated/command-inventory'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedDocumentsRouteImport } from './routes/_authenticated/documents'
 import { Route as AuthenticatedEquipmentRequestsRouteImport } from './routes/_authenticated/equipment-requests'
@@ -24,6 +26,7 @@ import { Route as AuthenticatedInventoryRouteImport } from './routes/_authentica
 import { Route as AuthenticatedIssuesRouteImport } from './routes/_authenticated/issues'
 import { Route as AuthenticatedLeaveRouteImport } from './routes/_authenticated/leave'
 import { Route as AuthenticatedManualRouteImport } from './routes/_authenticated/manual'
+import { Route as AuthenticatedNotificationsRouteImport } from './routes/_authenticated/notifications'
 import { Route as AuthenticatedOrganizationRouteImport } from './routes/_authenticated/organization'
 import { Route as AuthenticatedProcurementRouteImport } from './routes/_authenticated/procurement'
 import { Route as AuthenticatedReceiptsRouteImport } from './routes/_authenticated/receipts'
@@ -64,6 +67,17 @@ const AuthenticatedAuditRoute = AuthenticatedAuditRouteImport.update({
   path: '/audit',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedCommandRoute = AuthenticatedCommandRouteImport.update({
+  id: '/command',
+  path: '/command',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedCommandInventoryRoute =
+  AuthenticatedCommandInventoryRouteImport.update({
+    id: '/command-inventory',
+    path: '/command-inventory',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -115,6 +129,12 @@ const AuthenticatedManualRoute = AuthenticatedManualRouteImport.update({
   path: '/manual',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedNotificationsRoute =
+  AuthenticatedNotificationsRouteImport.update({
+    id: '/notifications',
+    path: '/notifications',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedOrganizationRoute =
   AuthenticatedOrganizationRouteImport.update({
     id: '/organization',
@@ -203,6 +223,8 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/assets': typeof AuthenticatedAssetsRoute
   '/audit': typeof AuthenticatedAuditRoute
+  '/command': typeof AuthenticatedCommandRoute
+  '/command-inventory': typeof AuthenticatedCommandInventoryRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/documents': typeof AuthenticatedDocumentsRoute
   '/equipment-requests': typeof AuthenticatedEquipmentRequestsRoute
@@ -213,6 +235,7 @@ export interface FileRoutesByFullPath {
   '/issues': typeof AuthenticatedIssuesRoute
   '/leave': typeof AuthenticatedLeaveRoute
   '/manual': typeof AuthenticatedManualRoute
+  '/notifications': typeof AuthenticatedNotificationsRoute
   '/organization': typeof AuthenticatedOrganizationRoute
   '/procurement': typeof AuthenticatedProcurementRoute
   '/receipts': typeof AuthenticatedReceiptsRoute
@@ -234,6 +257,8 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/assets': typeof AuthenticatedAssetsRoute
   '/audit': typeof AuthenticatedAuditRoute
+  '/command': typeof AuthenticatedCommandRoute
+  '/command-inventory': typeof AuthenticatedCommandInventoryRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/documents': typeof AuthenticatedDocumentsRoute
   '/equipment-requests': typeof AuthenticatedEquipmentRequestsRoute
@@ -244,6 +269,7 @@ export interface FileRoutesByTo {
   '/issues': typeof AuthenticatedIssuesRoute
   '/leave': typeof AuthenticatedLeaveRoute
   '/manual': typeof AuthenticatedManualRoute
+  '/notifications': typeof AuthenticatedNotificationsRoute
   '/organization': typeof AuthenticatedOrganizationRoute
   '/procurement': typeof AuthenticatedProcurementRoute
   '/receipts': typeof AuthenticatedReceiptsRoute
@@ -267,6 +293,8 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/_authenticated/assets': typeof AuthenticatedAssetsRoute
   '/_authenticated/audit': typeof AuthenticatedAuditRoute
+  '/_authenticated/command': typeof AuthenticatedCommandRoute
+  '/_authenticated/command-inventory': typeof AuthenticatedCommandInventoryRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/documents': typeof AuthenticatedDocumentsRoute
   '/_authenticated/equipment-requests': typeof AuthenticatedEquipmentRequestsRoute
@@ -277,6 +305,7 @@ export interface FileRoutesById {
   '/_authenticated/issues': typeof AuthenticatedIssuesRoute
   '/_authenticated/leave': typeof AuthenticatedLeaveRoute
   '/_authenticated/manual': typeof AuthenticatedManualRoute
+  '/_authenticated/notifications': typeof AuthenticatedNotificationsRoute
   '/_authenticated/organization': typeof AuthenticatedOrganizationRoute
   '/_authenticated/procurement': typeof AuthenticatedProcurementRoute
   '/_authenticated/receipts': typeof AuthenticatedReceiptsRoute
@@ -300,6 +329,8 @@ export interface FileRouteTypes {
     | '/auth'
     | '/assets'
     | '/audit'
+    | '/command'
+    | '/command-inventory'
     | '/dashboard'
     | '/documents'
     | '/equipment-requests'
@@ -310,6 +341,7 @@ export interface FileRouteTypes {
     | '/issues'
     | '/leave'
     | '/manual'
+    | '/notifications'
     | '/organization'
     | '/procurement'
     | '/receipts'
@@ -331,6 +363,8 @@ export interface FileRouteTypes {
     | '/auth'
     | '/assets'
     | '/audit'
+    | '/command'
+    | '/command-inventory'
     | '/dashboard'
     | '/documents'
     | '/equipment-requests'
@@ -341,6 +375,7 @@ export interface FileRouteTypes {
     | '/issues'
     | '/leave'
     | '/manual'
+    | '/notifications'
     | '/organization'
     | '/procurement'
     | '/receipts'
@@ -363,6 +398,8 @@ export interface FileRouteTypes {
     | '/auth'
     | '/_authenticated/assets'
     | '/_authenticated/audit'
+    | '/_authenticated/command'
+    | '/_authenticated/command-inventory'
     | '/_authenticated/dashboard'
     | '/_authenticated/documents'
     | '/_authenticated/equipment-requests'
@@ -373,6 +410,7 @@ export interface FileRouteTypes {
     | '/_authenticated/issues'
     | '/_authenticated/leave'
     | '/_authenticated/manual'
+    | '/_authenticated/notifications'
     | '/_authenticated/organization'
     | '/_authenticated/procurement'
     | '/_authenticated/receipts'
@@ -432,6 +470,20 @@ declare module '@tanstack/react-router' {
       path: '/audit'
       fullPath: '/audit'
       preLoaderRoute: typeof AuthenticatedAuditRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/command': {
+      id: '/_authenticated/command'
+      path: '/command'
+      fullPath: '/command'
+      preLoaderRoute: typeof AuthenticatedCommandRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/command-inventory': {
+      id: '/_authenticated/command-inventory'
+      path: '/command-inventory'
+      fullPath: '/command-inventory'
+      preLoaderRoute: typeof AuthenticatedCommandInventoryRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/dashboard': {
@@ -502,6 +554,13 @@ declare module '@tanstack/react-router' {
       path: '/manual'
       fullPath: '/manual'
       preLoaderRoute: typeof AuthenticatedManualRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/notifications': {
+      id: '/_authenticated/notifications'
+      path: '/notifications'
+      fullPath: '/notifications'
+      preLoaderRoute: typeof AuthenticatedNotificationsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/organization': {
@@ -615,6 +674,8 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAssetsRoute: typeof AuthenticatedAssetsRoute
   AuthenticatedAuditRoute: typeof AuthenticatedAuditRoute
+  AuthenticatedCommandRoute: typeof AuthenticatedCommandRoute
+  AuthenticatedCommandInventoryRoute: typeof AuthenticatedCommandInventoryRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedDocumentsRoute: typeof AuthenticatedDocumentsRoute
   AuthenticatedEquipmentRequestsRoute: typeof AuthenticatedEquipmentRequestsRoute
@@ -625,6 +686,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedIssuesRoute: typeof AuthenticatedIssuesRoute
   AuthenticatedLeaveRoute: typeof AuthenticatedLeaveRoute
   AuthenticatedManualRoute: typeof AuthenticatedManualRoute
+  AuthenticatedNotificationsRoute: typeof AuthenticatedNotificationsRoute
   AuthenticatedOrganizationRoute: typeof AuthenticatedOrganizationRoute
   AuthenticatedProcurementRoute: typeof AuthenticatedProcurementRoute
   AuthenticatedReceiptsRoute: typeof AuthenticatedReceiptsRoute
@@ -644,6 +706,8 @@ interface AuthenticatedRouteRouteChildren {
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAssetsRoute: AuthenticatedAssetsRoute,
   AuthenticatedAuditRoute: AuthenticatedAuditRoute,
+  AuthenticatedCommandRoute: AuthenticatedCommandRoute,
+  AuthenticatedCommandInventoryRoute: AuthenticatedCommandInventoryRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedDocumentsRoute: AuthenticatedDocumentsRoute,
   AuthenticatedEquipmentRequestsRoute: AuthenticatedEquipmentRequestsRoute,
@@ -654,6 +718,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedIssuesRoute: AuthenticatedIssuesRoute,
   AuthenticatedLeaveRoute: AuthenticatedLeaveRoute,
   AuthenticatedManualRoute: AuthenticatedManualRoute,
+  AuthenticatedNotificationsRoute: AuthenticatedNotificationsRoute,
   AuthenticatedOrganizationRoute: AuthenticatedOrganizationRoute,
   AuthenticatedProcurementRoute: AuthenticatedProcurementRoute,
   AuthenticatedReceiptsRoute: AuthenticatedReceiptsRoute,
