@@ -22,6 +22,7 @@ import { Route as AuthenticatedInventoryRouteImport } from './routes/_authentica
 import { Route as AuthenticatedIssuesRouteImport } from './routes/_authenticated/issues'
 import { Route as AuthenticatedLeaveRouteImport } from './routes/_authenticated/leave'
 import { Route as AuthenticatedOrganizationRouteImport } from './routes/_authenticated/organization'
+import { Route as AuthenticatedProcurementRouteImport } from './routes/_authenticated/procurement'
 import { Route as AuthenticatedReceiptsRouteImport } from './routes/_authenticated/receipts'
 import { Route as AuthenticatedRegistryRouteImport } from './routes/_authenticated/registry'
 import { Route as AuthenticatedSearchRouteImport } from './routes/_authenticated/search'
@@ -100,6 +101,12 @@ const AuthenticatedOrganizationRoute =
   AuthenticatedOrganizationRouteImport.update({
     id: '/organization',
     path: '/organization',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedProcurementRoute =
+  AuthenticatedProcurementRouteImport.update({
+    id: '/procurement',
+    path: '/procurement',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedReceiptsRoute = AuthenticatedReceiptsRouteImport.update({
@@ -186,6 +193,7 @@ export interface FileRoutesByFullPath {
   '/issues': typeof AuthenticatedIssuesRoute
   '/leave': typeof AuthenticatedLeaveRoute
   '/organization': typeof AuthenticatedOrganizationRoute
+  '/procurement': typeof AuthenticatedProcurementRoute
   '/receipts': typeof AuthenticatedReceiptsRoute
   '/registry': typeof AuthenticatedRegistryRoute
   '/search': typeof AuthenticatedSearchRoute
@@ -213,6 +221,7 @@ export interface FileRoutesByTo {
   '/issues': typeof AuthenticatedIssuesRoute
   '/leave': typeof AuthenticatedLeaveRoute
   '/organization': typeof AuthenticatedOrganizationRoute
+  '/procurement': typeof AuthenticatedProcurementRoute
   '/receipts': typeof AuthenticatedReceiptsRoute
   '/registry': typeof AuthenticatedRegistryRoute
   '/search': typeof AuthenticatedSearchRoute
@@ -242,6 +251,7 @@ export interface FileRoutesById {
   '/_authenticated/issues': typeof AuthenticatedIssuesRoute
   '/_authenticated/leave': typeof AuthenticatedLeaveRoute
   '/_authenticated/organization': typeof AuthenticatedOrganizationRoute
+  '/_authenticated/procurement': typeof AuthenticatedProcurementRoute
   '/_authenticated/receipts': typeof AuthenticatedReceiptsRoute
   '/_authenticated/registry': typeof AuthenticatedRegistryRoute
   '/_authenticated/search': typeof AuthenticatedSearchRoute
@@ -271,6 +281,7 @@ export interface FileRouteTypes {
     | '/issues'
     | '/leave'
     | '/organization'
+    | '/procurement'
     | '/receipts'
     | '/registry'
     | '/search'
@@ -298,6 +309,7 @@ export interface FileRouteTypes {
     | '/issues'
     | '/leave'
     | '/organization'
+    | '/procurement'
     | '/receipts'
     | '/registry'
     | '/search'
@@ -326,6 +338,7 @@ export interface FileRouteTypes {
     | '/_authenticated/issues'
     | '/_authenticated/leave'
     | '/_authenticated/organization'
+    | '/_authenticated/procurement'
     | '/_authenticated/receipts'
     | '/_authenticated/registry'
     | '/_authenticated/search'
@@ -441,6 +454,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedOrganizationRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/procurement': {
+      id: '/_authenticated/procurement'
+      path: '/procurement'
+      fullPath: '/procurement'
+      preLoaderRoute: typeof AuthenticatedProcurementRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/receipts': {
       id: '/_authenticated/receipts'
       path: '/receipts'
@@ -546,6 +566,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedIssuesRoute: typeof AuthenticatedIssuesRoute
   AuthenticatedLeaveRoute: typeof AuthenticatedLeaveRoute
   AuthenticatedOrganizationRoute: typeof AuthenticatedOrganizationRoute
+  AuthenticatedProcurementRoute: typeof AuthenticatedProcurementRoute
   AuthenticatedReceiptsRoute: typeof AuthenticatedReceiptsRoute
   AuthenticatedRegistryRoute: typeof AuthenticatedRegistryRoute
   AuthenticatedSearchRoute: typeof AuthenticatedSearchRoute
@@ -571,6 +592,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedIssuesRoute: AuthenticatedIssuesRoute,
   AuthenticatedLeaveRoute: AuthenticatedLeaveRoute,
   AuthenticatedOrganizationRoute: AuthenticatedOrganizationRoute,
+  AuthenticatedProcurementRoute: AuthenticatedProcurementRoute,
   AuthenticatedReceiptsRoute: AuthenticatedReceiptsRoute,
   AuthenticatedRegistryRoute: AuthenticatedRegistryRoute,
   AuthenticatedSearchRoute: AuthenticatedSearchRoute,

@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import { Card, CardContent } from "@/components/ui/card";
 import { PageHeader } from "@/components/AppShell";
 
@@ -13,6 +13,7 @@ const INFO: Record<string, { title: string; features: string[] }> = {
 };
 
 export const Route = createFileRoute("/_authenticated/modules/$module")({
+  beforeLoad: ({ params }) => { if (params.module === 'procurement') throw redirect({ to: '/procurement', statusCode: 301 }); },
   head: ({ params }) => {
     const title = `${INFO[params.module]?.title ?? "Module"} — LNPATS ERP`;
     const description = `${INFO[params.module]?.title ?? "Academy module"} planning for LNPATS.`;
