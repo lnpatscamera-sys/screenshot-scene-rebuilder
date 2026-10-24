@@ -36,4 +36,6 @@
 - [ ] External payroll provider linkage — provider and payroll calculation rules needed; current HR payroll is a manually entered salary summary, not payment execution.
 - [x] ICT Helpdesk: protected tickets, supervisor-approved service requests, incidents, canonical ICT assets/history, manual network/account registries, maintenance, knowledge base and reports. Signed-in ticket resolution/closure, incident closure, check-in, asset assignment, knowledge publication and Excel download verified; temporary records removed and audit retained; permission tests pass.
 - [ ] ICT live monitoring and external account execution — network monitoring and email/directory account providers must be supplied; current checks, uptime and account reset/unlock actions do not execute against external systems.
+- [x] Facility Management work orders (report → Facility Manager assigns technician → completed → requester confirms) and ISS suite (visitors, vehicle gate log, duty roster, Occurrence Book).
+- [ ] Assign Facility Manager and ISS Officer roles to real staff in Users & Roles.
 - [ ] Transport (outside Phase 2 scope)
