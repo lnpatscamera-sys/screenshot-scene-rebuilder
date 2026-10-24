@@ -232,6 +232,13 @@
       "when": 1792840468353,
       "tag": "0032_command_reporting",
       "breakpoints": true
+    },
+    {
+      "idx": 33,
+      "version": "7",
+      "when": 1792840538063,
+      "tag": "0033_command_supply_oversight",
+      "breakpoints": true
     }
   ]
 }

@@ -5021,70 +5021,148 @@ export type Database = {
       supply_requests: {
         Row: {
           approval_status: string
+          attachments: Json
           collection_status: string
+          command_chain: Json
+          command_stage: number
           created_at: string
           description: string | null
+          fulfillment_warehouse: string | null
           history: Json
           id: string
           item_id: string | null
           item_name: string
           justification: string | null
+          officer_id: string | null
+          pickup_signature: string | null
+          pickup_signed_at: string | null
+          pickup_signed_by: string | null
           priority: string
+          procurement_id: string | null
           quantity: number
           request_date: string
           request_number: string
           requested_by: string | null
           requested_by_name: string | null
+          required_date: string | null
+          reserved_quantity: number
           section_id: string | null
           stage: number
           unit: string
+          workflow_kind: string
         }
         Insert: {
           approval_status?: string
+          attachments?: Json
           collection_status?: string
+          command_chain?: Json
+          command_stage?: number
           created_at?: string
           description?: string | null
+          fulfillment_warehouse?: string | null
           history?: Json
           id?: string
           item_id?: string | null
           item_name: string
           justification?: string | null
+          officer_id?: string | null
+          pickup_signature?: string | null
+          pickup_signed_at?: string | null
+          pickup_signed_by?: string | null
           priority?: string
+          procurement_id?: string | null
           quantity: number
           request_date?: string
           request_number?: string
           requested_by?: string | null
           requested_by_name?: string | null
+          required_date?: string | null
+          reserved_quantity?: number
           section_id?: string | null
           stage?: number
           unit?: string
+          workflow_kind?: string
         }
         Update: {
           approval_status?: string
+          attachments?: Json
           collection_status?: string
+          command_chain?: Json
+          command_stage?: number
           created_at?: string
           description?: string | null
+          fulfillment_warehouse?: string | null
           history?: Json
           id?: string
           item_id?: string | null
           item_name?: string
           justification?: string | null
+          officer_id?: string | null
+          pickup_signature?: string | null
+          pickup_signed_at?: string | null
+          pickup_signed_by?: string | null
           priority?: string
+          procurement_id?: string | null
           quantity?: number
           request_date?: string
           request_number?: string
           requested_by?: string | null
           requested_by_name?: string | null
+          required_date?: string | null
+          reserved_quantity?: number
           section_id?: string | null
           stage?: number
           unit?: string
+          workflow_kind?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "supply_requests_fulfillment_warehouse_fkey"
+            columns: ["fulfillment_warehouse"]
+            isOneToOne: false
+            referencedRelation: "warehouses"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "supply_requests_item_id_fkey"
             columns: ["item_id"]
             isOneToOne: false
             referencedRelation: "inventory_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "supply_requests_officer_id_fkey"
+            columns: ["officer_id"]
+            isOneToOne: false
+            referencedRelation: "approvals"
+            referencedColumns: ["approver_id"]
+          },
+          {
+            foreignKeyName: "supply_requests_officer_id_fkey"
+            columns: ["officer_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "supply_requests_officer_id_fkey"
+            columns: ["officer_id"]
+            isOneToOne: false
+            referencedRelation: "equipment_requests"
+            referencedColumns: ["requested_by"]
+          },
+          {
+            foreignKeyName: "supply_requests_officer_id_fkey"
+            columns: ["officer_id"]
+            isOneToOne: false
+            referencedRelation: "officers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "supply_requests_procurement_id_fkey"
+            columns: ["procurement_id"]
+            isOneToOne: false
+            referencedRelation: "procurement_funding"
             referencedColumns: ["id"]
           },
           {
@@ -6072,12 +6150,20 @@ export type Database = {
       }
       command_directory: { Args: never; Returns: Json }
       command_file_reader: { Args: { _path: string }; Returns: boolean }
+      command_inventory_overview: { Args: never; Returns: Json }
       command_notify: {
         Args: { _body: string; _key: string; _title: string; _user: string }
         Returns: undefined
       }
       command_report_reader: { Args: { _id: string }; Returns: boolean }
       command_report_summary: { Args: { _date?: string }; Returns: Json }
+      command_supply_action: {
+        Args: { _action: string; _id: string; _payload?: Json }
+        Returns: string
+      }
+      command_supply_evidence: { Args: { _id: string }; Returns: Json }
+      command_supply_reader: { Args: { _id: string }; Returns: boolean }
+      command_supply_route: { Args: { _id: string }; Returns: undefined }
       command_validate_files: { Args: { _files: Json }; Returns: undefined }
       compile_daily_reports: { Args: { _payload: Json }; Returns: string }
       daily_report_action: {
