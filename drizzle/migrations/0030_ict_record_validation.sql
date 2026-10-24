@@ -1,0 +1,11 @@
+CREATE FUNCTION public.ict_validate_record() RETURNS trigger LANGUAGE plpgsql SET search_path=public AS $$ BEGIN
+ IF NEW.kind='requests' AND NEW.category NOT IN ('Computer Setup','Printer Installation','Software Installation','Email Account Creation','Password Reset','Internet Access','Network Connection','CCTV Support','Website Support','ERP Support') THEN RAISE EXCEPTION 'Invalid service request type'; END IF;
+ IF NEW.kind='incidents' AND NEW.category NOT IN ('Hardware Failure','Software Failure','Network Outage','Internet Failure','Security Incident','Email Problem','Server Problem','Website Problem','ERP Problem') THEN RAISE EXCEPTION 'Invalid incident category'; END IF;
+ IF NEW.kind='network' AND NEW.category NOT IN ('Router','Switch','Internet Link','WiFi Access Point','Server') THEN RAISE EXCEPTION 'Invalid network device type'; END IF;
+ IF NEW.kind='accounts' AND NEW.category NOT IN ('LNPATS Email','ERP','Active Directory','WiFi') THEN RAISE EXCEPTION 'Invalid account type'; END IF;
+ IF NEW.kind='knowledge' AND NEW.category NOT IN ('User Guides','ICT Policies','ERP Guides','Troubleshooting Guides','Network Documentation','Software Manuals') THEN RAISE EXCEPTION 'Invalid knowledge category'; END IF;
+ IF NEW.kind='network' AND TG_OP='UPDATE' AND NEW.details->>'last_check_in' IS DISTINCT FROM OLD.details->>'last_check_in' THEN NEW.history:=jsonb_set(NEW.history,ARRAY[(jsonb_array_length(NEW.history)-1)::text],(NEW.history->(jsonb_array_length(NEW.history)-1))||jsonb_build_object('status',NEW.status,'latency_ms',NEW.details->>'latency_ms')); END IF;
+ RETURN NEW; END $$;
+CREATE TRIGGER ict_validate_record BEFORE INSERT OR UPDATE ON public.ict_records FOR EACH ROW EXECUTE FUNCTION public.ict_validate_record();
+CREATE FUNCTION public.ict_ticket_validation() RETURNS trigger LANGUAGE plpgsql SET search_path=public AS $$ BEGIN IF NEW.created_by IS NOT NULL AND (NEW.priority IS NULL OR NEW.priority NOT IN ('Low','Medium','High','Critical') OR NEW.status IS NULL OR NEW.status NOT IN ('Open','Assigned','In Progress','Pending','Resolved','Closed')) THEN RAISE EXCEPTION 'Invalid ticket priority or status'; END IF; RETURN NEW; END $$;
+CREATE TRIGGER ict_ticket_validation BEFORE INSERT OR UPDATE ON public.tickets FOR EACH ROW EXECUTE FUNCTION public.ict_ticket_validation();
