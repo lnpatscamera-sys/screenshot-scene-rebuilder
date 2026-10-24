@@ -5871,8 +5871,20 @@ export type Database = {
         Args: { _action: string; _id: string; _module: string; _payload?: Json }
         Returns: string
       }
+      ict_directory: {
+        Args: never
+        Returns: {
+          full_name: string
+          id: string
+          is_technician: boolean
+          office_id: string
+          section_id: string
+          user_id: string
+        }[]
+      }
       ict_file_access: { Args: { _path: string }; Returns: boolean }
       ict_staff: { Args: never; Returns: boolean }
+      ict_supervisor: { Args: { _officer: string }; Returns: boolean }
       leave_stage_role: {
         Args: { _stage: number }
         Returns: Database["public"]["Enums"]["app_role"][]
