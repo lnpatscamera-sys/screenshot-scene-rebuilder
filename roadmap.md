@@ -26,5 +26,7 @@
 - [x] Procurement screens: vendors, requisitions, RFQs/comparison, orders, goods receipts, contracts, ratings, dashboard/reports; signed-in request → quotation → approved/sent order → approved receipt → completion/rating and contract renewal verified; PDF/Excel downloaded; temporary operational records removed, audit retained.
 - [x] Purchase-order email action connected to verified notify.lnpats.net; delivery not exercised because no recipient was authorized for a test email.
 - [ ] Conditional Director procurement approval — waits for the Director role and approval trigger from the organization.
-- [ ] HR: employee registry/files, recruitment, attendance/check-in, HR leave, appraisals, promotion/transfer approvals, training, discipline, payroll summaries, dashboards/reports and signed-in verification.
+- [x] HR screens: canonical employee registry/files, recruitment, manual/self/QR attendance, two-stage HR leave and recall, appraisals, promotion/transfer decisions, training, discipline, payroll summaries and PDF/Excel/print reports. Signed-in employee/vacancy/attendance/promotion/leave/recall/payroll/appraisal/export verified; temporary records removed and audit retained; 119 tests passed.
+- [ ] HR recall entitlement restoration — organizational policy needed; recall currently records the event without crediting unused leave days.
+- [ ] External payroll provider linkage — provider and payroll calculation rules needed; current HR payroll is a manually entered salary summary, not payment execution.
 - [ ] Transport and ICT helpdesk (outside Phase 2 scope)
