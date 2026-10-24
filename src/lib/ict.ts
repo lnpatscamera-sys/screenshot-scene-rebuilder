@@ -38,8 +38,8 @@ export const ASSET_TYPES = [
   "UPS Devices",
   "Projectors",
 ];
-export function resolutionHours(created: string, resolved: string | null) {
-  if (!resolved) return null;
+export function resolutionHours(created: string | null, resolved: string | null) {
+  if (!created || !resolved) return null;
   return Math.max(0, (Date.parse(resolved) - Date.parse(created)) / 3600000);
 }
 export function ticketActions(status: string, staff: boolean, owner: boolean) {

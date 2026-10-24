@@ -13,7 +13,7 @@ export function ICTOverview({ d }: { d: ICTData }) {
   const network = d.records.filter((r) => r.kind === "network");
   const resolved = d.tickets.filter((t) => t.resolved_at);
   const charts = [
-    { title: "Ticket trends", data: counts(d.tickets.map((t) => t.created_at.slice(0, 10))) },
+    { title: "Ticket trends", data: counts(d.tickets.map((t) => t.created_at?.slice(0, 10) ?? 'Unknown')) },
     {
       title: "Incident categories",
       data: counts(d.records.filter((r) => r.kind === "incidents").map((r) => r.category)),
@@ -57,9 +57,9 @@ export function ICTOverview({ d }: { d: ICTData }) {
             value: d.records.filter((r) => r.kind === "accounts" && r.status === "Active").length,
           },
           { label: "Network devices", value: network.length },
-          { label: "System uptime", value: "Not connected" },
         ]}
       />
+      <section className="border-b pb-4 mb-6"><div className="text-xs text-muted-foreground">System uptime</div><div className="font-semibold mt-1">Monitoring not connected</div></section>
       <div className="grid md:grid-cols-2 gap-x-8 gap-y-6">
         {charts.map((c) => (
           <section className="border-b pb-5 min-w-0 overflow-hidden" key={c.title}>
