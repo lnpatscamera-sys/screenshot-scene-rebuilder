@@ -9,7 +9,7 @@ beforeAll(async()=>{
  CREATE FUNCTION auth.uid() RETURNS uuid LANGUAGE sql AS $$ SELECT nullif(current_setting('test.uid',true),'')::uuid $$;
  CREATE TABLE user_roles(user_id uuid,role text); CREATE TABLE profiles(id uuid,email text);
  CREATE FUNCTION has_any_role(uuid,text[]) RETURNS boolean LANGUAGE sql AS $$ SELECT EXISTS(SELECT 1 FROM user_roles WHERE user_id=$1 AND (role='system_admin' OR role=ANY($2))) $$;
- CREATE TABLE officers(id uuid PRIMARY KEY,full_name text,rank text,user_id uuid,section_id uuid,office_id uuid,supervisor_id uuid,employment_status text,updated_at timestamptz);
+ CREATE TABLE officers(id uuid PRIMARY KEY,full_name text,rank text,user_id uuid,section_id uuid,office_id uuid,supervisor_id uuid,employment_status text,updated_at timestamptz,photo_url text);
  CREATE FUNCTION hr_staff() RETURNS boolean LANGUAGE sql AS $$ SELECT has_any_role(auth.uid(),ARRAY['hr_admin','hr_officer']) $$;
  CREATE FUNCTION hr_owner(uuid) RETURNS boolean LANGUAGE sql AS $$ SELECT EXISTS(SELECT 1 FROM officers WHERE id=$1 AND user_id=auth.uid()) $$;
  CREATE FUNCTION hr_head(uuid) RETURNS boolean LANGUAGE sql AS $$ SELECT false $$;
@@ -27,7 +27,7 @@ beforeAll(async()=>{
  CREATE TABLE performance_appraisals(id uuid DEFAULT gen_random_uuid(),officer_id uuid,status text,details jsonb,history jsonb,attachments jsonb,created_by uuid);
  CREATE TABLE storage.objects(name text,bucket_id text);
  CREATE FUNCTION hr_validate_files(jsonb) RETURNS void LANGUAGE plpgsql AS $$ BEGIN END $$;
- INSERT INTO officers VALUES('${employee}','Test employee','Sergeant','${uid}',null,null,null,'Active',now());
+ INSERT INTO officers VALUES('${employee}','Test employee','Sergeant','${uid}',null,null,null,'Active',now(),null);
  SET test.uid='${uid}'; INSERT INTO user_roles VALUES('${uid}','system_admin');
  CREATE FUNCTION act_on_leave(uuid,boolean,text) RETURNS void LANGUAGE plpgsql AS $$ BEGIN END $$;
  CREATE POLICY "staff read officer files" ON storage.objects FOR SELECT USING(true);`);
