@@ -19,6 +19,7 @@ import { Route as AuthenticatedDocumentsRouteImport } from './routes/_authentica
 import { Route as AuthenticatedEquipmentRequestsRouteImport } from './routes/_authenticated/equipment-requests'
 import { Route as AuthenticatedFinanceRouteImport } from './routes/_authenticated/finance'
 import { Route as AuthenticatedHrRouteImport } from './routes/_authenticated/hr'
+import { Route as AuthenticatedIctRouteImport } from './routes/_authenticated/ict'
 import { Route as AuthenticatedInventoryRouteImport } from './routes/_authenticated/inventory'
 import { Route as AuthenticatedIssuesRouteImport } from './routes/_authenticated/issues'
 import { Route as AuthenticatedLeaveRouteImport } from './routes/_authenticated/leave'
@@ -86,6 +87,11 @@ const AuthenticatedFinanceRoute = AuthenticatedFinanceRouteImport.update({
 const AuthenticatedHrRoute = AuthenticatedHrRouteImport.update({
   id: '/hr',
   path: '/hr',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedIctRoute = AuthenticatedIctRouteImport.update({
+  id: '/ict',
+  path: '/ict',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedInventoryRoute = AuthenticatedInventoryRouteImport.update({
@@ -196,6 +202,7 @@ export interface FileRoutesByFullPath {
   '/equipment-requests': typeof AuthenticatedEquipmentRequestsRoute
   '/finance': typeof AuthenticatedFinanceRoute
   '/hr': typeof AuthenticatedHrRoute
+  '/ict': typeof AuthenticatedIctRoute
   '/inventory': typeof AuthenticatedInventoryRoute
   '/issues': typeof AuthenticatedIssuesRoute
   '/leave': typeof AuthenticatedLeaveRoute
@@ -225,6 +232,7 @@ export interface FileRoutesByTo {
   '/equipment-requests': typeof AuthenticatedEquipmentRequestsRoute
   '/finance': typeof AuthenticatedFinanceRoute
   '/hr': typeof AuthenticatedHrRoute
+  '/ict': typeof AuthenticatedIctRoute
   '/inventory': typeof AuthenticatedInventoryRoute
   '/issues': typeof AuthenticatedIssuesRoute
   '/leave': typeof AuthenticatedLeaveRoute
@@ -256,6 +264,7 @@ export interface FileRoutesById {
   '/_authenticated/equipment-requests': typeof AuthenticatedEquipmentRequestsRoute
   '/_authenticated/finance': typeof AuthenticatedFinanceRoute
   '/_authenticated/hr': typeof AuthenticatedHrRoute
+  '/_authenticated/ict': typeof AuthenticatedIctRoute
   '/_authenticated/inventory': typeof AuthenticatedInventoryRoute
   '/_authenticated/issues': typeof AuthenticatedIssuesRoute
   '/_authenticated/leave': typeof AuthenticatedLeaveRoute
@@ -287,6 +296,7 @@ export interface FileRouteTypes {
     | '/equipment-requests'
     | '/finance'
     | '/hr'
+    | '/ict'
     | '/inventory'
     | '/issues'
     | '/leave'
@@ -316,6 +326,7 @@ export interface FileRouteTypes {
     | '/equipment-requests'
     | '/finance'
     | '/hr'
+    | '/ict'
     | '/inventory'
     | '/issues'
     | '/leave'
@@ -346,6 +357,7 @@ export interface FileRouteTypes {
     | '/_authenticated/equipment-requests'
     | '/_authenticated/finance'
     | '/_authenticated/hr'
+    | '/_authenticated/ict'
     | '/_authenticated/inventory'
     | '/_authenticated/issues'
     | '/_authenticated/leave'
@@ -443,6 +455,13 @@ declare module '@tanstack/react-router' {
       path: '/hr'
       fullPath: '/hr'
       preLoaderRoute: typeof AuthenticatedHrRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/ict': {
+      id: '/_authenticated/ict'
+      path: '/ict'
+      fullPath: '/ict'
+      preLoaderRoute: typeof AuthenticatedIctRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/inventory': {
@@ -582,6 +601,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedEquipmentRequestsRoute: typeof AuthenticatedEquipmentRequestsRoute
   AuthenticatedFinanceRoute: typeof AuthenticatedFinanceRoute
   AuthenticatedHrRoute: typeof AuthenticatedHrRoute
+  AuthenticatedIctRoute: typeof AuthenticatedIctRoute
   AuthenticatedInventoryRoute: typeof AuthenticatedInventoryRoute
   AuthenticatedIssuesRoute: typeof AuthenticatedIssuesRoute
   AuthenticatedLeaveRoute: typeof AuthenticatedLeaveRoute
@@ -609,6 +629,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedEquipmentRequestsRoute: AuthenticatedEquipmentRequestsRoute,
   AuthenticatedFinanceRoute: AuthenticatedFinanceRoute,
   AuthenticatedHrRoute: AuthenticatedHrRoute,
+  AuthenticatedIctRoute: AuthenticatedIctRoute,
   AuthenticatedInventoryRoute: AuthenticatedInventoryRoute,
   AuthenticatedIssuesRoute: AuthenticatedIssuesRoute,
   AuthenticatedLeaveRoute: AuthenticatedLeaveRoute,
