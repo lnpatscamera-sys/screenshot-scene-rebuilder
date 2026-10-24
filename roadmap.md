@@ -18,10 +18,12 @@
 - [x] Add the listed logistics records with protected access, auditing, and compatibility with existing stock and equipment workflows; operational screens and automated logistics posting are not part of this schema stage.
 - [x] Phase 2: connected leave HR processing, registry chain, document approvals/revisions/rollback, global search, private uploads, in-app notifications, audit activity, PDF/Excel/print reports and role-aware summaries.
 - [x] Managed email infrastructure for notify.lnpats.net; protected preview verified.
-- [ ] Phase 2 email notices — templates and workflow send triggers pending; delivery waits for sender DNS verification.
+- [ ] Phase 2 email notices — templates and workflow send triggers pending; sender domain is verified.
 - [ ] Cryptographic document signatures — currently recorded signer names only; requires the organization's signing identity/certificate provider.
 - [x] Extend ERP schema from supplied SQL without replacing existing workflows; match the supplied offices and sections.
 - [x] Training module: cadet registration, programs & courses, instructors, attendance registers with absence flags, assessments & results, graduation decisions with certificates and QR verification, dashboards and PDF/Excel reports.
 - [x] Finance module: budgets, monitoring alerts, expenses with documents, revenue receipts, cash advances, procurement funding, approval timelines, reports and audit trail.
-- [ ] Procurement screens: vendors, requisitions, RFQs/comparison, orders, goods receipts, contracts, ratings, dashboard/reports, email and signed-in purchasing verification.
+- [x] Procurement screens: vendors, requisitions, RFQs/comparison, orders, goods receipts, contracts, ratings, dashboard/reports; signed-in request → quotation → approved/sent order → approved receipt → completion/rating and contract renewal verified; PDF/Excel downloaded; temporary operational records removed, audit retained.
+- [x] Purchase-order email action connected to verified notify.lnpats.net; delivery not exercised because no recipient was authorized for a test email.
+- [ ] Conditional Director procurement approval — waits for the Director role and approval trigger from the organization.
 - [ ] Transport, HR, ICT helpdesk (outside Phase 2 scope)
