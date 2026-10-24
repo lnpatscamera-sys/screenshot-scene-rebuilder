@@ -1,0 +1,44 @@
+// @vitest-environment node
+import { PGlite } from '@electric-sql/pglite';
+import { readFileSync } from 'node:fs';
+import { beforeAll,afterAll,it,expect } from 'vitest';
+const db=new PGlite();
+const uid='00000000-0000-0000-0000-000000000001',other='00000000-0000-0000-0000-000000000002',employee='00000000-0000-0000-0000-000000000010';
+beforeAll(async()=>{
+ await db.exec(`CREATE ROLE authenticated; CREATE ROLE anon; CREATE SCHEMA auth; CREATE SCHEMA storage;
+ CREATE FUNCTION auth.uid() RETURNS uuid LANGUAGE sql AS $$ SELECT nullif(current_setting('test.uid',true),'')::uuid $$;
+ CREATE TABLE user_roles(user_id uuid,role text); CREATE TABLE profiles(id uuid,email text);
+ CREATE FUNCTION has_any_role(uuid,text[]) RETURNS boolean LANGUAGE sql AS $$ SELECT EXISTS(SELECT 1 FROM user_roles WHERE user_id=$1 AND (role='system_admin' OR role=ANY($2))) $$;
+ CREATE TABLE officers(id uuid PRIMARY KEY,full_name text,rank text,user_id uuid,section_id uuid,office_id uuid,supervisor_id uuid,employment_status text,updated_at timestamptz);
+ CREATE FUNCTION hr_staff() RETURNS boolean LANGUAGE sql AS $$ SELECT has_any_role(auth.uid(),ARRAY['hr_admin','hr_officer']) $$;
+ CREATE FUNCTION hr_owner(uuid) RETURNS boolean LANGUAGE sql AS $$ SELECT EXISTS(SELECT 1 FROM officers WHERE id=$1 AND user_id=auth.uid()) $$;
+ CREATE FUNCTION hr_head(uuid) RETURNS boolean LANGUAGE sql AS $$ SELECT false $$;
+ CREATE FUNCTION hr_reader(uuid) RETURNS boolean LANGUAGE sql AS $$ SELECT hr_staff() OR hr_owner($1) OR has_any_role(auth.uid(),ARRAY['commandant']) $$;
+ CREATE TABLE sections(id uuid,office_id uuid);
+ CREATE TABLE attendance(id uuid DEFAULT gen_random_uuid(),officer_id uuid,attendance_date date,status text,remarks text,check_in timestamptz,check_out timestamptz,method text,recorded_by uuid,created_at timestamptz DEFAULT now());
+ CREATE TABLE promotions(id uuid DEFAULT gen_random_uuid(),officer_id uuid,previous_rank text,promoted_rank text,promotion_date date,remarks text,status text,details jsonb,history jsonb);
+ CREATE TABLE leave_requests(id uuid,officer_id uuid,status text,workflow_kind text,attachments jsonb,recalled_at timestamptz,recall_reason text,history jsonb);
+ CREATE TABLE officer_documents(officer_id uuid,bucket_id text,file_url text);
+ CREATE TABLE disciplinary_actions(officer_id uuid,attachments jsonb);
+ CREATE TABLE training_records(officer_id uuid,attachments jsonb);
+ CREATE TABLE recruitment_applicants(id uuid DEFAULT gen_random_uuid(),officer_id uuid,status text,details jsonb,history jsonb,attachments jsonb,created_by uuid);
+ CREATE TABLE recruitment_vacancies(id uuid DEFAULT gen_random_uuid(),officer_id uuid,status text,details jsonb,history jsonb,attachments jsonb,created_by uuid);
+ CREATE TABLE payroll_records(id uuid DEFAULT gen_random_uuid(),officer_id uuid,status text,details jsonb,history jsonb,attachments jsonb,created_by uuid);
+ CREATE TABLE performance_appraisals(id uuid DEFAULT gen_random_uuid(),officer_id uuid,status text,details jsonb,history jsonb,attachments jsonb,created_by uuid);
+ CREATE TABLE storage.objects(name text,bucket_id text);
+ CREATE FUNCTION hr_validate_files(jsonb) RETURNS void LANGUAGE plpgsql AS $$ BEGIN END $$;
+ INSERT INTO officers VALUES('${employee}','Test employee','Sergeant','${uid}',null,null,null,'Active',now());
+ SET test.uid='${uid}'; INSERT INTO user_roles VALUES('${uid}','system_admin');
+ CREATE FUNCTION act_on_leave(uuid,boolean,text) RETURNS void LANGUAGE plpgsql AS $$ BEGIN END $$;
+ CREATE POLICY "staff read officer files" ON storage.objects FOR SELECT USING(true);`);
+ await db.exec(readFileSync('drizzle/migrations/0023_hr_authorized_actions.sql','utf8').split('DO $$')[0]??'');
+ await db.exec(readFileSync('drizzle/migrations/0025_hr_workflow_validation.sql','utf8'));
+ await db.exec(readFileSync('drizzle/migrations/0026_hr_decision_payload_guard.sql','utf8'));
+},30000);
+afterAll(()=>db.close());
+async function role(role:string){await db.exec(`DELETE FROM user_roles WHERE user_id='${uid}'; INSERT INTO user_roles VALUES('${uid}','${role}'); SET test.uid='${uid}';`);}
+it('lets employees check in only themselves and rejects duplicate check-ins',async()=>{await role('officer');await expect(db.query('select hr_action($1,null,$2,$3)', ['attendance','check_in',{officer_id:employee}])).resolves.toBeDefined();await expect(db.query('select hr_action($1,null,$2,$3)', ['attendance','check_in',{officer_id:employee}])).rejects.toThrow('already recorded');await expect(db.query('select hr_action($1,null,$2,$3)', ['attendance','check_in',{officer_id:other}])).rejects.toThrow('own attendance');});
+it('requires Commandant or HR administrator to approve promotions, not HR officer',async()=>{await role('hr_officer');const result=await db.query<{id:string}>(`select hr_action('promotions',null,'create',$1) id`,[{officer_id:employee,details:{new_rank:'Captain',effective_date:'2020-01-01'}}]);const id=result.rows[0]?.id;expect(id).toBeTruthy();await expect(db.query(`select hr_action('promotions',$1,'approve','{}')`,[id])).rejects.toThrow('authority');await role('commandant');await db.query(`select hr_action('promotions',$1,'approve','{}')`,[id]);expect((await db.query<{rank:string}>(`select rank from officers where id=$1`,[employee])).rows[0]?.rank).toBe('Captain');});
+it('rejects decision payloads trying to alter approved rank',async()=>{await role('system_admin');await expect(db.query(`select hr_action('promotions',null,'approve',$1)`,[{new_rank:'General'}])).rejects.toThrow('cannot edit records');});
+it('requires all payroll amounts and allows no negative amounts',async()=>{await role('hr_officer');const base={period:'2026-10',currency:'USD',salary_grade:'A'};await expect(db.query(`select hr_action('payroll',null,'create',$1)`,[{officer_id:employee,details:base}])).rejects.toThrow('payroll amounts');await expect(db.query(`select hr_action('payroll',null,'create',$1)`,[{officer_id:employee,details:{...base,basic_salary:'500',allowances:'0',deductions:'-1',overtime:'0'}}])).rejects.toThrow('payroll amounts');});
+it('permits own personnel file but denies another employee and guessed paths',async()=>{await role('officer');await db.exec(`INSERT INTO officer_documents VALUES('${employee}','hr-files','${uid}/private.pdf');`);expect((await db.query<{allowed:boolean}>(`select hr_file_access($1) allowed`,[`${uid}/private.pdf`])).rows[0]?.allowed).toBe(true);await db.exec(`SET test.uid='${other}'`);expect((await db.query<{allowed:boolean}>(`select hr_file_access($1) allowed`,[`${uid}/private.pdf`])).rows[0]?.allowed).toBe(false);await db.exec(`SET test.uid='${uid}'`);expect((await db.query<{allowed:boolean}>(`select hr_file_access('guessed.pdf') allowed`)).rows[0]?.allowed).toBe(false);});
