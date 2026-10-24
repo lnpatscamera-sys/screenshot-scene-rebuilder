@@ -295,6 +295,13 @@
       "when": 1792845924725,
       "tag": "0041_facility_iss_module",
       "breakpoints": true
+    },
+    {
+      "idx": 42,
+      "version": "7",
+      "when": 1792847312167,
+      "tag": "0042_establishment_appointments",
+      "breakpoints": true
     }
   ]
 }

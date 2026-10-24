@@ -14,6 +14,84 @@ export type Database = {
   }
   public: {
     Tables: {
+      appointment_requests: {
+        Row: {
+          created_at: string
+          decided_at: string | null
+          decided_by: string | null
+          decision_note: string | null
+          id: string
+          justification: string | null
+          officer_id: string
+          post_id: string
+          requested_by: string
+          roles: Database["public"]["Enums"]["app_role"][]
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          decided_at?: string | null
+          decided_by?: string | null
+          decision_note?: string | null
+          id?: string
+          justification?: string | null
+          officer_id: string
+          post_id: string
+          requested_by?: string
+          roles?: Database["public"]["Enums"]["app_role"][]
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          decided_at?: string | null
+          decided_by?: string | null
+          decision_note?: string | null
+          id?: string
+          justification?: string | null
+          officer_id?: string
+          post_id?: string
+          requested_by?: string
+          roles?: Database["public"]["Enums"]["app_role"][]
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "appointment_requests_officer_id_fkey"
+            columns: ["officer_id"]
+            isOneToOne: false
+            referencedRelation: "approvals"
+            referencedColumns: ["approver_id"]
+          },
+          {
+            foreignKeyName: "appointment_requests_officer_id_fkey"
+            columns: ["officer_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "appointment_requests_officer_id_fkey"
+            columns: ["officer_id"]
+            isOneToOne: false
+            referencedRelation: "equipment_requests"
+            referencedColumns: ["requested_by"]
+          },
+          {
+            foreignKeyName: "appointment_requests_officer_id_fkey"
+            columns: ["officer_id"]
+            isOneToOne: false
+            referencedRelation: "officers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "appointment_requests_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "establishment_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       assessment_results: {
         Row: {
           assessment_id: string
@@ -1693,6 +1771,65 @@ export type Database = {
           },
         ]
       }
+      establishment_posts: {
+        Row: {
+          authorized: number
+          created_at: string
+          id: string
+          rank_allocation: Json
+          sort_order: number
+          title: string
+          unit_id: string
+        }
+        Insert: {
+          authorized?: number
+          created_at?: string
+          id?: string
+          rank_allocation?: Json
+          sort_order?: number
+          title: string
+          unit_id: string
+        }
+        Update: {
+          authorized?: number
+          created_at?: string
+          id?: string
+          rank_allocation?: Json
+          sort_order?: number
+          title?: string
+          unit_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "establishment_posts_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "establishment_units"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      establishment_units: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          sort_order: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          sort_order?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          sort_order?: number
+        }
+        Relationships: []
+      }
       expenses: {
         Row: {
           amount: number | null
@@ -3287,6 +3424,7 @@ export type Database = {
           employee_number: string | null
           employment_status: string
           employment_type: string
+          establishment_post_id: string | null
           first_name: string | null
           full_name: string
           gender: string | null
@@ -3330,6 +3468,7 @@ export type Database = {
           employee_number?: string | null
           employment_status?: string
           employment_type?: string
+          establishment_post_id?: string | null
           first_name?: string | null
           full_name: string
           gender?: string | null
@@ -3373,6 +3512,7 @@ export type Database = {
           employee_number?: string | null
           employment_status?: string
           employment_type?: string
+          establishment_post_id?: string | null
           first_name?: string | null
           full_name?: string
           gender?: string | null
@@ -3400,6 +3540,13 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "officers_establishment_post_id_fkey"
+            columns: ["establishment_post_id"]
+            isOneToOne: false
+            referencedRelation: "establishment_posts"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "officers_office_id_fkey"
             columns: ["office_id"]
@@ -6362,6 +6509,7 @@ export type Database = {
         Returns: undefined
       }
       can_read_document: { Args: { _id: string }; Returns: boolean }
+      cancel_appointment: { Args: { _id: string }; Returns: undefined }
       command_accounts: { Args: never; Returns: Json }
       command_assign: { Args: { _payload: Json }; Returns: undefined }
       command_chain: {
@@ -6399,6 +6547,10 @@ export type Database = {
         Returns: string
       }
       daily_report_alerts: { Args: { _at?: string }; Returns: number }
+      decide_appointment: {
+        Args: { _approve: boolean; _id: string; _note: string }
+        Returns: undefined
+      }
       facility_action: {
         Args: { _action: string; _id: string; _payload?: Json }
         Returns: undefined
@@ -6506,6 +6658,15 @@ export type Database = {
         Returns: boolean
       }
       section_head_of: { Args: { _section: string }; Returns: boolean }
+      submit_appointment: {
+        Args: {
+          _justification: string
+          _officer: string
+          _post: string
+          _roles: Database["public"]["Enums"]["app_role"][]
+        }
+        Returns: string
+      }
       supply_stage_role: {
         Args: { _stage: number }
         Returns: Database["public"]["Enums"]["app_role"][]
