@@ -215,40 +215,55 @@ export type Database = {
       }
       asset_maintenance: {
         Row: {
+          action_taken: string | null
           asset_id: string | null
           cost: number | null
           created_at: string
           description: string | null
+          findings: string | null
           id: string
           maintenance_date: string | null
+          maintenance_number: string | null
           maintenance_type: string | null
           next_service_date: string | null
           recorded_by: string | null
+          status: string
           supplier_id: string | null
+          technician_id: string | null
         }
         Insert: {
+          action_taken?: string | null
           asset_id?: string | null
           cost?: number | null
           created_at?: string
           description?: string | null
+          findings?: string | null
           id?: string
           maintenance_date?: string | null
+          maintenance_number?: string | null
           maintenance_type?: string | null
           next_service_date?: string | null
           recorded_by?: string | null
+          status?: string
           supplier_id?: string | null
+          technician_id?: string | null
         }
         Update: {
+          action_taken?: string | null
           asset_id?: string | null
           cost?: number | null
           created_at?: string
           description?: string | null
+          findings?: string | null
           id?: string
           maintenance_date?: string | null
+          maintenance_number?: string | null
           maintenance_type?: string | null
           next_service_date?: string | null
           recorded_by?: string | null
+          status?: string
           supplier_id?: string | null
+          technician_id?: string | null
         }
         Relationships: [
           {
@@ -298,6 +313,34 @@ export type Database = {
             columns: ["supplier_id"]
             isOneToOne: false
             referencedRelation: "vendors"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "asset_maintenance_technician_id_fkey"
+            columns: ["technician_id"]
+            isOneToOne: false
+            referencedRelation: "approvals"
+            referencedColumns: ["approver_id"]
+          },
+          {
+            foreignKeyName: "asset_maintenance_technician_id_fkey"
+            columns: ["technician_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "asset_maintenance_technician_id_fkey"
+            columns: ["technician_id"]
+            isOneToOne: false
+            referencedRelation: "equipment_requests"
+            referencedColumns: ["requested_by"]
+          },
+          {
+            foreignKeyName: "asset_maintenance_technician_id_fkey"
+            columns: ["technician_id"]
+            isOneToOne: false
+            referencedRelation: "officers"
             referencedColumns: ["id"]
           },
         ]
@@ -451,32 +494,56 @@ export type Database = {
         Row: {
           asset_name: string | null
           asset_number: string | null
+          asset_status: string
           assigned_to: string | null
+          brand: string | null
           category: string | null
           condition: string | null
+          department_id: string | null
+          ict_managed: boolean
           id: string
+          model: string | null
           purchase_date: string | null
+          section_id: string | null
+          serial_number: string | null
           value: number | null
+          warranty_expiry: string | null
         }
         Insert: {
           asset_name?: string | null
           asset_number?: string | null
+          asset_status?: string
           assigned_to?: string | null
+          brand?: string | null
           category?: string | null
           condition?: string | null
+          department_id?: string | null
+          ict_managed?: boolean
           id?: string
+          model?: string | null
           purchase_date?: string | null
+          section_id?: string | null
+          serial_number?: string | null
           value?: number | null
+          warranty_expiry?: string | null
         }
         Update: {
           asset_name?: string | null
           asset_number?: string | null
+          asset_status?: string
           assigned_to?: string | null
+          brand?: string | null
           category?: string | null
           condition?: string | null
+          department_id?: string | null
+          ict_managed?: boolean
           id?: string
+          model?: string | null
           purchase_date?: string | null
+          section_id?: string | null
+          serial_number?: string | null
           value?: number | null
+          warranty_expiry?: string | null
         }
         Relationships: [
           {
@@ -505,6 +572,20 @@ export type Database = {
             columns: ["assigned_to"]
             isOneToOne: false
             referencedRelation: "officers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "assets_department_id_fkey"
+            columns: ["department_id"]
+            isOneToOne: false
+            referencedRelation: "offices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "assets_section_id_fkey"
+            columns: ["section_id"]
+            isOneToOne: false
+            referencedRelation: "sections"
             referencedColumns: ["id"]
           },
         ]
@@ -1918,6 +1999,117 @@ export type Database = {
           {
             foreignKeyName: "hr_reports_officer_id_fkey"
             columns: ["officer_id"]
+            isOneToOne: false
+            referencedRelation: "officers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ict_records: {
+        Row: {
+          attachments: Json
+          category: string
+          created_at: string
+          created_by: string
+          details: Json
+          history: Json
+          id: string
+          kind: string
+          number: string
+          officer_id: string | null
+          priority: string
+          status: string
+          technician_id: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          attachments?: Json
+          category: string
+          created_at?: string
+          created_by?: string
+          details?: Json
+          history?: Json
+          id?: string
+          kind: string
+          number?: string
+          officer_id?: string | null
+          priority?: string
+          status?: string
+          technician_id?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          attachments?: Json
+          category?: string
+          created_at?: string
+          created_by?: string
+          details?: Json
+          history?: Json
+          id?: string
+          kind?: string
+          number?: string
+          officer_id?: string | null
+          priority?: string
+          status?: string
+          technician_id?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ict_records_officer_id_fkey"
+            columns: ["officer_id"]
+            isOneToOne: false
+            referencedRelation: "approvals"
+            referencedColumns: ["approver_id"]
+          },
+          {
+            foreignKeyName: "ict_records_officer_id_fkey"
+            columns: ["officer_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ict_records_officer_id_fkey"
+            columns: ["officer_id"]
+            isOneToOne: false
+            referencedRelation: "equipment_requests"
+            referencedColumns: ["requested_by"]
+          },
+          {
+            foreignKeyName: "ict_records_officer_id_fkey"
+            columns: ["officer_id"]
+            isOneToOne: false
+            referencedRelation: "officers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ict_records_technician_id_fkey"
+            columns: ["technician_id"]
+            isOneToOne: false
+            referencedRelation: "approvals"
+            referencedColumns: ["approver_id"]
+          },
+          {
+            foreignKeyName: "ict_records_technician_id_fkey"
+            columns: ["technician_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ict_records_technician_id_fkey"
+            columns: ["technician_id"]
+            isOneToOne: false
+            referencedRelation: "equipment_requests"
+            referencedColumns: ["requested_by"]
+          },
+          {
+            foreignKeyName: "ict_records_technician_id_fkey"
+            columns: ["technician_id"]
             isOneToOne: false
             referencedRelation: "officers"
             referencedColumns: ["id"]
@@ -4670,34 +4862,58 @@ export type Database = {
         Row: {
           assigned_to: string | null
           created_at: string | null
+          created_by: string | null
+          department_id: string | null
           description: string | null
+          email: string | null
+          history: Json
           id: string
           issue_type: string | null
+          phone: string | null
           priority: string | null
           reported_by: string | null
+          requester_name: string | null
+          resolved_at: string | null
           status: string | null
+          subject: string | null
           ticket_number: string | null
         }
         Insert: {
           assigned_to?: string | null
           created_at?: string | null
+          created_by?: string | null
+          department_id?: string | null
           description?: string | null
+          email?: string | null
+          history?: Json
           id?: string
           issue_type?: string | null
+          phone?: string | null
           priority?: string | null
           reported_by?: string | null
+          requester_name?: string | null
+          resolved_at?: string | null
           status?: string | null
+          subject?: string | null
           ticket_number?: string | null
         }
         Update: {
           assigned_to?: string | null
           created_at?: string | null
+          created_by?: string | null
+          department_id?: string | null
           description?: string | null
+          email?: string | null
+          history?: Json
           id?: string
           issue_type?: string | null
+          phone?: string | null
           priority?: string | null
           reported_by?: string | null
+          requester_name?: string | null
+          resolved_at?: string | null
           status?: string | null
+          subject?: string | null
           ticket_number?: string | null
         }
         Relationships: [
@@ -4727,6 +4943,13 @@ export type Database = {
             columns: ["assigned_to"]
             isOneToOne: false
             referencedRelation: "officers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tickets_department_id_fkey"
+            columns: ["department_id"]
+            isOneToOne: false
+            referencedRelation: "offices"
             referencedColumns: ["id"]
           },
           {
@@ -5644,6 +5867,24 @@ export type Database = {
       hr_reader: { Args: { _officer: string }; Returns: boolean }
       hr_staff: { Args: never; Returns: boolean }
       hr_validate_files: { Args: { _files: Json }; Returns: undefined }
+      ict_action: {
+        Args: { _action: string; _id: string; _module: string; _payload?: Json }
+        Returns: string
+      }
+      ict_directory: {
+        Args: never
+        Returns: {
+          full_name: string
+          id: string
+          is_technician: boolean
+          office_id: string
+          section_id: string
+          user_id: string
+        }[]
+      }
+      ict_file_access: { Args: { _path: string }; Returns: boolean }
+      ict_staff: { Args: never; Returns: boolean }
+      ict_supervisor: { Args: { _officer: string }; Returns: boolean }
       leave_stage_role: {
         Args: { _stage: number }
         Returns: Database["public"]["Enums"]["app_role"][]

@@ -197,6 +197,34 @@
       "when": 1792836273003,
       "tag": "0027_hr_personnel_retention_guard",
       "breakpoints": true
+    },
+    {
+      "idx": 28,
+      "version": "7",
+      "when": 1792836828238,
+      "tag": "0028_ict_helpdesk",
+      "breakpoints": true
+    },
+    {
+      "idx": 29,
+      "version": "7",
+      "when": 1792836851336,
+      "tag": "0029_ict_directory_access",
+      "breakpoints": true
+    },
+    {
+      "idx": 30,
+      "version": "7",
+      "when": 1792836986327,
+      "tag": "0030_ict_record_validation",
+      "breakpoints": true
+    },
+    {
+      "idx": 31,
+      "version": "7",
+      "when": 1792837145372,
+      "tag": "0031_ict_actor_identity",
+      "breakpoints": true
     }
   ]
 }

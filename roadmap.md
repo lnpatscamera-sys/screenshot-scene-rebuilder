@@ -29,4 +29,6 @@
 - [x] HR screens: canonical employee registry/files, recruitment, manual/self/QR attendance, two-stage HR leave and recall, appraisals, promotion/transfer decisions, training, discipline, payroll summaries and PDF/Excel/print reports. Signed-in employee/vacancy/attendance/promotion/leave/recall/payroll/appraisal/export verified; temporary records removed and audit retained; 119 tests passed.
 - [ ] HR recall entitlement restoration — organizational policy needed; recall currently records the event without crediting unused leave days.
 - [ ] External payroll provider linkage — provider and payroll calculation rules needed; current HR payroll is a manually entered salary summary, not payment execution.
-- [ ] Transport and ICT helpdesk (outside Phase 2 scope)
+- [x] ICT Helpdesk: protected tickets, supervisor-approved service requests, incidents, canonical ICT assets/history, manual network/account registries, maintenance, knowledge base and reports. Signed-in ticket resolution/closure, incident closure, check-in, asset assignment, knowledge publication and Excel download verified; temporary records removed and audit retained; permission tests pass.
+- [ ] ICT live monitoring and external account execution — network monitoring and email/directory account providers must be supplied; current checks, uptime and account reset/unlock actions do not execute against external systems.
+- [ ] Transport (outside Phase 2 scope)
