@@ -19,6 +19,7 @@ import { Route as AuthenticatedCommandInventoryRouteImport } from './routes/_aut
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedDocumentsRouteImport } from './routes/_authenticated/documents'
 import { Route as AuthenticatedEquipmentRequestsRouteImport } from './routes/_authenticated/equipment-requests'
+import { Route as AuthenticatedFacilitiesRouteImport } from './routes/_authenticated/facilities'
 import { Route as AuthenticatedFinanceRouteImport } from './routes/_authenticated/finance'
 import { Route as AuthenticatedHrRouteImport } from './routes/_authenticated/hr'
 import { Route as AuthenticatedIctRouteImport } from './routes/_authenticated/ict'
@@ -32,6 +33,7 @@ import { Route as AuthenticatedProcurementRouteImport } from './routes/_authenti
 import { Route as AuthenticatedReceiptsRouteImport } from './routes/_authenticated/receipts'
 import { Route as AuthenticatedRegistryRouteImport } from './routes/_authenticated/registry'
 import { Route as AuthenticatedSearchRouteImport } from './routes/_authenticated/search'
+import { Route as AuthenticatedSecurityRouteImport } from './routes/_authenticated/security'
 import { Route as AuthenticatedStockMovementsRouteImport } from './routes/_authenticated/stock-movements'
 import { Route as AuthenticatedSuppliersRouteImport } from './routes/_authenticated/suppliers'
 import { Route as AuthenticatedSuppliesRouteImport } from './routes/_authenticated/supplies'
@@ -94,6 +96,11 @@ const AuthenticatedEquipmentRequestsRoute =
     path: '/equipment-requests',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedFacilitiesRoute = AuthenticatedFacilitiesRouteImport.update({
+  id: '/facilities',
+  path: '/facilities',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedFinanceRoute = AuthenticatedFinanceRouteImport.update({
   id: '/finance',
   path: '/finance',
@@ -162,6 +169,11 @@ const AuthenticatedSearchRoute = AuthenticatedSearchRouteImport.update({
   path: '/search',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedSecurityRoute = AuthenticatedSecurityRouteImport.update({
+  id: '/security',
+  path: '/security',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedStockMovementsRoute =
   AuthenticatedStockMovementsRouteImport.update({
     id: '/stock-movements',
@@ -228,6 +240,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/documents': typeof AuthenticatedDocumentsRoute
   '/equipment-requests': typeof AuthenticatedEquipmentRequestsRoute
+  '/facilities': typeof AuthenticatedFacilitiesRoute
   '/finance': typeof AuthenticatedFinanceRoute
   '/hr': typeof AuthenticatedHrRoute
   '/ict': typeof AuthenticatedIctRoute
@@ -241,6 +254,7 @@ export interface FileRoutesByFullPath {
   '/receipts': typeof AuthenticatedReceiptsRoute
   '/registry': typeof AuthenticatedRegistryRoute
   '/search': typeof AuthenticatedSearchRoute
+  '/security': typeof AuthenticatedSecurityRoute
   '/stock-movements': typeof AuthenticatedStockMovementsRoute
   '/suppliers': typeof AuthenticatedSuppliersRoute
   '/supplies': typeof AuthenticatedSuppliesRoute
@@ -262,6 +276,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/documents': typeof AuthenticatedDocumentsRoute
   '/equipment-requests': typeof AuthenticatedEquipmentRequestsRoute
+  '/facilities': typeof AuthenticatedFacilitiesRoute
   '/finance': typeof AuthenticatedFinanceRoute
   '/hr': typeof AuthenticatedHrRoute
   '/ict': typeof AuthenticatedIctRoute
@@ -275,6 +290,7 @@ export interface FileRoutesByTo {
   '/receipts': typeof AuthenticatedReceiptsRoute
   '/registry': typeof AuthenticatedRegistryRoute
   '/search': typeof AuthenticatedSearchRoute
+  '/security': typeof AuthenticatedSecurityRoute
   '/stock-movements': typeof AuthenticatedStockMovementsRoute
   '/suppliers': typeof AuthenticatedSuppliersRoute
   '/supplies': typeof AuthenticatedSuppliesRoute
@@ -298,6 +314,7 @@ export interface FileRoutesById {
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/documents': typeof AuthenticatedDocumentsRoute
   '/_authenticated/equipment-requests': typeof AuthenticatedEquipmentRequestsRoute
+  '/_authenticated/facilities': typeof AuthenticatedFacilitiesRoute
   '/_authenticated/finance': typeof AuthenticatedFinanceRoute
   '/_authenticated/hr': typeof AuthenticatedHrRoute
   '/_authenticated/ict': typeof AuthenticatedIctRoute
@@ -311,6 +328,7 @@ export interface FileRoutesById {
   '/_authenticated/receipts': typeof AuthenticatedReceiptsRoute
   '/_authenticated/registry': typeof AuthenticatedRegistryRoute
   '/_authenticated/search': typeof AuthenticatedSearchRoute
+  '/_authenticated/security': typeof AuthenticatedSecurityRoute
   '/_authenticated/stock-movements': typeof AuthenticatedStockMovementsRoute
   '/_authenticated/suppliers': typeof AuthenticatedSuppliersRoute
   '/_authenticated/supplies': typeof AuthenticatedSuppliesRoute
@@ -334,6 +352,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/documents'
     | '/equipment-requests'
+    | '/facilities'
     | '/finance'
     | '/hr'
     | '/ict'
@@ -347,6 +366,7 @@ export interface FileRouteTypes {
     | '/receipts'
     | '/registry'
     | '/search'
+    | '/security'
     | '/stock-movements'
     | '/suppliers'
     | '/supplies'
@@ -368,6 +388,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/documents'
     | '/equipment-requests'
+    | '/facilities'
     | '/finance'
     | '/hr'
     | '/ict'
@@ -381,6 +402,7 @@ export interface FileRouteTypes {
     | '/receipts'
     | '/registry'
     | '/search'
+    | '/security'
     | '/stock-movements'
     | '/suppliers'
     | '/supplies'
@@ -403,6 +425,7 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard'
     | '/_authenticated/documents'
     | '/_authenticated/equipment-requests'
+    | '/_authenticated/facilities'
     | '/_authenticated/finance'
     | '/_authenticated/hr'
     | '/_authenticated/ict'
@@ -416,6 +439,7 @@ export interface FileRouteTypes {
     | '/_authenticated/receipts'
     | '/_authenticated/registry'
     | '/_authenticated/search'
+    | '/_authenticated/security'
     | '/_authenticated/stock-movements'
     | '/_authenticated/suppliers'
     | '/_authenticated/supplies'
@@ -505,6 +529,13 @@ declare module '@tanstack/react-router' {
       path: '/equipment-requests'
       fullPath: '/equipment-requests'
       preLoaderRoute: typeof AuthenticatedEquipmentRequestsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/facilities': {
+      id: '/_authenticated/facilities'
+      path: '/facilities'
+      fullPath: '/facilities'
+      preLoaderRoute: typeof AuthenticatedFacilitiesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/finance': {
@@ -598,6 +629,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSearchRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/security': {
+      id: '/_authenticated/security'
+      path: '/security'
+      fullPath: '/security'
+      preLoaderRoute: typeof AuthenticatedSecurityRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/stock-movements': {
       id: '/_authenticated/stock-movements'
       path: '/stock-movements'
@@ -679,6 +717,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedDocumentsRoute: typeof AuthenticatedDocumentsRoute
   AuthenticatedEquipmentRequestsRoute: typeof AuthenticatedEquipmentRequestsRoute
+  AuthenticatedFacilitiesRoute: typeof AuthenticatedFacilitiesRoute
   AuthenticatedFinanceRoute: typeof AuthenticatedFinanceRoute
   AuthenticatedHrRoute: typeof AuthenticatedHrRoute
   AuthenticatedIctRoute: typeof AuthenticatedIctRoute
@@ -692,6 +731,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedReceiptsRoute: typeof AuthenticatedReceiptsRoute
   AuthenticatedRegistryRoute: typeof AuthenticatedRegistryRoute
   AuthenticatedSearchRoute: typeof AuthenticatedSearchRoute
+  AuthenticatedSecurityRoute: typeof AuthenticatedSecurityRoute
   AuthenticatedStockMovementsRoute: typeof AuthenticatedStockMovementsRoute
   AuthenticatedSuppliersRoute: typeof AuthenticatedSuppliersRoute
   AuthenticatedSuppliesRoute: typeof AuthenticatedSuppliesRoute
@@ -711,6 +751,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedDocumentsRoute: AuthenticatedDocumentsRoute,
   AuthenticatedEquipmentRequestsRoute: AuthenticatedEquipmentRequestsRoute,
+  AuthenticatedFacilitiesRoute: AuthenticatedFacilitiesRoute,
   AuthenticatedFinanceRoute: AuthenticatedFinanceRoute,
   AuthenticatedHrRoute: AuthenticatedHrRoute,
   AuthenticatedIctRoute: AuthenticatedIctRoute,
@@ -724,6 +765,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedReceiptsRoute: AuthenticatedReceiptsRoute,
   AuthenticatedRegistryRoute: AuthenticatedRegistryRoute,
   AuthenticatedSearchRoute: AuthenticatedSearchRoute,
+  AuthenticatedSecurityRoute: AuthenticatedSecurityRoute,
   AuthenticatedStockMovementsRoute: AuthenticatedStockMovementsRoute,
   AuthenticatedSuppliersRoute: AuthenticatedSuppliersRoute,
   AuthenticatedSuppliesRoute: AuthenticatedSuppliesRoute,
