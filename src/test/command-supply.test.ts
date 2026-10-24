@@ -60,7 +60,7 @@ beforeAll(async()=>{
  CREATE FUNCTION command_chain(uuid,boolean) RETURNS jsonb LANGUAGE sql AS $$ SELECT jsonb_build_array(jsonb_build_object('user_id',auth.uid()),jsonb_build_object('user_id',auth.uid()),jsonb_build_object('user_id',auth.uid()),jsonb_build_object('user_id',auth.uid()),jsonb_build_object('user_id',auth.uid())) $$;
  CREATE POLICY "read sr" ON supply_requests FOR SELECT USING(true);
  INSERT INTO officers(id,user_id,full_name,employment_status) VALUES('${request}','${actor}','Requester','Active');
- INSERT INTO user_roles VALUES('${actor}','procurement_admin','deputy_commandant');`);
+ INSERT INTO user_roles VALUES('${actor}','procurement_admin');`);
  for(const f of ['0033_command_supply_oversight.sql','0038_command_shortage_cost_initialization.sql','0039_command_draft_procurement_estimate.sql']) await db.exec(readFileSync('drizzle/migrations/'+f,'utf8'));
  await db.exec(`ALTER TABLE inventory_items DISABLE TRIGGER guard_inventory_metadata; INSERT INTO inventory_items(id,name,quantity,unit) VALUES('${item}','Stock item',10,'pcs'); ALTER TABLE inventory_items ENABLE TRIGGER guard_inventory_metadata; INSERT INTO warehouse_stock(item_id,quantity) VALUES('${item}',10);`);
 },30000);
