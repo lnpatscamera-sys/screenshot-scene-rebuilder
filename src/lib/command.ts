@@ -15,7 +15,7 @@ export const commandOptions = queryOptions({ queryKey: ['command'], queryFn: asy
   for (let offset = 0; ; offset += 1000) { const r = await supabase.from('compiled_reports').select('*').order('created_at', { ascending: false }).order('id').range(offset, offset + 999); if (r.error) throw r.error; compilations.push(...r.data); if (r.data.length < 1000) break; }
   return { directory: directory.data as unknown as Directory, summary: summary.data as unknown as ReportSummary, reports, compilations };
 } });
-export async function refreshCommand(qc: QueryClient) { await Promise.all(['command', 'notifications', 'supplies', 'dashboard', 'command-inventory', 'inventory', 'procurement'].map(k => qc.invalidateQueries({ queryKey: [k] }))); }
+export async function refreshCommand(qc: QueryClient) { await Promise.all(['command', 'notifications', 'supplies', 'dashboard', 'command-inventory', 'inventory', 'procurement', 'notification-center', 'supply-evidence', 'command-accounts'].map(k => qc.invalidateQueries({ queryKey: [k] }))); }
 // The generated RPC types omit PostgreSQL's nullable UUID arguments; send explicit null for creation, not undefined.
 export async function reportAction(id: string | null, action: string, payload: Json = {}) { const r = await supabase.rpc('daily_report_action', { _id: id as string, _action: action, _payload: payload }); if (r.error) throw r.error; return r.data; }
 export async function supplyCommandAction(id: string | null, action: string, payload: Json = {}) { const r = await supabase.rpc('command_supply_action', { _id: id as string, _action: action, _payload: payload }); if (r.error) throw r.error; return r.data; }
