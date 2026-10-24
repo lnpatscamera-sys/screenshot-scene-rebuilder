@@ -14,6 +14,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedAssetsRouteImport } from './routes/_authenticated/assets'
 import { Route as AuthenticatedAuditRouteImport } from './routes/_authenticated/audit'
+import { Route as AuthenticatedCommandRouteImport } from './routes/_authenticated/command'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedDocumentsRouteImport } from './routes/_authenticated/documents'
 import { Route as AuthenticatedEquipmentRequestsRouteImport } from './routes/_authenticated/equipment-requests'
@@ -62,6 +63,11 @@ const AuthenticatedAssetsRoute = AuthenticatedAssetsRouteImport.update({
 const AuthenticatedAuditRoute = AuthenticatedAuditRouteImport.update({
   id: '/audit',
   path: '/audit',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedCommandRoute = AuthenticatedCommandRouteImport.update({
+  id: '/command',
+  path: '/command',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
@@ -203,6 +209,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/assets': typeof AuthenticatedAssetsRoute
   '/audit': typeof AuthenticatedAuditRoute
+  '/command': typeof AuthenticatedCommandRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/documents': typeof AuthenticatedDocumentsRoute
   '/equipment-requests': typeof AuthenticatedEquipmentRequestsRoute
@@ -234,6 +241,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/assets': typeof AuthenticatedAssetsRoute
   '/audit': typeof AuthenticatedAuditRoute
+  '/command': typeof AuthenticatedCommandRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/documents': typeof AuthenticatedDocumentsRoute
   '/equipment-requests': typeof AuthenticatedEquipmentRequestsRoute
@@ -267,6 +275,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/_authenticated/assets': typeof AuthenticatedAssetsRoute
   '/_authenticated/audit': typeof AuthenticatedAuditRoute
+  '/_authenticated/command': typeof AuthenticatedCommandRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/documents': typeof AuthenticatedDocumentsRoute
   '/_authenticated/equipment-requests': typeof AuthenticatedEquipmentRequestsRoute
@@ -300,6 +309,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/assets'
     | '/audit'
+    | '/command'
     | '/dashboard'
     | '/documents'
     | '/equipment-requests'
@@ -331,6 +341,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/assets'
     | '/audit'
+    | '/command'
     | '/dashboard'
     | '/documents'
     | '/equipment-requests'
@@ -363,6 +374,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/_authenticated/assets'
     | '/_authenticated/audit'
+    | '/_authenticated/command'
     | '/_authenticated/dashboard'
     | '/_authenticated/documents'
     | '/_authenticated/equipment-requests'
@@ -432,6 +444,13 @@ declare module '@tanstack/react-router' {
       path: '/audit'
       fullPath: '/audit'
       preLoaderRoute: typeof AuthenticatedAuditRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/command': {
+      id: '/_authenticated/command'
+      path: '/command'
+      fullPath: '/command'
+      preLoaderRoute: typeof AuthenticatedCommandRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/dashboard': {
@@ -615,6 +634,7 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAssetsRoute: typeof AuthenticatedAssetsRoute
   AuthenticatedAuditRoute: typeof AuthenticatedAuditRoute
+  AuthenticatedCommandRoute: typeof AuthenticatedCommandRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedDocumentsRoute: typeof AuthenticatedDocumentsRoute
   AuthenticatedEquipmentRequestsRoute: typeof AuthenticatedEquipmentRequestsRoute
@@ -644,6 +664,7 @@ interface AuthenticatedRouteRouteChildren {
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAssetsRoute: AuthenticatedAssetsRoute,
   AuthenticatedAuditRoute: AuthenticatedAuditRoute,
+  AuthenticatedCommandRoute: AuthenticatedCommandRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedDocumentsRoute: AuthenticatedDocumentsRoute,
   AuthenticatedEquipmentRequestsRoute: AuthenticatedEquipmentRequestsRoute,

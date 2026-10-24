@@ -29,6 +29,8 @@
   --color-destructive-foreground: var(--destructive-foreground);
   --color-success: var(--success);
   --color-warning: var(--warning);
+  --color-stock-out: var(--stock-out);
+  --color-stock-out-foreground: var(--stock-out-foreground);
   --color-gold: var(--gold);
   --color-gold-foreground: var(--gold-foreground);
   --color-border: var(--border);
@@ -69,6 +71,8 @@
   --gold-foreground: oklch(0.2 0.04 262);
   --success: oklch(0.6 0.14 155);
   --warning: oklch(0.75 0.15 75);
+  --stock-out: oklch(0.12 0 0);
+  --stock-out-foreground: oklch(0.98 0 0);
   --destructive: oklch(0.56 0.21 27);
   --destructive-foreground: oklch(0.98 0 0);
   --border: oklch(0.9 0.012 255);

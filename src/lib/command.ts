@@ -16,8 +16,9 @@ export const commandOptions = queryOptions({ queryKey: ['command'], queryFn: asy
   return { directory: directory.data as unknown as Directory, summary: summary.data as unknown as ReportSummary, reports, compilations };
 } });
 export async function refreshCommand(qc: QueryClient) { await Promise.all(['command', 'notifications', 'supplies', 'dashboard', 'command-inventory', 'inventory', 'procurement'].map(k => qc.invalidateQueries({ queryKey: [k] }))); }
-export async function reportAction(id: string | null, action: string, payload: Json = {}) { const r = await supabase.rpc('daily_report_action', { _id: id ?? undefined, _action: action, _payload: payload }); if (r.error) throw r.error; return r.data; }
-export async function supplyCommandAction(id: string | null, action: string, payload: Json = {}) { const r = await supabase.rpc('command_supply_action', { _id: id ?? undefined, _action: action, _payload: payload }); if (r.error) throw r.error; return r.data; }
+// The generated RPC types omit PostgreSQL's nullable UUID arguments; send explicit null for creation, not undefined.
+export async function reportAction(id: string | null, action: string, payload: Json = {}) { const r = await supabase.rpc('daily_report_action', { _id: id as string, _action: action, _payload: payload }); if (r.error) throw r.error; return r.data; }
+export async function supplyCommandAction(id: string | null, action: string, payload: Json = {}) { const r = await supabase.rpc('command_supply_action', { _id: id as string, _action: action, _payload: payload }); if (r.error) throw r.error; return r.data; }
 export async function uploadCommandFile(file: File, userId: string) { const path = `${userId}/${crypto.randomUUID()}/${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`; const r = await supabase.storage.from('command-files').upload(path, file); if (r.error) throw r.error; return { path, name: file.name }; }
 export async function openCommandFile(path: string) { const r = await supabase.storage.from('command-files').createSignedUrl(path, 300); if (r.error) throw r.error; window.open(r.data.signedUrl, '_blank', 'noopener,noreferrer'); }
 export async function exportCommandWord(title: string, rows: Record<string, unknown>[]) {
