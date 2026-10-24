@@ -253,6 +253,13 @@
       "when": 1792840695265,
       "tag": "0035_command_supply_request_lines",
       "breakpoints": true
+    },
+    {
+      "idx": 36,
+      "version": "7",
+      "when": 1792840942394,
+      "tag": "0036_command_setup_and_fulfillment_guards",
+      "breakpoints": true
     }
   ]
 }

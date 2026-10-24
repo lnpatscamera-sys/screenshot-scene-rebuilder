@@ -6143,6 +6143,7 @@ export type Database = {
         Returns: undefined
       }
       can_read_document: { Args: { _id: string }; Returns: boolean }
+      command_accounts: { Args: never; Returns: Json }
       command_assign: { Args: { _payload: Json }; Returns: undefined }
       command_chain: {
         Args: { _officer: string; _supply?: boolean }
@@ -6151,6 +6152,14 @@ export type Database = {
       command_directory: { Args: never; Returns: Json }
       command_file_reader: { Args: { _path: string }; Returns: boolean }
       command_inventory_overview: { Args: never; Returns: Json }
+      command_link_account: {
+        Args: { _officer: string; _user: string }
+        Returns: undefined
+      }
+      command_map_supply_item: {
+        Args: { _id: string; _item: string }
+        Returns: undefined
+      }
       command_notify: {
         Args: { _body: string; _key: string; _title: string; _user: string }
         Returns: undefined
