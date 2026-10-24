@@ -1074,6 +1074,60 @@ export type Database = {
           },
         ]
       }
+      compiled_reports: {
+        Row: {
+          comments: string | null
+          created_at: string
+          created_by: string
+          end_date: string
+          history: Json
+          id: string
+          period: string
+          recipient_id: string | null
+          report_number: string
+          signature: string
+          source_ids: string[]
+          source_snapshots: Json
+          start_date: string
+          status: string
+          title: string
+        }
+        Insert: {
+          comments?: string | null
+          created_at?: string
+          created_by: string
+          end_date: string
+          history?: Json
+          id?: string
+          period: string
+          recipient_id?: string | null
+          report_number?: string
+          signature: string
+          source_ids: string[]
+          source_snapshots: Json
+          start_date: string
+          status?: string
+          title: string
+        }
+        Update: {
+          comments?: string | null
+          created_at?: string
+          created_by?: string
+          end_date?: string
+          history?: Json
+          id?: string
+          period?: string
+          recipient_id?: string | null
+          report_number?: string
+          signature?: string
+          source_ids?: string[]
+          source_snapshots?: Json
+          start_date?: string
+          status?: string
+          title?: string
+        }
+        Relationships: []
+      }
       contracts: {
         Row: {
           attachments: Json
@@ -1312,6 +1366,127 @@ export type Database = {
             columns: ["training_program_id"]
             isOneToOne: false
             referencedRelation: "training_programs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      daily_reports: {
+        Row: {
+          activities: string
+          attachments: Json
+          chain: Json
+          challenges: string | null
+          created_at: string
+          created_by: string
+          duty_assignment: string
+          employee_name: string
+          employee_number: string | null
+          history: Json
+          id: string
+          office_id: string | null
+          officer_id: string
+          recommendations: string | null
+          report_date: string
+          report_number: string
+          revision: number
+          section_id: string | null
+          signature: string | null
+          stage: number
+          status: string
+          submitted_at: string | null
+          tasks_completed: string | null
+        }
+        Insert: {
+          activities: string
+          attachments?: Json
+          chain?: Json
+          challenges?: string | null
+          created_at?: string
+          created_by: string
+          duty_assignment: string
+          employee_name: string
+          employee_number?: string | null
+          history?: Json
+          id?: string
+          office_id?: string | null
+          officer_id: string
+          recommendations?: string | null
+          report_date?: string
+          report_number?: string
+          revision?: number
+          section_id?: string | null
+          signature?: string | null
+          stage?: number
+          status?: string
+          submitted_at?: string | null
+          tasks_completed?: string | null
+        }
+        Update: {
+          activities?: string
+          attachments?: Json
+          chain?: Json
+          challenges?: string | null
+          created_at?: string
+          created_by?: string
+          duty_assignment?: string
+          employee_name?: string
+          employee_number?: string | null
+          history?: Json
+          id?: string
+          office_id?: string | null
+          officer_id?: string
+          recommendations?: string | null
+          report_date?: string
+          report_number?: string
+          revision?: number
+          section_id?: string | null
+          signature?: string | null
+          stage?: number
+          status?: string
+          submitted_at?: string | null
+          tasks_completed?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "daily_reports_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "offices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "daily_reports_officer_id_fkey"
+            columns: ["officer_id"]
+            isOneToOne: false
+            referencedRelation: "approvals"
+            referencedColumns: ["approver_id"]
+          },
+          {
+            foreignKeyName: "daily_reports_officer_id_fkey"
+            columns: ["officer_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "daily_reports_officer_id_fkey"
+            columns: ["officer_id"]
+            isOneToOne: false
+            referencedRelation: "equipment_requests"
+            referencedColumns: ["requested_by"]
+          },
+          {
+            foreignKeyName: "daily_reports_officer_id_fkey"
+            columns: ["officer_id"]
+            isOneToOne: false
+            referencedRelation: "officers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "daily_reports_section_id_fkey"
+            columns: ["section_id"]
+            isOneToOne: false
+            referencedRelation: "sections"
             referencedColumns: ["id"]
           },
         ]
@@ -2778,6 +2953,7 @@ export type Database = {
         Row: {
           body: string | null
           created_at: string
+          event_key: string | null
           id: string
           is_read: boolean | null
           message: string | null
@@ -2789,6 +2965,7 @@ export type Database = {
         Insert: {
           body?: string | null
           created_at?: string
+          event_key?: string | null
           id?: string
           is_read?: boolean | null
           message?: string | null
@@ -2800,6 +2977,7 @@ export type Database = {
         Update: {
           body?: string | null
           created_at?: string
+          event_key?: string | null
           id?: string
           is_read?: boolean | null
           message?: string | null
@@ -4004,6 +4182,66 @@ export type Database = {
           year?: number
         }
         Relationships: []
+      }
+      reporting_lines: {
+        Row: {
+          id: string
+          kind: string
+          office_id: string | null
+          officer_id: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          kind: string
+          office_id?: string | null
+          officer_id: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          kind?: string
+          office_id?: string | null
+          officer_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reporting_lines_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "offices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reporting_lines_officer_id_fkey"
+            columns: ["officer_id"]
+            isOneToOne: false
+            referencedRelation: "approvals"
+            referencedColumns: ["approver_id"]
+          },
+          {
+            foreignKeyName: "reporting_lines_officer_id_fkey"
+            columns: ["officer_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reporting_lines_officer_id_fkey"
+            columns: ["officer_id"]
+            isOneToOne: false
+            referencedRelation: "equipment_requests"
+            referencedColumns: ["requested_by"]
+          },
+          {
+            foreignKeyName: "reporting_lines_officer_id_fkey"
+            columns: ["officer_id"]
+            isOneToOne: false
+            referencedRelation: "officers"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       request_items: {
         Row: {
@@ -5827,6 +6065,26 @@ export type Database = {
         Returns: undefined
       }
       can_read_document: { Args: { _id: string }; Returns: boolean }
+      command_assign: { Args: { _payload: Json }; Returns: undefined }
+      command_chain: {
+        Args: { _officer: string; _supply?: boolean }
+        Returns: Json
+      }
+      command_directory: { Args: never; Returns: Json }
+      command_file_reader: { Args: { _path: string }; Returns: boolean }
+      command_notify: {
+        Args: { _body: string; _key: string; _title: string; _user: string }
+        Returns: undefined
+      }
+      command_report_reader: { Args: { _id: string }; Returns: boolean }
+      command_report_summary: { Args: { _date?: string }; Returns: Json }
+      command_validate_files: { Args: { _files: Json }; Returns: undefined }
+      compile_daily_reports: { Args: { _payload: Json }; Returns: string }
+      daily_report_action: {
+        Args: { _action: string; _id: string; _payload?: Json }
+        Returns: string
+      }
+      daily_report_alerts: { Args: { _at?: string }; Returns: number }
       finance_reader: { Args: never; Returns: boolean }
       finance_staff: { Args: never; Returns: boolean }
       finance_workflow: {

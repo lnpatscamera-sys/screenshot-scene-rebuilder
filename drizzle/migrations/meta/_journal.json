@@ -225,6 +225,13 @@
       "when": 1792837145372,
       "tag": "0031_ict_actor_identity",
       "breakpoints": true
+    },
+    {
+      "idx": 32,
+      "version": "7",
+      "when": 1792840468353,
+      "tag": "0032_command_reporting",
+      "breakpoints": true
     }
   ]
 }
