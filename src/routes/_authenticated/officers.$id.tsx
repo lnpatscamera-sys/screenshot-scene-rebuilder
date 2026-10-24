@@ -13,6 +13,7 @@ import { Label } from "@/components/ui/label";
 import { PageHeader, StatusBadge } from "@/components/AppShell";
 import { Logo } from "@/components/Logo";
 import { useAuth } from "@/lib/auth";
+import { policeRankOptions } from "@/lib/police-ranks";
 
 export const Route = createFileRoute("/_authenticated/officers/$id")({
   head: () => ({ meta: [{ title: "Officer Profile — LNPATS ERP" }, { name: "description", content: "View an LNPATS officer profile, service details, and identification card." }, { property: "og:title", content: "Officer Profile — LNPATS ERP" }, { property: "og:description", content: "View an LNPATS officer profile, service details, and identification card." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
@@ -117,7 +118,7 @@ function OfficerPage() {
             {edit ? (
               <form onSubmit={save} className="grid sm:grid-cols-2 gap-3">
                 {(["full_name", "rank", "phone", "email", "county", "nationality", "marital_status", "position", "current_assignment", "employment_status"] as const).map((k) => (
-                  <div key={k} className="space-y-1"><Label className="capitalize">{k.replace("_", " ")}</Label><Input name={k} defaultValue={o[k] ?? ""} /></div>
+                  <div key={k} className="space-y-1"><Label className="capitalize">{k.replace("_", " ")}</Label>{k === "rank" ? <select name="rank" aria-label="Rank" defaultValue={o.rank} required className="w-full h-9 rounded-md border bg-background px-2 text-sm">{policeRankOptions(o.rank).map(r => <option key={r.value} value={r.value}>{r.label}</option>)}</select> : <Input name={k} defaultValue={o[k] ?? ""} />}</div>
                 ))}
                 {LONG_FIELDS.map(([k, l]) => (
                   <div key={k} className="space-y-1 sm:col-span-2"><Label>{l}</Label><Textarea name={k} defaultValue={o[k] ?? ""} rows={2} /></div>
