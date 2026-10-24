@@ -13,13 +13,12 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { PageHeader, StatusBadge } from "@/components/AppShell";
 import { useAuth } from "@/lib/auth";
 import { exportCsv } from "@/lib/export";
+import { policeRankOptions } from "@/lib/police-ranks";
 
 export const Route = createFileRoute("/_authenticated/officers/")({
   head: () => ({ meta: [{ title: "Officers — LNPATS ERP" }, { name: "description", content: "Manage LNPATS officer profiles, service numbers, and assignments." }, { property: "og:title", content: "Officers — LNPATS ERP" }, { property: "og:description", content: "Manage LNPATS officer profiles, service numbers, and assignments." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
   component: Officers,
 });
-
-export const RANKS = ["Colonel", "Lt. Colonel", "Major", "Captain", "Lieutenant", "Sergeant", "Corporal", "Patrolman", "Cadet"];
 
 function Officers() {
   const { hasAny } = useAuth();
@@ -72,7 +71,7 @@ function Officers() {
                     <F name="service_number" label="Service number" required />
                     <F name="full_name" label="Full name" required />
                     <div className="space-y-1"><Label>Rank</Label>
-                      <select name="rank" required className="w-full h-9 rounded-md border bg-background px-2 text-sm">{RANKS.map((r) => <option key={r}>{r}</option>)}</select>
+                      <select name="rank" aria-label="Rank" required className="w-full h-9 rounded-md border bg-background px-2 text-sm"><option value="">Select rank</option>{policeRankOptions().map((r) => <option key={r.value} value={r.value}>{r.label}</option>)}</select>
                     </div>
                     <div className="space-y-1"><Label>Gender</Label>
                       <select name="gender" className="w-full h-9 rounded-md border bg-background px-2 text-sm"><option>Male</option><option>Female</option></select>
