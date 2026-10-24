@@ -148,6 +148,13 @@
       "when": 1792834630337,
       "tag": "0020_procurement_admin_workflow_access",
       "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1792835506480,
+      "tag": "0021_hr_administrator_role",
+      "breakpoints": true
     }
   ]
 }
