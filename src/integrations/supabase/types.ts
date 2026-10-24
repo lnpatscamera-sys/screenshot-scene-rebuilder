@@ -5634,6 +5634,10 @@ export type Database = {
         }
         Returns: boolean
       }
+      hr_action: {
+        Args: { _action: string; _id: string; _module: string; _payload?: Json }
+        Returns: string
+      }
       hr_file_access: { Args: { _path: string }; Returns: boolean }
       hr_head: { Args: { _officer: string }; Returns: boolean }
       hr_owner: { Args: { _officer: string }; Returns: boolean }
