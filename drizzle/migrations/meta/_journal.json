@@ -176,6 +176,13 @@
       "when": 1792835834850,
       "tag": "0024_hr_personnel_privacy",
       "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1792835959393,
+      "tag": "0025_hr_workflow_validation",
+      "breakpoints": true
     }
   ]
 }
