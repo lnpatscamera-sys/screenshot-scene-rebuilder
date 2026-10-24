@@ -29,7 +29,7 @@ export const BUDGET_APPROVERS: AppRole[] = ["finance_admin", "commandant"];
 export const CASH_STAGES = ["Draft", "Supervisor", "Finance", "Commandant", "Approved", "Funds Released", "Closed"];
 export const CASH_STAGE_ROLES: Record<number, AppRole[]> = { 1: ["section_head"], 2: FINANCE_STAFF, 3: ["commandant"] };
 export const PROCUREMENT_STAGES = ["Draft", "Department Head", "Procurement", "Finance", "Chief of ICT", "Commandant", "Approved"];
-export const PROCUREMENT_STAGE_ROLES: Record<number, AppRole[]> = { 1: ["section_head"], 2: ["procurement_officer"], 3: FINANCE_STAFF, 4: ["ict_admin"], 5: ["commandant"] };
+export const PROCUREMENT_STAGE_ROLES: Record<number, AppRole[]> = { 1: ["section_head"], 2: ["procurement_officer", "procurement_admin"], 3: FINANCE_STAFF, 4: ["ict_admin"], 5: ["commandant"] };
 export const EXPENSE_STAGE_ROLES: Record<number, AppRole[]> = { 1: FINANCE_STAFF, 2: ["commandant"] };
 
 /** Next stage after an approval; non-ICT procurement skips the Chief of ICT step. */

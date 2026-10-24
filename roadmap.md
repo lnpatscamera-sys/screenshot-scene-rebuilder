@@ -23,4 +23,5 @@
 - [x] Extend ERP schema from supplied SQL without replacing existing workflows; match the supplied offices and sections.
 - [x] Training module: cadet registration, programs & courses, instructors, attendance registers with absence flags, assessments & results, graduation decisions with certificates and QR verification, dashboards and PDF/Excel reports.
 - [x] Finance module: budgets, monitoring alerts, expenses with documents, revenue receipts, cash advances, procurement funding, approval timelines, reports and audit trail.
-- [ ] Procurement, Transport, HR, ICT helpdesk (outside Phase 2 scope)
+- [ ] Procurement screens: vendors, requisitions, RFQs/comparison, orders, goods receipts, contracts, ratings, dashboard/reports, email and signed-in purchasing verification.
+- [ ] Transport, HR, ICT helpdesk (outside Phase 2 scope)

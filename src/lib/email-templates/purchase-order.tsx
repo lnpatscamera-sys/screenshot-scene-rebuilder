@@ -1,0 +1,7 @@
+import { Body, Container, Head, Heading, Html, Preview, Text } from '@react-email/components';
+import type { TemplateEntry } from './registry';
+type Props = { number?: string; vendor?: string; amount?: string; delivery?: string; lines?: string; notes?: string };
+function PurchaseOrderEmail({ number, vendor, amount, delivery, lines, notes }: Props) {
+  return <Html><Head /><Preview>LNPATS purchase order {number}</Preview><Body style={{ backgroundColor: '#ffffff', fontFamily: 'Arial, sans-serif' }}><Container style={{ padding: '24px' }}><Heading>LNPATS Purchase Order</Heading><Text>Dear {vendor ?? 'Supplier'},</Text><Text>Purchase order: {number}<br />Total: {amount}<br />Delivery date: {delivery ?? 'To be arranged'}</Text><Text style={{ whiteSpace: 'pre-wrap' }}>{lines}</Text>{notes && <Text>{notes}</Text>}<Text>Please confirm acceptance and delivery arrangements with the LNPATS Procurement Section.</Text><Text>Liberia National Police Academy and Training School</Text></Container></Body></Html>;
+}
+export const template = { component: PurchaseOrderEmail, subject: (data) => `LNPATS Purchase Order ${data['number'] ?? ''}`, displayName: 'Purchase order', previewData: { number: 'LNPATS/PO/2026/0001', vendor: 'Supplier', amount: '$250.00', delivery: '2026-11-01', lines: 'Office supplies · 5 × $50.00' } } satisfies TemplateEntry;
