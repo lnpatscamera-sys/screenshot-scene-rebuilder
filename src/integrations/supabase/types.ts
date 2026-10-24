@@ -1810,6 +1810,69 @@ export type Database = {
           },
         ]
       }
+      facility_work_orders: {
+        Row: {
+          assigned_at: string | null
+          assigned_by: string | null
+          category: string
+          completed_at: string | null
+          completion_notes: string | null
+          confirmed_at: string | null
+          created_at: string
+          description: string | null
+          id: string
+          location: string
+          priority: string
+          reference: string
+          reported_by: string
+          reporter_name: string | null
+          status: string
+          technician: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          assigned_at?: string | null
+          assigned_by?: string | null
+          category?: string
+          completed_at?: string | null
+          completion_notes?: string | null
+          confirmed_at?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          location: string
+          priority?: string
+          reference?: string
+          reported_by?: string
+          reporter_name?: string | null
+          status?: string
+          technician?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          assigned_at?: string | null
+          assigned_by?: string | null
+          category?: string
+          completed_at?: string | null
+          completion_notes?: string | null
+          confirmed_at?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          location?: string
+          priority?: string
+          reference?: string
+          reported_by?: string
+          reporter_name?: string | null
+          status?: string
+          technician?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       finance_approvals: {
         Row: {
           action: string
@@ -2662,6 +2725,162 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      iss_duty_roster: {
+        Row: {
+          created_at: string
+          id: string
+          notes: string | null
+          officer_name: string
+          post: string
+          recorded_by: string
+          shift: string
+          shift_date: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          notes?: string | null
+          officer_name: string
+          post: string
+          recorded_by?: string
+          shift: string
+          shift_date: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          notes?: string | null
+          officer_name?: string
+          post?: string
+          recorded_by?: string
+          shift?: string
+          shift_date?: string
+        }
+        Relationships: []
+      }
+      iss_gate_logs: {
+        Row: {
+          created_at: string
+          direction: string
+          driver_name: string | null
+          gate: string
+          id: string
+          logged_at: string
+          plate_number: string
+          purpose: string | null
+          recorded_by: string
+        }
+        Insert: {
+          created_at?: string
+          direction: string
+          driver_name?: string | null
+          gate?: string
+          id?: string
+          logged_at?: string
+          plate_number: string
+          purpose?: string | null
+          recorded_by?: string
+        }
+        Update: {
+          created_at?: string
+          direction?: string
+          driver_name?: string | null
+          gate?: string
+          id?: string
+          logged_at?: string
+          plate_number?: string
+          purpose?: string | null
+          recorded_by?: string
+        }
+        Relationships: []
+      }
+      iss_occurrences: {
+        Row: {
+          action_taken: string | null
+          category: string
+          created_at: string
+          description: string
+          id: string
+          location: string
+          ob_number: string
+          occurred_at: string
+          recorded_by: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          action_taken?: string | null
+          category?: string
+          created_at?: string
+          description: string
+          id?: string
+          location: string
+          ob_number?: string
+          occurred_at?: string
+          recorded_by?: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          action_taken?: string | null
+          category?: string
+          created_at?: string
+          description?: string
+          id?: string
+          location?: string
+          ob_number?: string
+          occurred_at?: string
+          recorded_by?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      iss_visitors: {
+        Row: {
+          badge_number: string | null
+          created_at: string
+          host: string | null
+          id: string
+          id_number: string | null
+          organization: string | null
+          phone: string | null
+          purpose: string
+          recorded_by: string
+          time_in: string
+          time_out: string | null
+          visitor_name: string
+        }
+        Insert: {
+          badge_number?: string | null
+          created_at?: string
+          host?: string | null
+          id?: string
+          id_number?: string | null
+          organization?: string | null
+          phone?: string | null
+          purpose: string
+          recorded_by?: string
+          time_in?: string
+          time_out?: string | null
+          visitor_name: string
+        }
+        Update: {
+          badge_number?: string | null
+          created_at?: string
+          host?: string | null
+          id?: string
+          id_number?: string | null
+          organization?: string | null
+          phone?: string | null
+          purpose?: string
+          recorded_by?: string
+          time_in?: string
+          time_out?: string | null
+          visitor_name?: string
+        }
+        Relationships: []
       }
       leave_balances: {
         Row: {
@@ -6180,6 +6399,10 @@ export type Database = {
         Returns: string
       }
       daily_report_alerts: { Args: { _at?: string }; Returns: number }
+      facility_action: {
+        Args: { _action: string; _id: string; _payload?: Json }
+        Returns: undefined
+      }
       finance_reader: { Args: never; Returns: boolean }
       finance_staff: { Args: never; Returns: boolean }
       finance_workflow: {
