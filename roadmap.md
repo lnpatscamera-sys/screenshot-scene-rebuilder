@@ -11,6 +11,8 @@
 - [x] Audit log
 
 ## Later phases
+- [ ] Connect ICT Helpdesk to real network monitoring and service-account actions — waiting for the organization's network and account providers, reachable management service and authorized actions; verify real outcomes before marking resolved.
+- [ ] Certified signing for command reports and supply approvals — waiting for the organization's signing provider/certificate authority and required certification standard; approvals must bind verified signatures to the exact record revision.
 - [x] Command chain: reporting assignments/account linking, daily activity reports and source-report compilation, PDF/Word/print summaries, weekday 3–6 PM Liberia-time in-app alerts, five-step staff supply approvals/corrections, signed pickup with atomic stock deduction, draft shortage procurement links and inventory mapping, restricted command inventory and decision evidence. Signed-in report approval → compilation → Word download and supply shortage → stock mapping → signed collection verified; 150 tests pass; temporary records removed and stock restored.
 - [ ] Command-chain setup — HR must add/link actual personnel accounts and assign supervisors, section heads and command appointments; existing sections still need their departments assigned.
 - [ ] Command-chain external email/SMS delivery and cryptographic signatures — SMS provider and signing identity are unavailable; email alert triggers remain unconnected. In-app timed alerts are active; never imply external delivery or certified signatures.
