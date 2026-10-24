@@ -23,6 +23,7 @@ const NAV: { group: string; items: NavItem[] }[] = [
       { to: "/finance", label: "Finance", icon: Wallet },
       { to: "/procurement", label: "Procurement", icon: ShoppingCart },
       { to: "/hr", label: "Human Resources", icon: Briefcase },
+      { to: "/ict", label: "ICT Helpdesk", icon: LifeBuoy },
       { to: "/leave", label: "Leave", icon: CalendarDays },
       { to: "/supplies", label: "Supply Requests", icon: PackageSearch },
       { to: "/inventory", label: "Inventory Items", icon: Boxes },
@@ -47,7 +48,6 @@ const NAV: { group: string; items: NavItem[] }[] = [
     group: "Coming next",
     items: [
       { to: "/modules/$module", params: { module: "transport" }, label: "Transport", icon: Truck },
-      { to: "/modules/$module", params: { module: "ict" }, label: "ICT Helpdesk", icon: LifeBuoy },
     ],
   },
   { group: "Administration", items: [{ to: "/audit", label: "Audit Log", icon: ScrollText }, { to: "/admin/users", label: "Users & Roles", icon: ShieldCheck }] },
