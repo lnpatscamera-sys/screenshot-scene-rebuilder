@@ -169,6 +169,13 @@
       "when": 1792835670871,
       "tag": "0023_hr_authorized_actions",
       "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1792835834850,
+      "tag": "0024_hr_personnel_privacy",
+      "breakpoints": true
     }
   ]
 }
