@@ -1,0 +1,35 @@
+// @vitest-environment node
+import { PGlite } from '@electric-sql/pglite';
+import { readFileSync } from 'node:fs';
+import { beforeAll, afterAll, it, expect } from 'vitest';
+const db=new PGlite();
+const user='00000000-0000-0000-0000-000000000001', reviewer='00000000-0000-0000-0000-000000000002', outsider='00000000-0000-0000-0000-000000000003';
+const emp='00000000-0000-0000-0000-000000000010', boss='00000000-0000-0000-0000-000000000020', office='00000000-0000-0000-0000-000000000030', section='00000000-0000-0000-0000-000000000040';
+beforeAll(async()=>{
+ await db.exec(`CREATE ROLE authenticated; CREATE ROLE anon; CREATE ROLE service_role; CREATE SCHEMA auth; CREATE SCHEMA storage;
+ CREATE FUNCTION auth.uid() RETURNS uuid LANGUAGE sql AS $$ SELECT nullif(current_setting('test.uid',true),'')::uuid $$;
+ CREATE TYPE app_role AS ENUM('system_admin','officer','section_head','assistant_commissioner','deputy_commandant','dc_admin','commandant','procurement_admin','hr_admin');
+ CREATE TABLE user_roles(user_id uuid,role app_role); CREATE TABLE profiles(id uuid,full_name text);
+ CREATE FUNCTION has_any_role(uuid,app_role[]) RETURNS boolean LANGUAGE sql AS $$ SELECT EXISTS(SELECT 1 FROM user_roles WHERE user_id=$1 AND (role='system_admin' OR role=ANY($2))) $$;
+ CREATE FUNCTION has_role(uuid,app_role) RETURNS boolean LANGUAGE sql AS $$ SELECT EXISTS(SELECT 1 FROM user_roles WHERE user_id=$1 AND role=$2) $$;
+ CREATE TABLE offices(id uuid PRIMARY KEY,name text); CREATE TABLE sections(id uuid PRIMARY KEY,name text,office_id uuid,section_head uuid);
+ CREATE TABLE officers(id uuid PRIMARY KEY,full_name text,employee_number text,user_id uuid,office_id uuid,section_id uuid,supervisor_id uuid,employment_status text);
+ CREATE TABLE notifications(id uuid DEFAULT gen_random_uuid(),user_id uuid,title text,body text);
+ CREATE TABLE storage.objects(name text,bucket_id text);
+ CREATE FUNCTION audit_trigger() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN RETURN coalesce(NEW,OLD); END $$;
+ INSERT INTO offices VALUES('${office}','Test office'); INSERT INTO sections VALUES('${section}','Test section','${office}','${boss}');
+ INSERT INTO officers VALUES('${emp}','Staff','EMP-1','${user}','${office}','${section}','${boss}','Active'),('${boss}','Supervisor','EMP-2','${reviewer}','${office}','${section}',null,'Active');
+ INSERT INTO user_roles VALUES('${reviewer}','system_admin'),('${user}','officer'); INSERT INTO profiles VALUES('${user}','Staff'),('${reviewer}','Supervisor'); SET test.uid='${reviewer}';`);
+ await db.exec(readFileSync('drizzle/migrations/0032_command_reporting.sql','utf8'));
+ await db.exec(`INSERT INTO reporting_lines(kind,office_id,officer_id) VALUES('Department Head','${office}','${boss}'),('Deputy Commandant',null,'${boss}'),('Commandant',null,'${boss}'); SET test.uid='${user}';`);
+},30000);
+afterAll(()=>db.close());
+let reportId:string;
+it('requires a linked personnel identity, not a supplied employee name',async()=>{await db.exec(`SET test.uid='${outsider}'`);await expect(db.query(`select daily_report_action(null,'submit',$1)`,[{report_date:'2026-10-23',duty_assignment:'Duty',activities:'Work',signature:'Someone'}])).rejects.toThrow('link your active personnel');await db.exec(`SET test.uid='${user}'`);});
+it('snapshots assigned reviewers and derives employee identity',async()=>{const r=await db.query<{id:string}>(`select daily_report_action(null,'submit',$1) id`,[{report_date:'2026-10-23',duty_assignment:'Duty',activities:'Work',signature:'Staff',employee_name:'Forged'}]);reportId=r.rows[0]?.id??'';const rows=await db.query<{employee_name:string;chain:{user_id:string}[]}>('select employee_name,chain from daily_reports where id=$1',[reportId]);expect(rows.rows[0]?.employee_name).toBe('Staff');expect(rows.rows[0]?.chain).toHaveLength(5);expect(rows.rows[0]?.chain[0]?.user_id).toBe(reviewer);});
+it('prevents approval by an unrelated account',async()=>{await db.exec(`SET test.uid='${outsider}'`);await expect(db.query(`select daily_report_action($1,'approve','{}')`,[reportId])).rejects.toThrow('assigned reviewer');});
+it('returns for correction only with a reason and preserves the original',async()=>{await db.exec(`SET test.uid='${reviewer}'`);await expect(db.query(`select daily_report_action($1,'return','{}')`,[reportId])).rejects.toThrow('Reason required');await db.query(`select daily_report_action($1,'return',$2)`,[reportId,{note:'Clarify'}]);await db.exec(`SET test.uid='${user}'`);await db.query(`select daily_report_action($1,'submit',$2)`,[reportId,{report_date:'2026-10-23',duty_assignment:'Duty',activities:'Corrected work',signature:'Staff'}]);const r=await db.query<{revision:number;history:unknown[]}>('select revision,history from daily_reports where id=$1',[reportId]);expect(r.rows[0]?.revision).toBe(2);expect(JSON.stringify(r.rows[0]?.history)).toContain('Work');});
+it('requires all five approvals before final approval',async()=>{await db.exec(`SET test.uid='${reviewer}'`);for(let n=0;n<4;n++)await db.query(`select daily_report_action($1,'approve','{}')`,[reportId]);expect((await db.query<{status:string}>('select status from daily_reports where id=$1',[reportId])).rows[0]?.status).toBe('Pending');await db.query(`select daily_report_action($1,'approve','{}')`,[reportId]);expect((await db.query<{status:string}>('select status from daily_reports where id=$1',[reportId])).rows[0]?.status).toBe('Approved');await expect(db.query(`select daily_report_action($1,'approve','{}')`,[reportId])).rejects.toThrow('Pending report required');});
+it('denies guessed private attachment paths',async()=>{await db.exec(`INSERT INTO storage.objects VALUES('${user}/private.pdf','command-files'); UPDATE daily_reports SET attachments='[{"path":"${user}/private.pdf","name":"private.pdf"}]' WHERE id='${reportId}'; SET test.uid='${outsider}';`);expect((await db.query<{allowed:boolean}>(`select command_file_reader($1) allowed`,[`${user}/private.pdf`])).rows[0]?.allowed).toBe(false);await db.exec(`SET test.uid='${user}'`);expect((await db.query<{allowed:boolean}>(`select command_file_reader($1) allowed`,[`${user}/private.pdf`])).rows[0]?.allowed).toBe(true);});
+it('rejects supervisor cycles',async()=>{await db.exec(`SET test.uid='${reviewer}'`);await expect(db.query(`select command_assign($1)`,[{kind:'Supervisor',officer_id:boss,supervisor_id:emp}])).rejects.toThrow('cycle');});
+it('deduplicates overdue notifications and suppresses weekend alerts',async()=>{await db.exec(`SET test.uid=''`);await db.query(`select daily_report_alerts('2026-10-26T17:00:00Z')`);const first=await db.query<{n:number}>(`select count(*)::int n from notifications where title='Daily Report Overdue'`);await db.query(`select daily_report_alerts('2026-10-26T17:00:00Z')`);expect((await db.query<{n:number}>(`select count(*)::int n from notifications where title='Daily Report Overdue'`)).rows[0]?.n).toBe(first.rows[0]?.n);expect(first.rows[0]?.n).toBe(3);expect((await db.query<{n:number}>(`select daily_report_alerts('2026-10-24T17:00:00Z') n`)).rows[0]?.n).toBe(0);});
