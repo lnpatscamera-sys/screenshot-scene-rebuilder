@@ -274,6 +274,13 @@
       "when": 1792841215396,
       "tag": "0038_command_shortage_cost_initialization",
       "breakpoints": true
+    },
+    {
+      "idx": 39,
+      "version": "7",
+      "when": 1792841242999,
+      "tag": "0039_command_draft_procurement_estimate",
+      "breakpoints": true
     }
   ]
 }
