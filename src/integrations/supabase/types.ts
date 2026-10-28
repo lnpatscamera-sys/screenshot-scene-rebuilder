@@ -739,6 +739,132 @@ export type Database = {
           },
         ]
       }
+      attendance_devices: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          id: string
+          ip_address: string | null
+          last_seen_at: string | null
+          last_sync_at: string | null
+          location: string | null
+          model: string
+          name: string
+          offline_alerted: boolean
+          port: number
+          serial_number: string | null
+          status: string
+          token_hash: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          ip_address?: string | null
+          last_seen_at?: string | null
+          last_sync_at?: string | null
+          location?: string | null
+          model?: string
+          name: string
+          offline_alerted?: boolean
+          port?: number
+          serial_number?: string | null
+          status?: string
+          token_hash: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          ip_address?: string | null
+          last_seen_at?: string | null
+          last_sync_at?: string | null
+          location?: string | null
+          model?: string
+          name?: string
+          offline_alerted?: boolean
+          port?: number
+          serial_number?: string | null
+          status?: string
+          token_hash?: string
+        }
+        Relationships: []
+      }
+      attendance_punches: {
+        Row: {
+          biometric_user_id: string | null
+          created_at: string
+          device_id: string
+          direction: string
+          event_key: string
+          id: string
+          method: string
+          officer_id: string | null
+          punched_at: string
+          raw: Json | null
+        }
+        Insert: {
+          biometric_user_id?: string | null
+          created_at?: string
+          device_id: string
+          direction?: string
+          event_key: string
+          id?: string
+          method?: string
+          officer_id?: string | null
+          punched_at: string
+          raw?: Json | null
+        }
+        Update: {
+          biometric_user_id?: string | null
+          created_at?: string
+          device_id?: string
+          direction?: string
+          event_key?: string
+          id?: string
+          method?: string
+          officer_id?: string | null
+          punched_at?: string
+          raw?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "attendance_punches_device_id_fkey"
+            columns: ["device_id"]
+            isOneToOne: false
+            referencedRelation: "attendance_devices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "attendance_punches_officer_id_fkey"
+            columns: ["officer_id"]
+            isOneToOne: false
+            referencedRelation: "approvals"
+            referencedColumns: ["approver_id"]
+          },
+          {
+            foreignKeyName: "attendance_punches_officer_id_fkey"
+            columns: ["officer_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "attendance_punches_officer_id_fkey"
+            columns: ["officer_id"]
+            isOneToOne: false
+            referencedRelation: "equipment_requests"
+            referencedColumns: ["requested_by"]
+          },
+          {
+            foreignKeyName: "attendance_punches_officer_id_fkey"
+            columns: ["officer_id"]
+            isOneToOne: false
+            referencedRelation: "officers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       attendance_records: {
         Row: {
           attendance_date: string
@@ -787,6 +913,41 @@ export type Database = {
           },
         ]
       }
+      attendance_sync_logs: {
+        Row: {
+          created_at: string
+          detail: string | null
+          device_id: string | null
+          event: string
+          id: string
+          ip_address: string | null
+        }
+        Insert: {
+          created_at?: string
+          detail?: string | null
+          device_id?: string | null
+          event: string
+          id?: string
+          ip_address?: string | null
+        }
+        Update: {
+          created_at?: string
+          detail?: string | null
+          device_id?: string | null
+          event?: string
+          id?: string
+          ip_address?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "attendance_sync_logs_device_id_fkey"
+            columns: ["device_id"]
+            isOneToOne: false
+            referencedRelation: "attendance_devices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       audit_logs: {
         Row: {
           action: string
@@ -825,6 +986,59 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: []
+      }
+      biometric_users: {
+        Row: {
+          biometric_user_id: string
+          created_at: string
+          created_by: string | null
+          id: string
+          officer_id: string
+        }
+        Insert: {
+          biometric_user_id: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          officer_id: string
+        }
+        Update: {
+          biometric_user_id?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          officer_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "biometric_users_officer_id_fkey"
+            columns: ["officer_id"]
+            isOneToOne: true
+            referencedRelation: "approvals"
+            referencedColumns: ["approver_id"]
+          },
+          {
+            foreignKeyName: "biometric_users_officer_id_fkey"
+            columns: ["officer_id"]
+            isOneToOne: true
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "biometric_users_officer_id_fkey"
+            columns: ["officer_id"]
+            isOneToOne: true
+            referencedRelation: "equipment_requests"
+            referencedColumns: ["requested_by"]
+          },
+          {
+            foreignKeyName: "biometric_users_officer_id_fkey"
+            columns: ["officer_id"]
+            isOneToOne: true
+            referencedRelation: "officers"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       budget_allocations: {
         Row: {
@@ -6541,6 +6755,12 @@ export type Database = {
         }
         Returns: undefined
       }
+      attendance_alert: {
+        Args: { _body: string; _key: string; _title: string }
+        Returns: undefined
+      }
+      attendance_device_watch: { Args: never; Returns: undefined }
+      attendance_staff: { Args: never; Returns: boolean }
       can_read_document: { Args: { _id: string }; Returns: boolean }
       cancel_appointment: { Args: { _id: string }; Returns: undefined }
       command_accounts: { Args: never; Returns: Json }

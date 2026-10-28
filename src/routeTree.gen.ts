@@ -44,6 +44,7 @@ import { Route as AuthenticatedModulesModuleRouteImport } from './routes/_authen
 import { Route as AuthenticatedOfficersIndexRouteImport } from './routes/_authenticated/officers.index'
 import { Route as AuthenticatedOfficersIdRouteImport } from './routes/_authenticated/officers.$id'
 import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
+import { Route as ApiPublicAttendanceHikvisionDeviceIdRouteImport } from './routes/api/public/attendance/hikvision.$deviceId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -229,6 +230,12 @@ const LovableEmailTransactionalPreviewRoute =
     path: '/lovable/email/transactional/preview',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicAttendanceHikvisionDeviceIdRoute =
+  ApiPublicAttendanceHikvisionDeviceIdRouteImport.update({
+    id: '/api/public/attendance/hikvision/$deviceId',
+    path: '/api/public/attendance/hikvision/$deviceId',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -265,6 +272,7 @@ export interface FileRoutesByFullPath {
   '/officers/$id': typeof AuthenticatedOfficersIdRoute
   '/officers/': typeof AuthenticatedOfficersIndexRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
+  '/api/public/attendance/hikvision/$deviceId': typeof ApiPublicAttendanceHikvisionDeviceIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -301,6 +309,7 @@ export interface FileRoutesByTo {
   '/officers/$id': typeof AuthenticatedOfficersIdRoute
   '/officers': typeof AuthenticatedOfficersIndexRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
+  '/api/public/attendance/hikvision/$deviceId': typeof ApiPublicAttendanceHikvisionDeviceIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -339,6 +348,7 @@ export interface FileRoutesById {
   '/_authenticated/officers/$id': typeof AuthenticatedOfficersIdRoute
   '/_authenticated/officers/': typeof AuthenticatedOfficersIndexRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
+  '/api/public/attendance/hikvision/$deviceId': typeof ApiPublicAttendanceHikvisionDeviceIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -377,6 +387,7 @@ export interface FileRouteTypes {
     | '/officers/$id'
     | '/officers/'
     | '/lovable/email/transactional/preview'
+    | '/api/public/attendance/hikvision/$deviceId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -413,6 +424,7 @@ export interface FileRouteTypes {
     | '/officers/$id'
     | '/officers'
     | '/lovable/email/transactional/preview'
+    | '/api/public/attendance/hikvision/$deviceId'
   id:
     | '__root__'
     | '/'
@@ -450,6 +462,7 @@ export interface FileRouteTypes {
     | '/_authenticated/officers/$id'
     | '/_authenticated/officers/'
     | '/lovable/email/transactional/preview'
+    | '/api/public/attendance/hikvision/$deviceId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -457,6 +470,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   LovableEmailTransactionalPreviewRoute: typeof LovableEmailTransactionalPreviewRoute
+  ApiPublicAttendanceHikvisionDeviceIdRoute: typeof ApiPublicAttendanceHikvisionDeviceIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -706,6 +720,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LovableEmailTransactionalPreviewRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/attendance/hikvision/$deviceId': {
+      id: '/api/public/attendance/hikvision/$deviceId'
+      path: '/api/public/attendance/hikvision/$deviceId'
+      fullPath: '/api/public/attendance/hikvision/$deviceId'
+      preLoaderRoute: typeof ApiPublicAttendanceHikvisionDeviceIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -785,6 +806,8 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   LovableEmailTransactionalPreviewRoute: LovableEmailTransactionalPreviewRoute,
+  ApiPublicAttendanceHikvisionDeviceIdRoute:
+    ApiPublicAttendanceHikvisionDeviceIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
