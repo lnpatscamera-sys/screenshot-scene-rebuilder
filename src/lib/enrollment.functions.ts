@@ -80,3 +80,30 @@ export const signInWithLnpId = createServerFn({ method: 'POST' })
     if (s.error || !s.data.session) return fail;
     return { access_token: s.data.session.access_token, refresh_token: s.data.session.refresh_token };
   });
+
+const RESET_ORIGINS = /^(https:\/\/([a-z0-9-]+\.)*lovable\.app|https:\/\/([a-z0-9-]+\.)*lnpats\.net|http:\/\/localhost(:\d+)?)$/;
+
+/** Sends a password-reset link to the account email for an LNP ID; always replies the same way so emails/IDs are never revealed. */
+export const requestPasswordReset = createServerFn({ method: 'POST' })
+  .inputValidator((input: unknown) => z.object({ lnpId: z.string().trim().min(2).max(200), origin: z.string().url().max(200) }).parse(input))
+  .handler(async ({ data }) => {
+    const ok = { ok: true } as const;
+    if (!RESET_ORIGINS.test(data.origin)) return ok;
+    const { supabaseAdmin } = await import('@/integrations/supabase/client.server');
+    let email: string | undefined;
+    if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.lnpId)) email = data.lnpId.toLowerCase();
+    else {
+      const o = await supabaseAdmin.from('officers').select('user_id').ilike('service_number', normalizeLnpId(data.lnpId)).not('user_id', 'is', null).maybeSingle();
+      if (o.data?.user_id) email = (await supabaseAdmin.auth.admin.getUserById(o.data.user_id)).data.user?.email ?? undefined;
+    }
+    if (!email) return ok;
+    const { createClient } = await import('@supabase/supabase-js');
+    const key = process.env['SUPABASE_PUBLISHABLE_KEY']!;
+    const client = createClient(process.env['SUPABASE_URL']!, key, {
+      auth: { persistSession: false, autoRefreshToken: false },
+      global: { fetch: (input, init) => { const h = new Headers(init?.headers); if (key.startsWith('sb_') && h.get('Authorization') === `Bearer ${key}`) h.delete('Authorization'); h.set('apikey', key); return fetch(input, { ...init, headers: h }); } },
+    });
+    const r = await client.auth.resetPasswordForEmail(email, { redirectTo: `${data.origin}/reset-password` });
+    if (r.error) console.error('password reset failed', r.error.message);
+    return ok;
+  });
