@@ -146,6 +146,7 @@ export function AppShell() {
     nav({ to: "/auth", replace: true });
   };
   const topRole = roles.find((r) => r !== "officer") ?? "officer";
+  if (session?.user.user_metadata?.must_change_password === true) return <ForcePasswordChange />;
 
   return (
     <div className="min-h-screen flex">

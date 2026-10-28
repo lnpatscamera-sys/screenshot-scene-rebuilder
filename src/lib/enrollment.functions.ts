@@ -44,7 +44,7 @@ export const enrollStaff = createServerFn({ method: 'POST' })
     }
     await supabaseAdmin.from('audit_logs').insert({
       user_id: context.userId, action: 'staff_enrolled', table_name: 'officers', record_id: officer.data.id,
-      new_data: { lnp_id: lnpId, email, class_number: data.classNumber },
+      details: { lnp_id: lnpId, email, class_number: data.classNumber },
     } as never);
 
     let emailed = false;
