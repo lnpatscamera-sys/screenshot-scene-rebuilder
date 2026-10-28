@@ -14,10 +14,10 @@
 - Approval workflows (leave, supply) advance only via SECURITY DEFINER functions `act_on_leave`/`act_on_supply`; stage→role maps are mirrored in `src/lib/workflow.ts` — keep both in sync. Why: clients cannot update workflow rows directly.
 - Attach `audit_trigger` to every business table. Why: all actions must be audited.
 - Roles live in `user_roles`; `system_admin` passes every `has_any_role` check.
-- Keep existing identity, names, inventory, and workflow columns canonical; alternate uploaded SQL names are generated read-only columns or security-invoker views. Why: prevents duplicate state and approval bypasses.
+- Keep existing identity, names, inventory, and workflow columns canonical; alternate uploaded SQL names are generated read-only columns or security-invoker views. Why: no duplicate state/bypasses.
 - Newly staged ERP modules are system-admin-only with RLS, explicit grants, and audit triggers until module-specific permissions are implemented. Why: schema preparation must not expose personnel, financial, or disciplinary records.
-- Preserve full names without automatic splitting. Why: avoid invented personal data.
-- Share police rank choices via `src/lib/police-ranks.ts`; retain historical values and separate ranks from roles. Why: consistent choices without reclassification or privilege changes.
+- Preserve full names without automatic splitting. Why: no invented data.
+- Share police rank choices via `src/lib/police-ranks.ts`; retain historical values and separate ranks from roles. Why: consistency.
 - Phase 2 correspondence/documents mutate via authorized RPCs, share query/report controls and one registry for both directions; private attachments use exact path membership and signed links. Why: read access never implies approval or file access.
 - App emails use the managed server-only template sender, with no local queue or generic send endpoint; email preview routes bypass app guards and authenticate themselves. Why: central delivery.
 - Receipts, issues, and reconciliations post stock atomically under inventory row locks and generate immutable source-linked movements; supply collection creates its issue only through its authorized workflow RPC. Other logistics histories remain staged; suppliers and equipment request items stay read-only projections. Why: prevents duplicate stock changes, approval bypasses, and divergent identities.
