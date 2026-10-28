@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { liberiaDateTime } from '@/lib/time';
 
 const issOptions = queryOptions({
   queryKey: ["iss"],
@@ -34,7 +35,7 @@ export const Route = createFileRoute("/_authenticated/security")({
 });
 
 const sel = "h-9 rounded-md border bg-background px-2 text-sm";
-const fmt = (d: string | null) => (d ? new Date(d).toLocaleString() : "—");
+const fmt = (d: string | null) => liberiaDateTime(d);
 
 function SecurityPage() {
   const { hasAny } = useAuth();

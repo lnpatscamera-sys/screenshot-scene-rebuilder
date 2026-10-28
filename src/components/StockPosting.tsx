@@ -11,6 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { warehouseOptions, refreshInventory, warehouseName } from '@/lib/inventory';
+import { liberiaDateTime } from '@/lib/time';
 
 type Item = { id: string; name: string; code: string; quantity: number; unit: string };
 type Mode = "Receipt" | "Issue" | "Reconciliation";
@@ -88,7 +89,7 @@ export function StockPosting({ items, initialMode = "Receipt", showHistory = tru
     {showHistory && (isError ? <div className="flex items-center gap-3"><p className="text-sm text-destructive">Stock history could not be loaded.</p><Button variant="outline" onClick={() => qc.invalidateQueries({ queryKey: ["inventory-movements"] })}>Retry</Button></div>
       : isPending ? <p className="text-sm text-muted-foreground">Loading stock history…</p>
       : <Table><TableHeader><TableRow><TableHead>Date</TableHead><TableHead>Item</TableHead><TableHead>Entry</TableHead><TableHead>Warehouse</TableHead><TableHead>Change</TableHead><TableHead>Before</TableHead><TableHead>After</TableHead><TableHead>Recorded by</TableHead><TableHead>Remarks</TableHead></TableRow></TableHeader>
-        <TableBody>{movements.map(m => <TableRow key={m.id}><TableCell className="whitespace-nowrap">{new Date(m.created_at).toLocaleString()}</TableCell><TableCell>{items.find(i => i.id === m.item_id)?.name || m.item_id}</TableCell><TableCell>{m.movement_type}</TableCell><TableCell>{warehouseName(warehouseData?.warehouses || [], m.warehouse_id)}{m.transfer_id ? ` → ${warehouseName(warehouseData?.warehouses || [], m.to_warehouse_id)}` : ''}</TableCell><TableCell>{(m.quantity ?? 0) > 0 ? "+" : ""}{m.quantity}</TableCell><TableCell>{m.balance_before}</TableCell><TableCell>{m.balance_after}</TableCell><TableCell className="font-mono text-xs">{m.actor_id || "Legacy"}</TableCell><TableCell>{m.remarks}</TableCell></TableRow>)}{movements.length === 0 && <TableRow><TableCell colSpan={9} className="text-muted-foreground">No stock movements recorded.</TableCell></TableRow>}</TableBody>
+        <TableBody>{movements.map(m => <TableRow key={m.id}><TableCell className="whitespace-nowrap">{liberiaDateTime(m.created_at)}</TableCell><TableCell>{items.find(i => i.id === m.item_id)?.name || m.item_id}</TableCell><TableCell>{m.movement_type}</TableCell><TableCell>{warehouseName(warehouseData?.warehouses || [], m.warehouse_id)}{m.transfer_id ? ` → ${warehouseName(warehouseData?.warehouses || [], m.to_warehouse_id)}` : ''}</TableCell><TableCell>{(m.quantity ?? 0) > 0 ? "+" : ""}{m.quantity}</TableCell><TableCell>{m.balance_before}</TableCell><TableCell>{m.balance_after}</TableCell><TableCell className="font-mono text-xs">{m.actor_id || "Legacy"}</TableCell><TableCell>{m.remarks}</TableCell></TableRow>)}{movements.length === 0 && <TableRow><TableCell colSpan={9} className="text-muted-foreground">No stock movements recorded.</TableCell></TableRow>}</TableBody>
       </Table>)}
   </section>;
 }

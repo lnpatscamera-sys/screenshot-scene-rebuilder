@@ -16,6 +16,7 @@ import { PageHeader, StatusBadge } from "@/components/AppShell";
 import { Field, MetricBand, ReportActions, SelectField } from "@/components/Phase2Shared";
 import { formValues } from "@/lib/export";
 import { useAuth } from "@/lib/auth";
+import { liberiaDate } from '@/lib/time';
 import {
   ASSESSMENT_TYPES, ATTENDANCE_STATUSES, CADET_STATUSES, GRADUATION_ROLES, INSTRUCTOR_ROLES, PROGRAM_NAMES, TRAINING_ADMIN_ROLES,
   attendanceRate, cadetAverage, cadetName, excessiveAbsences, graduationEligible, refreshTraining, trainingOptions,
@@ -29,7 +30,7 @@ export const Route = createFileRoute("/_authenticated/training")({
 });
 
 const COLORS = ["var(--chart-1)", "var(--chart-2)", "var(--chart-3)", "var(--chart-4)", "var(--chart-5)"];
-const today = () => new Date().toISOString().slice(0, 10);
+const today = () => liberiaDate();
 
 function Training() {
   const { hasAny } = useAuth();

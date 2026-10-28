@@ -15,6 +15,7 @@ import { exportExcel, exportPdf } from '@/lib/export';
 import { enrollStaff } from '@/lib/enrollment.functions';
 import { PERSONNEL_CATEGORIES, OFFICER_CATEGORIES, EMPLOYMENT_TYPES, EMPLOYMENT_STATUSES, ENROLLMENT_DOCUMENTS, categorySections, emailSubject, emailBody, nearingRetirement, yearsBetween } from '@/lib/hr-enrollment';
 import type { Json } from '@/integrations/supabase/types';
+import { liberiaDate } from '@/lib/time';
 
 type F = { name: string; label: string; type?: string; options?: string[] | { value: string; label: string }[]; col?: boolean; wide?: boolean };
 const COLUMN_FIELDS = new Set(['service_number', 'first_name', 'middle_name', 'last_name', 'gender', 'date_of_birth', 'nationality', 'marital_status', 'blood_group', 'phone', 'email', 'address', 'county', 'employment_status', 'employment_type', 'office_id', 'section_id', 'rank', 'position', 'date_joined', 'supervisor_id', 'retirement_date', 'lnp_class_number', 'education', 'promotion_history', 'training_history']);
@@ -146,7 +147,7 @@ export function HREnrollment({ d }: { d: HRData }) {
   </section>;
 }
 
-function today() { return new Date().toISOString().slice(0, 10); }
+function today() { return liberiaDate(); }
 
 function EmailDialog({ e, dept, onClose, onSent }: { e: Employee; dept: string; onClose: () => void; onSent: () => void }) {
   const category = e.personnel_category ?? 'Newly Recruited Officer';

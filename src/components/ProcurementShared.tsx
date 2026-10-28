@@ -14,6 +14,7 @@ import { formValues } from '@/lib/export';
 import { refreshProcurement, type ProcurementData } from '@/lib/procurement';
 import { useAuth } from '@/lib/auth';
 import type { Json } from '@/integrations/supabase/types';
+import { liberiaDateTime } from '@/lib/time';
 
 export type FormField = { name: string; label: string; type?: string; required?: boolean; options?: { value: string; label: string }[]; value?: string | undefined; min?: number; max?: number; step?: string };
 export const options = (values: string[]) => values.map(value => ({ value, label: value }));
@@ -42,7 +43,7 @@ export function RecordsTable<T extends { id: string | number }>({ title, rows, c
 }
 export function RecordDetails({ title, module, record, d, children, onClose }: { title: string; module: string; record: { id: string; history?: Json | null; attachments?: Json | null }; d: ProcurementData; children?: ReactNode; onClose: () => void }) {
   const approvals = d.approvals.filter(a => a.module === module && a.record_id === record.id).sort((a,b) => a.created_at.localeCompare(b.created_at));
-  return <Dialog open onOpenChange={open => !open && onClose()}><DialogContent className="sm:max-w-3xl max-h-[85vh] overflow-y-auto"><DialogHeader><DialogTitle>{title}</DialogTitle></DialogHeader>{children}{record.attachments && <section className="border-t pt-3"><h3 className="font-medium mb-2">Attachments</h3><AttachedFiles files={fileRecords(record.attachments)} module={module} id={record.id} /></section>}<section className="border-t pt-3"><h3 className="font-medium mb-2">Approval history</h3>{approvals.length ? <div className="space-y-3">{approvals.map(a => <div className="border-l-2 border-gold pl-3 text-sm" key={a.id}><div className="font-medium capitalize">{a.action} · {a.level}</div><div className="text-muted-foreground text-xs">{a.actor_name} · {new Date(a.created_at).toLocaleString()}</div>{a.signature && <div className="italic text-xs">Signed: {a.signature}</div>}{a.note && <p>{a.note}</p>}</div>)}</div> : <History value={record.history ?? []} />}</section></DialogContent></Dialog>;
+  return <Dialog open onOpenChange={open => !open && onClose()}><DialogContent className="sm:max-w-3xl max-h-[85vh] overflow-y-auto"><DialogHeader><DialogTitle>{title}</DialogTitle></DialogHeader>{children}{record.attachments && <section className="border-t pt-3"><h3 className="font-medium mb-2">Attachments</h3><AttachedFiles files={fileRecords(record.attachments)} module={module} id={record.id} /></section>}<section className="border-t pt-3"><h3 className="font-medium mb-2">Approval history</h3>{approvals.length ? <div className="space-y-3">{approvals.map(a => <div className="border-l-2 border-gold pl-3 text-sm" key={a.id}><div className="font-medium capitalize">{a.action} · {a.level}</div><div className="text-muted-foreground text-xs">{a.actor_name} · {liberiaDateTime(a.created_at)}</div>{a.signature && <div className="italic text-xs">Signed: {a.signature}</div>}{a.note && <p>{a.note}</p>}</div>)}</div> : <History value={record.history ?? []} />}</section></DialogContent></Dialog>;
 }
 export function useDecision() {
   const mutation = useProcurementMutation();
