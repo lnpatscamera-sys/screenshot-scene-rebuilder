@@ -65,13 +65,13 @@ export function HREnrollment({ d }: { d: HRData }) {
   const save = async (ev: React.FormEvent<HTMLFormElement>) => {
     ev.preventDefault();
     const v = Object.fromEntries(new FormData(ev.currentTarget)) as Record<string, string>;
-    if (!category) return toast.error('Select a personnel category');
-    if (!v['first_name'] || !v['last_name'] || !v['service_number']) return toast.error('First name, last name and service number are required');
+    if (!category) { toast.error('Select a personnel category'); return; }
+    if (!v['first_name'] || !v['last_name'] || !v['service_number']) { toast.error('First name, last name and service number are required'); return; }
     const openAccount = v['open_account'] === 'on'; delete v['open_account'];
     const cols: Record<string, string | null> = {}; const profile: Record<string, string> = {};
     for (const [k, val] of Object.entries(v)) { if (COLUMN_FIELDS.has(k)) cols[k] = val.trim() || null; else if (val.trim()) profile[k] = val.trim(); }
     const full_name = [v['first_name'], v['middle_name'], v['last_name']].filter(Boolean).join(' ');
-    const payload = { ...cols, full_name, service_number: v['service_number'].trim(), rank: cols['rank'] ?? (OFFICER_CATEGORIES.includes(category) ? 'Officer' : 'Civilian'), employment_status: cols['employment_status'] ?? 'Active', employment_type: cols['employment_type'] ?? 'Permanent', personnel_category: category, enrollment_profile: profile as Json };
+    const payload: Record<string, string | null | Json> & { service_number: string } = { ...cols, full_name, service_number: v['service_number'].trim(), rank: cols['rank'] ?? (OFFICER_CATEGORIES.includes(category) ? 'Officer' : 'Civilian'), employment_status: cols['employment_status'] ?? 'Active', employment_type: cols['employment_type'] ?? 'Permanent', personnel_category: category, enrollment_profile: profile as Json };
     setBusy(true);
     try {
       if (editing === 'new') {
@@ -82,8 +82,8 @@ export function HREnrollment({ d }: { d: HRData }) {
         if (r.error) throw r.error;
       }
       if (openAccount) {
-        if (!payload.email) throw new Error('Record saved. An email address is needed to open a login account.');
-        const r = await enroll({ data: { fullName: full_name, lnpId: payload.service_number, phone: payload.phone ?? '-----', classNumber: payload.lnp_class_number ?? '', email: payload.email } });
+        const em = cols['email']; if (!em) throw new Error('Record saved. An email address is needed to open a login account.');
+        const r = await enroll({ data: { fullName: full_name, lnpId: payload.service_number, phone: cols['phone'] ?? '-----', classNumber: cols['lnp_class_number'] ?? '', email: em } });
         toast.success(r.emailed ? 'Record saved; login account opened and username/password emailed.' : `Record saved; login opened but email failed. Give the officer this password privately: ${r.password}`, { duration: r.emailed ? 4000 : 60000 });
       } else toast.success('Personnel record saved');
       setEditing(null); await refreshHR(qc);
@@ -93,7 +93,7 @@ export function HREnrollment({ d }: { d: HRData }) {
 
   const setArchived = async (e: Employee, archive: boolean) => {
     const r = await supabase.from('officers').update({ archived_at: archive ? new Date().toISOString() : null } as never).eq('id', e.id);
-    if (r.error) return toast.error(r.error.message);
+    if (r.error) { toast.error(r.error.message); return; }
     toast.success(archive ? 'Record archived' : 'Record restored'); await refreshHR(qc);
   };
 
@@ -139,9 +139,9 @@ export function HREnrollment({ d }: { d: HRData }) {
     {mail && <EmailDialog e={mail} dept={officeName(mail.office_id)} onClose={() => setMail(null)} onSent={() => refreshHR(qc)} />}
 
     <Dialog open={!!docsFor} onOpenChange={o => !o && setDocsFor(null)}><DialogContent className="max-w-xl"><DialogHeader><DialogTitle>Documents — {docsFor?.full_name}</DialogTitle></DialogHeader>
-      {docsFor && <div className="space-y-3"><form className="flex flex-wrap gap-2 items-end" onSubmit={async ev => { ev.preventDefault(); const fd = new FormData(ev.currentTarget); const file = fd.get('file') as File; if (!session || !file?.size) return toast.error('Choose a file'); try { const up = await uploadHR(file, session.user.id); const r = await supabase.from('officer_documents').insert({ officer_id: docsFor.id, document_name: file.name, document_type: String(fd.get('type')), file_url: up.path, bucket_id: 'hr-files', uploaded_by: session.user.id }); if (r.error) throw r.error; toast.success('Document uploaded'); (ev.target as HTMLFormElement).reset(); await refreshHR(qc); } catch (err) { toast.error((err as Error).message); } }}>
+      {docsFor && <div className="space-y-3"><form className="flex flex-wrap gap-2 items-end" onSubmit={async ev => { ev.preventDefault(); const fd = new FormData(ev.currentTarget); const file = fd.get('file') as File; if (!session || !file?.size) { toast.error('Choose a file'); return; } try { const up = await uploadHR(file, session.user.id); const r = await supabase.from('officer_documents').insert({ officer_id: docsFor.id, document_name: file.name, document_type: String(fd.get('type')), file_url: up.path, bucket_id: 'hr-files', uploaded_by: session.user.id }); if (r.error) throw r.error; toast.success('Document uploaded'); (ev.target as HTMLFormElement).reset(); await refreshHR(qc); } catch (err) { toast.error((err as Error).message); } }}>
         <select name="type" aria-label="Document type" className="h-9 rounded-md border bg-background px-2 text-sm">{ENROLLMENT_DOCUMENTS.map(t => <option key={t}>{t}</option>)}</select><Input type="file" name="file" className="w-56" aria-label="File" /><Button size="sm">Upload</Button></form>
-        <ul className="text-sm divide-y">{d.documents.filter(x => x.officer_id === docsFor.id).map(x => <li key={x.id} className="py-2 flex justify-between gap-2"><span>{x.document_type} — {x.document_name}</span><Button size="sm" variant="ghost" onClick={() => openHR({ path: x.file_url, name: x.document_name }, x.bucket_id ?? 'hr-files').catch(err => toast.error(err.message))}>Open</Button></li>)}</ul>
+        <ul className="text-sm divide-y">{d.documents.filter(x => x.officer_id === docsFor.id).map(x => <li key={x.id} className="py-2 flex justify-between gap-2"><span>{x.document_type} — {x.document_name}</span><Button size="sm" variant="ghost" onClick={() => openHR({ path: x.file_url ?? '', name: x.document_name ?? '' }, x.bucket_id ?? 'hr-files').catch(err => toast.error(err.message))}>Open</Button></li>)}</ul>
       </div>}</DialogContent></Dialog>
   </section>;
 }
@@ -156,7 +156,7 @@ function EmailDialog({ e, dept, onClose, onSent }: { e: Employee; dept: string; 
   const [notes, setNotes] = useState(e.email_notes ?? '');
   const sent = e.email_status === 'sent';
   const pdf = async () => { const { jsPDF } = await import('jspdf'); const doc = new jsPDF(); doc.setFontSize(14); doc.text(subject, 14, 20); doc.setFontSize(11); doc.text(doc.splitTextToSize(body, 180), 14, 32); doc.save(`${subject} - ${e.full_name}.pdf`); };
-  const markSent = async () => { const r = await supabase.from('officers').update({ email_status: 'sent', email_notes: notes || null } as never).eq('id', e.id); if (r.error) return toast.error(r.error.message); toast.success('Marked as sent; record is now active'); onSent(); onClose(); };
+  const markSent = async () => { const r = await supabase.from('officers').update({ email_status: 'sent', email_notes: notes || null } as never).eq('id', e.id); if (r.error) { toast.error(r.error.message); return; } toast.success('Marked as sent; record is now active'); onSent(); onClose(); };
   return <Dialog open onOpenChange={o => !o && onClose()}><DialogContent className="max-w-2xl"><DialogHeader><DialogTitle>Enrollment email — {e.full_name}</DialogTitle></DialogHeader>
     <div className="space-y-3">
       <p className="text-xs text-muted-foreground">This letter is never sent by the system. Review it, send it yourself, then mark it as sent.</p>
