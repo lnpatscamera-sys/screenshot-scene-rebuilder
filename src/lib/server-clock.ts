@@ -14,7 +14,7 @@ if (typeof window !== "undefined" && !(window as { __clockFixed?: boolean }).__c
       if (args.length === 0) super(realNow() + offset);
       else super(...(args as [string | number | Date]));
     }
-    static now() { return realNow() + offset; }
+    static override now() { return realNow() + offset; }
   }
   globalThis.Date = FixedDate as DateConstructor;
 
