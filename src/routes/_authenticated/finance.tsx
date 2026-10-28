@@ -19,6 +19,7 @@ import { AttachedFiles, Field, ReportActions, SelectField } from "@/components/P
 import { formValues } from "@/lib/export";
 import { useAuth } from "@/lib/auth";
 import { uploadPhaseFile, type FileRecord } from "@/lib/phase2-data";
+import { liberiaDate, liberiaDateOnly, liberiaDateTime, liberiaTime } from '@/lib/time';
 import {
   ATTACHMENT_TYPES, BUDGET_APPROVERS, BUDGET_CATEGORIES, CASH_STAGES, CASH_STAGE_ROLES, EXPENSE_STAGE_ROLES, FINANCE_READERS, FINANCE_STAFF,
   FUNDING_SOURCES, HIGH_VALUE_THRESHOLD, PAYMENT_METHODS, PROCUREMENT_STAGES, PROCUREMENT_STAGE_ROLES, REVENUE_SOURCES,
@@ -132,7 +133,7 @@ function Chart({ title, children }: { title: string; children: React.ReactElemen
 function Timeline({ d, module, id }: { d: Data; module: string; id: string }) {
   const rows = d.approvals.filter((a) => a.module === module && a.record_id === id);
   if (!rows.length) return <p className="text-sm text-muted-foreground">No approval activity yet.</p>;
-  return <div className="space-y-3 text-sm">{rows.map((a) => <div key={a.id} className="border-l-2 border-gold pl-3"><div className="font-medium capitalize">{a.action} · {a.level}</div><div className="text-xs text-muted-foreground">{a.actor_name} · {new Date(a.created_at).toLocaleString()}</div>{a.signature && <div className="text-xs italic">Signed: {a.signature}</div>}{a.note && <p className="mt-1">{a.note}</p>}</div>)}</div>;
+  return <div className="space-y-3 text-sm">{rows.map((a) => <div key={a.id} className="border-l-2 border-gold pl-3"><div className="font-medium capitalize">{a.action} · {a.level}</div><div className="text-xs text-muted-foreground">{a.actor_name} · {liberiaDateTime(a.created_at)}</div>{a.signature && <div className="text-xs italic">Signed: {a.signature}</div>}{a.note && <p className="mt-1">{a.note}</p>}</div>)}</div>;
 }
 function TimelineDialog({ d, module, id, title, onClose }: { d: Data; module: string; id: string | null; title: string; onClose: () => void }) {
   return <Dialog open={!!id} onOpenChange={(o) => !o && onClose()}><DialogContent><DialogHeader><DialogTitle>{title}</DialogTitle></DialogHeader>{id && <Timeline d={d} module={module} id={id} />}</DialogContent></Dialog>;
@@ -238,7 +239,7 @@ function ExpensesTab({ d }: { d: Data }) {
             </TableCell></TableRow>)}</TableBody></Table></div>
       <Dialog open={!!edit} onOpenChange={(o) => !o && setEdit(null)}><DialogContent className="max-w-2xl"><DialogHeader><DialogTitle>{cur ? `Edit ${cur.expense_number}` : "Record expense"}</DialogTitle></DialogHeader>
         <form onSubmit={save} className="grid sm:grid-cols-2 gap-3">
-          <Field label="Date" name="expense_date" type="date" required defaultValue={cur?.expense_date ?? new Date().toISOString().slice(0, 10)} />
+          <Field label="Date" name="expense_date" type="date" required defaultValue={cur?.expense_date ?? liberiaDate()} />
           <SelectField label="Department" name="section_id" required options={d.sections.map((s) => ({ value: s.id, label: s.name }))} defaultValue={cur?.section_id ?? ""} />
           <SelectField label="Vendor" name="vendor_id" options={d.vendors.map((v) => ({ value: v.id, label: v.company_name ?? "Vendor" }))} defaultValue={cur?.vendor_id ?? ""} />
           <SelectField label="Expense category" name="expense_type" required options={opt(BUDGET_CATEGORIES)} defaultValue={cur?.expense_type ?? ""} />
@@ -290,7 +291,7 @@ function RevenueTab({ d }: { d: Data }) {
       <Dialog open={open} onOpenChange={setOpen}><DialogContent><DialogHeader><DialogTitle>Record revenue</DialogTitle></DialogHeader>
         <form onSubmit={save} className="grid sm:grid-cols-2 gap-3">
           <SelectField label="Revenue source" name="source" required options={opt(REVENUE_SOURCES)} />
-          <Field label="Date received" name="received_date" type="date" required defaultValue={new Date().toISOString().slice(0, 10)} />
+          <Field label="Date received" name="received_date" type="date" required defaultValue={liberiaDate()} />
           <Field label="Amount (USD)" name="amount" type="number" required />
           <SelectField label="Received by" name="received_by" options={d.officers.map((o) => ({ value: o.id, label: o.full_name }))} />
           <div className="sm:col-span-2 space-y-1"><Label htmlFor="rdesc">Description</Label><Textarea id="rdesc" name="description" /></div>
@@ -433,7 +434,7 @@ function AuditTab() {
     const p = prev as Record<string, unknown>, n = next as Record<string, unknown>;
     return Object.keys(n).filter((k) => JSON.stringify(p[k]) !== JSON.stringify(n[k]) && k !== "history").map((k) => `${k}: ${JSON.stringify(p[k])} → ${JSON.stringify(n[k])}`).join("; ");
   };
-  const rows = (data ?? []).map((a) => ({ User: a.user_email ?? "system", Action: a.action, Record: a.table_name.replace(/_/g, " "), Date: new Date(a.created_at).toLocaleDateString(), Time: new Date(a.created_at).toLocaleTimeString(), Changes: changes(a.previous_details, a.details) }));
+  const rows = (data ?? []).map((a) => ({ User: a.user_email ?? "system", Action: a.action, Record: a.table_name.replace(/_/g, " "), Date: liberiaDateOnly(a.created_at), Time: liberiaTime(a.created_at), Changes: changes(a.previous_details, a.details) }));
   return (
     <div className="space-y-3">
       <div className="flex justify-between flex-wrap gap-2"><p className="text-sm text-muted-foreground">Audit records are permanent and cannot be edited or deleted.</p><ReportActions title="Finance audit trail" rows={rows} /></div>

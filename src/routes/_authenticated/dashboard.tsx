@@ -14,6 +14,7 @@ import { DOCUMENT_ROLES, REGISTRY_ROLES } from "@/lib/phase2";
 import { Button } from '@/components/ui/button';
 import { commandOptions } from '@/lib/command';
 import { reportAlertHour } from '@/lib/command-rules';
+import { liberiaDateOnly } from '@/lib/time';
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({ meta: [{ title: "Dashboard — LNPATS ERP" }, { name: "description", content: "Command overview of LNPATS officers, leave, supply requests, and inventory." }, { property: "og:title", content: "Dashboard — LNPATS ERP" }, { property: "og:description", content: "Command overview of LNPATS officers, leave, supply requests, and inventory." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
@@ -155,7 +156,7 @@ function Dashboard() {
             {data.audit.map((a) => (
               <div key={a.id} className="flex justify-between gap-2 border-b pb-1">
                 <span className="truncate">{a.user_email ?? "system"} · {a.action.toLowerCase()} {a.table_name.replace("_", " ")}</span>
-                <span className="text-xs text-muted-foreground shrink-0">{new Date(a.created_at).toLocaleDateString()}</span>
+                <span className="text-xs text-muted-foreground shrink-0">{liberiaDateOnly(a.created_at)}</span>
               </div>
             ))}
           </CardContent>

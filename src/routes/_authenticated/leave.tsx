@@ -19,6 +19,7 @@ import { exportCsv } from "@/lib/export";
 import { AttachedFiles, Field, History, MetricBand, ReportActions, SelectField } from "@/components/Phase2Shared";
 import { fileRecords, phase2Options, uploadPhaseFile } from "@/lib/phase2-data";
 import { exportPdf } from "@/lib/export";
+import { liberiaDate } from '@/lib/time';
 
 export const Route = createFileRoute("/_authenticated/leave")({
   head: () => ({ meta: [{ title: "Leave Management — LNPATS ERP" }, { name: "description", content: "Review LNPATS leave applications, approval stages, and leave balances." }, { property: "og:title", content: "Leave Management — LNPATS ERP" }, { property: "og:description", content: "Review LNPATS leave applications, approval stages, and leave balances." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
@@ -121,7 +122,7 @@ function Leave() {
           </>
         }
       />
-      <MetricBand items={[{label:"Pending",value:allLeave.filter(l=>l.status==='Pending').length},{label:"Approved",value:allLeave.filter(l=>l.status==='Approved').length},{label:"Rejected",value:allLeave.filter(l=>l.status==='Rejected').length},{label:"Officers on leave",value:allLeave.filter(l=>l.status==='Approved' && l.start_date<=new Date().toISOString().slice(0,10) && l.end_date>=new Date().toISOString().slice(0,10)).length}]} />
+      <MetricBand items={[{label:"Pending",value:allLeave.filter(l=>l.status==='Pending').length},{label:"Approved",value:allLeave.filter(l=>l.status==='Approved').length},{label:"Rejected",value:allLeave.filter(l=>l.status==='Rejected').length},{label:"Officers on leave",value:allLeave.filter(l=>l.status==='Approved' && l.start_date<=liberiaDate() && l.end_date>=liberiaDate()).length}]} />
       <div className="flex justify-between gap-3 flex-wrap mb-4"><Input value={search} onChange={e=>setSearch(e.target.value)} aria-label="Search leave" placeholder="Leave number, officer or status" className="max-w-sm" /><ReportActions title="Leave report" rows={reportRows} /></div>
       <Tabs defaultValue="requests">
         <TabsList><TabsTrigger value="requests">Requests</TabsTrigger><TabsTrigger value="calendar">Calendar</TabsTrigger><TabsTrigger value="balance">Balances</TabsTrigger><TabsTrigger value="analytics">Trends</TabsTrigger></TabsList>

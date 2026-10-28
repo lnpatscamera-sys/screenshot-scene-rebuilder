@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
+import { liberiaDateTime } from '@/lib/time';
 
 const workOrdersOptions = queryOptions({
   queryKey: ["facility_work_orders"],
@@ -105,7 +106,7 @@ function WorkOrderCard({ w, mgr, mine, act }: { w: WO; mgr: boolean; mine: boole
           <Badge variant={w.priority === "Urgent" || w.priority === "High" ? "destructive" : "secondary"}>{w.priority}</Badge>
           <Badge>{STATUS_LABEL[w.status]}</Badge>
         </div>
-        <div className="text-sm text-muted-foreground">{w.location} · reported {new Date(w.created_at).toLocaleString()}{w.technician ? ` · technician: ${w.technician}` : ""}</div>
+        <div className="text-sm text-muted-foreground">{w.location} · reported {liberiaDateTime(w.created_at)}{w.technician ? ` · technician: ${w.technician}` : ""}</div>
         {w.description && <p className="text-sm">{w.description}</p>}
         {w.completion_notes && <p className="text-sm"><span className="font-medium">Work notes:</span> {w.completion_notes}</p>}
         <div className="flex flex-wrap gap-2 pt-1">

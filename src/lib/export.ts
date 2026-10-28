@@ -1,3 +1,4 @@
+import { liberiaDateTime } from '@/lib/time';
 export function exportCsv(filename: string, rows: Record<string, unknown>[]) {
   if (!rows.length) return;
   const keys = Object.keys(rows[0] ?? {});
@@ -23,7 +24,7 @@ export async function exportPdf(title: string, rows: Record<string, unknown>[]) 
   doc.setFontSize(16);
   doc.text(`LNPATS — ${title}`, 14, 18);
   doc.setFontSize(9);
-  doc.text(new Date().toLocaleString(), 14, 25);
+  doc.text(liberiaDateTime(new Date()), 14, 25);
   if (title === "Leave approval letter") {
     const record = rows[0];
     if (!record) return;

@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { liberiaDate, liberiaDateTime } from '@/lib/time';
 
 const issOptions = queryOptions({
   queryKey: ["iss"],
@@ -34,7 +35,7 @@ export const Route = createFileRoute("/_authenticated/security")({
 });
 
 const sel = "h-9 rounded-md border bg-background px-2 text-sm";
-const fmt = (d: string | null) => (d ? new Date(d).toLocaleString() : "—");
+const fmt = (d: string | null) => liberiaDateTime(d);
 
 function SecurityPage() {
   const { hasAny } = useAuth();
@@ -55,7 +56,7 @@ function SecurityInner({ canWrite }: { canWrite: boolean }) {
   };
   const onSite = data.visitors.filter((v) => !v.time_out).length;
   const openOb = data.ob.filter((o) => o.status !== "closed").length;
-  const today = new Date().toISOString().slice(0, 10);
+  const today = liberiaDate();
 
   return (
     <div className="space-y-5">
