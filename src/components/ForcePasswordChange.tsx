@@ -12,11 +12,11 @@ export function ForcePasswordChange({ current }: { current?: string }) {
   const [busy, setBusy] = useState(false);
   const submit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const v = Object.fromEntries(new FormData(e.currentTarget)) as Record<string, string>;
+    const v = Object.fromEntries(new FormData(e.currentTarget)) as { current: string; password: string; confirm: string };
     const problem = passwordProblem(v.password);
-    if (problem) return toast.error(problem);
-    if (v.password !== v.confirm) return toast.error('The passwords do not match.');
-    if (v.password === v.current) return toast.error('Choose a password different from the default one.');
+    if (problem) { toast.error(problem); return; }
+    if (v.password !== v.confirm) { toast.error('The passwords do not match.'); return; }
+    if (v.password === v.current) { toast.error('Choose a password different from the default one.'); return; }
     setBusy(true);
     const { error } = await supabase.auth.updateUser({ password: v.password, current_password: v.current, data: { must_change_password: false } } as never);
     setBusy(false);

@@ -28,7 +28,7 @@ export function StaffEnrollment() {
   const submit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const form = e.currentTarget;
-    const v = Object.fromEntries(new FormData(form)) as Record<string, string>;
+    const v = Object.fromEntries(new FormData(form)) as { fullName: string; lnpId: string; phone: string; classNumber: string; email: string };
     setBusy(true);
     try {
       const r = await enroll({ data: { fullName: v.fullName, lnpId: v.lnpId, phone: v.phone, classNumber: v.classNumber, email: v.email } });
