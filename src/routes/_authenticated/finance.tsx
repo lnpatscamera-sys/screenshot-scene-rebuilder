@@ -239,7 +239,7 @@ function ExpensesTab({ d }: { d: Data }) {
             </TableCell></TableRow>)}</TableBody></Table></div>
       <Dialog open={!!edit} onOpenChange={(o) => !o && setEdit(null)}><DialogContent className="max-w-2xl"><DialogHeader><DialogTitle>{cur ? `Edit ${cur.expense_number}` : "Record expense"}</DialogTitle></DialogHeader>
         <form onSubmit={save} className="grid sm:grid-cols-2 gap-3">
-          <Field label="Date" name="expense_date" type="date" required defaultValue={cur?.expense_date ?? new Date().toISOString().slice(0, 10)} />
+          <Field label="Date" name="expense_date" type="date" required defaultValue={cur?.expense_date ?? liberiaDate()} />
           <SelectField label="Department" name="section_id" required options={d.sections.map((s) => ({ value: s.id, label: s.name }))} defaultValue={cur?.section_id ?? ""} />
           <SelectField label="Vendor" name="vendor_id" options={d.vendors.map((v) => ({ value: v.id, label: v.company_name ?? "Vendor" }))} defaultValue={cur?.vendor_id ?? ""} />
           <SelectField label="Expense category" name="expense_type" required options={opt(BUDGET_CATEGORIES)} defaultValue={cur?.expense_type ?? ""} />
@@ -291,7 +291,7 @@ function RevenueTab({ d }: { d: Data }) {
       <Dialog open={open} onOpenChange={setOpen}><DialogContent><DialogHeader><DialogTitle>Record revenue</DialogTitle></DialogHeader>
         <form onSubmit={save} className="grid sm:grid-cols-2 gap-3">
           <SelectField label="Revenue source" name="source" required options={opt(REVENUE_SOURCES)} />
-          <Field label="Date received" name="received_date" type="date" required defaultValue={new Date().toISOString().slice(0, 10)} />
+          <Field label="Date received" name="received_date" type="date" required defaultValue={liberiaDate()} />
           <Field label="Amount (USD)" name="amount" type="number" required />
           <SelectField label="Received by" name="received_by" options={d.officers.map((o) => ({ value: o.id, label: o.full_name }))} />
           <div className="sm:col-span-2 space-y-1"><Label htmlFor="rdesc">Description</Label><Textarea id="rdesc" name="description" /></div>

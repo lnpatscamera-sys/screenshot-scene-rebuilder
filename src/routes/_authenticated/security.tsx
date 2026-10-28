@@ -56,7 +56,7 @@ function SecurityInner({ canWrite }: { canWrite: boolean }) {
   };
   const onSite = data.visitors.filter((v) => !v.time_out).length;
   const openOb = data.ob.filter((o) => o.status !== "closed").length;
-  const today = new Date().toISOString().slice(0, 10);
+  const today = liberiaDate();
 
   return (
     <div className="space-y-5">
