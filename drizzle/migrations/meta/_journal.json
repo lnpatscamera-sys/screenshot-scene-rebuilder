@@ -309,6 +309,13 @@
       "when": 1793171772234,
       "tag": "0043_staff_enrollment",
       "breakpoints": true
+    },
+    {
+      "idx": 44,
+      "version": "7",
+      "when": 1793185503642,
+      "tag": "0044_hr_enrollment_registry",
+      "breakpoints": true
     }
   ]
 }
