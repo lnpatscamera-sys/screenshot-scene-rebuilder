@@ -29,7 +29,7 @@ export function supplierScore(ratings: (number | null)[]) {
   return values.length ? Math.round(200 * values.reduce((a, b) => a + b, 0) / values.length) / 10 : null;
 }
 export function contractDays(end: string, today = new Date()) {
-  return Math.ceil((Date.parse(end + 'T00:00:00Z') - Date.parse(liberiaDate() + 'T00:00:00Z')) / 86400000);
+  return Math.ceil((Date.parse(end + 'T00:00:00Z') - Date.parse(liberiaDate(today) + 'T00:00:00Z')) / 86400000);
 }
 export function canOrderAction(roles: AppRole[], status: string | null, action: string) {
   const has = (allowed: AppRole[]) => roles.includes('system_admin') || allowed.some(r => roles.includes(r));
