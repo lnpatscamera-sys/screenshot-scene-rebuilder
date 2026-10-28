@@ -26,10 +26,9 @@ export const Route = createFileRoute("/auth")({
 function AuthPage() {
   const nav = useNavigate();
   const { session } = useAuth();
-  const [mode, setMode] = useState<"in" | "up">("in");
-  const [email, setEmail] = useState("");
+  const lnpSignIn = useServerFn(signInWithLnpId);
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [name, setName] = useState("");
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
@@ -39,17 +38,19 @@ function AuthPage() {
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setBusy(true);
-    if (mode === "in") {
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) toast.error(error.message);
-    } else {
-      const { error } = await supabase.auth.signUp({
-        email, password,
-        options: { emailRedirectTo: window.location.origin + "/dashboard", data: { full_name: name } },
-      });
-      if (error) toast.error(error.message);
-      else toast.success("Check your email to confirm your account.");
-    }
+    try {
+      if (looksLikeEmail(username)) {
+        const { error } = await supabase.auth.signInWithPassword({ email: username.trim(), password });
+        if (error) toast.error(error.message);
+      } else {
+        const r = await lnpSignIn({ data: { lnpId: username, password } });
+        if ("error" in r) toast.error(r.error);
+        else {
+          const { error } = await supabase.auth.setSession(r);
+          if (error) toast.error(error.message);
+        }
+      }
+    } catch { toast.error("Sign-in failed. Try again."); }
     setBusy(false);
   };
 
@@ -68,18 +69,12 @@ function AuthPage() {
       <div className="flex items-center justify-center p-6">
         <form onSubmit={submit} className="w-full max-w-sm space-y-4">
           <div className="md:hidden flex justify-center"><Logo className="h-20 w-20" /></div>
-          <h1 className="text-2xl font-bold">{mode === "in" ? "Staff sign in" : "Create staff account"}</h1>
-          {mode === "up" && (
-            <div className="space-y-1"><Label>Full name</Label><Input required value={name} onChange={(e) => setName(e.target.value)} /></div>
-          )}
-          <div className="space-y-1"><Label>Email</Label><Input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} /></div>
-          <div className="space-y-1"><Label>Password</Label><Input type="password" required minLength={8} value={password} onChange={(e) => setPassword(e.target.value)} /></div>
-          <Button className="w-full" disabled={busy}>{mode === "in" ? "Sign in" : "Create account"}</Button>
+          <h1 className="text-2xl font-bold">Staff sign in</h1>
+          <div className="space-y-1"><Label htmlFor="auth-user">LNP ID Number or email</Label><Input id="auth-user" required autoComplete="username" value={username} onChange={(e) => setUsername(e.target.value)} /></div>
+          <div className="space-y-1"><Label htmlFor="auth-pass">Password</Label><Input id="auth-pass" type="password" required autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} /></div>
+          <Button className="w-full" disabled={busy}>{busy ? "Signing in…" : "Sign in"}</Button>
           <Button type="button" variant="outline" className="w-full" onClick={google}>Continue with Google</Button>
-          <button type="button" className="text-sm text-muted-foreground underline w-full" onClick={() => setMode(mode === "in" ? "up" : "in")}>
-            {mode === "in" ? "New staff member? Create an account" : "Already have an account? Sign in"}
-          </button>
-          <p className="text-xs text-muted-foreground text-center">New accounts start as Officer. A System Administrator assigns other roles.</p>
+          <p className="text-xs text-muted-foreground text-center">Accounts are opened by the Human Resources Section only. Contact HR if you do not have one.</p>
         </form>
       </div>
     </div>
