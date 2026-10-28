@@ -1,3 +1,4 @@
+import { ForcePasswordChange } from "@/components/ForcePasswordChange";
 import { Link, Outlet, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";

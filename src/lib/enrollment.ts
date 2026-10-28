@@ -7,7 +7,7 @@ export const looksLikeEmail = (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v
 
 /** Default password: 12 chars with upper, lower, digit and symbol. */
 export function generatePassword(rand: (n: number) => number = (n) => {
-  const a = new Uint32Array(1); crypto.getRandomValues(a); return a[0] % n;
+  const a = new Uint32Array(1); crypto.getRandomValues(a); return (a[0] ?? 0) % n;
 }) {
   const sets = ['ABCDEFGHJKLMNPQRSTUVWXYZ', 'abcdefghijkmnpqrstuvwxyz', '23456789', '!@#$%*?'];
   const all = sets.join('');
