@@ -34,13 +34,6 @@ function AuthPage() {
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
 
-  const [clockOff, setClockOff] = useState(0);
-  useEffect(() => {
-    fetch(window.location.href, { method: "HEAD", cache: "no-store" }).then((r) => {
-      const server = Date.parse(r.headers.get("date") ?? "");
-      if (!Number.isNaN(server)) setClockOff(Math.round((Date.now() - server) / 60000));
-    }).catch(() => {});
-  }, []);
 
   useEffect(() => {
     if (session) nav({ to: "/dashboard", replace: true });
