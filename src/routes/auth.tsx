@@ -1,6 +1,6 @@
 import { useServerFn } from "@tanstack/react-start";
 import { looksLikeEmail } from "@/lib/enrollment";
-import { signInWithLnpId } from "@/lib/enrollment.functions";
+import { requestPasswordReset, signInWithLnpId } from "@/lib/enrollment.functions";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -29,6 +29,7 @@ function AuthPage() {
   const nav = useNavigate();
   const { session } = useAuth();
   const lnpSignIn = useServerFn(signInWithLnpId);
+  const resetFn = useServerFn(requestPasswordReset);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
@@ -64,6 +65,16 @@ function AuthPage() {
     setBusy(false);
   };
 
+  const forgot = async () => {
+    if (!username.trim()) { toast.error("Enter your LNP ID Number in User name first."); return; }
+    setBusy(true);
+    try {
+      await resetFn({ data: { lnpId: username.trim(), origin: window.location.origin } });
+      toast.success("If this LNP ID Number has an account, a password reset link has been sent to its email.");
+    } catch { toast.error("Could not send the reset link. Try again."); }
+    setBusy(false);
+  };
+
   return (
     <div className="min-h-screen grid md:grid-cols-2">
       <div className="hidden md:flex flex-col items-center justify-center bg-sidebar text-sidebar-foreground p-10 text-center">
@@ -79,6 +90,7 @@ function AuthPage() {
           <div className="space-y-1"><Label htmlFor="auth-user">User name (LNP ID Number)</Label><Input id="auth-user" required autoComplete="username" value={username} onChange={(e) => setUsername(e.target.value)} /></div>
           <div className="space-y-1"><Label htmlFor="auth-pass">Password</Label><Input id="auth-pass" type="password" required autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} /></div>
           <Button className="w-full" disabled={busy}>{busy ? "Signing in…" : "Sign in"}</Button>
+          <button type="button" className="block w-full text-sm text-primary underline-offset-4 hover:underline" onClick={forgot}>Forgot password?</button>
           <p className="text-xs text-muted-foreground text-center">Accounts are opened by the Human Resources Section only. Contact HR if you do not have one.</p>
         </form>
       </div>
