@@ -57,11 +57,6 @@ function AuthPage() {
     setBusy(false);
   };
 
-  const google = async () => {
-    const r = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin + "/auth" });
-    if (r.error) toast.error(r.error.message ?? "Google sign-in failed");
-  };
-
   return (
     <div className="min-h-screen grid md:grid-cols-2">
       <div className="hidden md:flex flex-col items-center justify-center bg-sidebar text-sidebar-foreground p-10 text-center">
@@ -73,10 +68,9 @@ function AuthPage() {
         <form onSubmit={submit} className="w-full max-w-sm space-y-4">
           <div className="md:hidden flex justify-center"><Logo className="h-20 w-20" /></div>
           <h1 className="text-2xl font-bold">Staff sign in</h1>
-          <div className="space-y-1"><Label htmlFor="auth-user">LNP ID Number or email</Label><Input id="auth-user" required autoComplete="username" value={username} onChange={(e) => setUsername(e.target.value)} /></div>
+          <div className="space-y-1"><Label htmlFor="auth-user">User name (LNP ID Number)</Label><Input id="auth-user" required autoComplete="username" value={username} onChange={(e) => setUsername(e.target.value)} /></div>
           <div className="space-y-1"><Label htmlFor="auth-pass">Password</Label><Input id="auth-pass" type="password" required autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} /></div>
           <Button className="w-full" disabled={busy}>{busy ? "Signing in…" : "Sign in"}</Button>
-          <Button type="button" variant="outline" className="w-full" onClick={google}>Continue with Google</Button>
           <p className="text-xs text-muted-foreground text-center">Accounts are opened by the Human Resources Section only. Contact HR if you do not have one.</p>
         </form>
       </div>
