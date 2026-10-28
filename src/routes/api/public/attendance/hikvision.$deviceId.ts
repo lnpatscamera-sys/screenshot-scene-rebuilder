@@ -51,10 +51,9 @@ export const Route = createFileRoute('/api/public/attendance/hikvision/$deviceId
             saved++;
             if (!map) await supabaseAdmin.rpc('attendance_alert', { _title: 'Unlinked biometric user', _body: `Biometric ID ${employee} signed in on ${device.name} but is not linked to an employee`, _key: `unlinked:${employee}` });
             else if (direction !== 'Check Out' && isLate(new Date(at))) {
-              const { count } = await supabaseAdmin.from('attendance_punches').select('id', { count: 'exact', head: true }).eq('officer_id', map.officer_id).eq('direction', 'Check In').gte('punched_at', new Date(Date.parse(at) - 7 * 86400_000).toISOString()).filter('punched_at', 'gt', '1970-01-01');
               const { data: lates } = await supabaseAdmin.from('attendance_punches').select('punched_at').eq('officer_id', map.officer_id).eq('direction', 'Check In').gte('punched_at', new Date(Date.parse(at) - 7 * 86400_000).toISOString());
               const lateCount = (lates ?? []).filter(p => isLate(new Date(p.punched_at))).length;
-              if (count && lateCount >= 3) await supabaseAdmin.rpc('attendance_alert', { _title: 'Repeated lateness', _body: `An officer (biometric ID ${employee}) was late ${lateCount} times in 7 days`, _key: `late:${map.officer_id}:${at.slice(0, 10)}` });
+              if (lateCount >= 3) await supabaseAdmin.rpc('attendance_alert', { _title: 'Repeated lateness', _body: `An officer (biometric ID ${employee}) was late ${lateCount} times in 7 days`, _key: `late:${map.officer_id}:${at.slice(0, 10)}` });
             }
           }
         } catch (e) {
