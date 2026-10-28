@@ -3430,6 +3430,7 @@ export type Database = {
           gender: string | null
           id: string
           last_name: string | null
+          lnp_class_number: string | null
           marital_status: string | null
           medical_info: string | null
           middle_name: string | null
@@ -3474,6 +3475,7 @@ export type Database = {
           gender?: string | null
           id?: string
           last_name?: string | null
+          lnp_class_number?: string | null
           marital_status?: string | null
           medical_info?: string | null
           middle_name?: string | null
@@ -3518,6 +3520,7 @@ export type Database = {
           gender?: string | null
           id?: string
           last_name?: string | null
+          lnp_class_number?: string | null
           marital_status?: string | null
           medical_info?: string | null
           middle_name?: string | null
