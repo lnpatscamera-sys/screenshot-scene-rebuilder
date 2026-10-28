@@ -40,7 +40,7 @@ function dayList(from: string, to: string): string[] {
   return out;
 }
 
-export function buildRoster(punches: Punch[], officerIds: string[], from: string, to: string, leave: { officer_id: string; start_date: string; end_date: string }[] = []): RosterRow[] {
+export function buildRoster(punches: Punch[], officerIds: string[], from: string, to: string, leave: { officer_id: string | null; start_date: string; end_date: string }[] = []): RosterRow[] {
   const sorted = [...punches].sort((a, b) => a.punched_at.localeCompare(b.punched_at));
   const rows: RosterRow[] = [];
   for (const officer of officerIds) {

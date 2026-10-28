@@ -34,3 +34,4 @@
 - Command oversight uses protected aggregate RPCs, not widened policies; timed notifications are per-recipient and idempotent. Why: oversight never implies sensitive-record access.
 - Facility work orders change state only via `facility_action`; ISS records are iss_officer-writable, command-readable. Why: no self-completed work; restricted security logs.
 - Only HR opens accounts via `enrollStaff` (signup disabled); `signInWithLnpId` resolves email server-side, never returning it; `must_change_password` metadata gates the app. Why: HR-controlled enrollment without exposing emails.
+- Biometric attendance: devices push events to /api/public/attendance/hikvision/$deviceId with a per-device token (hash stored); punches/sync logs are immutable and roster status is derived via src/lib/attendance.ts. Why: no LAN polling from the cloud, no manual edits.
