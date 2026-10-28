@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { liberiaDateTime } from '@/lib/time';
+import { liberiaDate, liberiaDateTime } from '@/lib/time';
 
 const issOptions = queryOptions({
   queryKey: ["iss"],
