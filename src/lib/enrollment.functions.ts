@@ -7,7 +7,7 @@ const enrollSchema = z.object({
   fullName: z.string().trim().min(2).max(150),
   lnpId: z.string().trim().min(2).max(40).regex(/^[A-Za-z0-9/_-]+$/, 'LNP ID may use letters, numbers, - / _'),
   phone: z.string().trim().min(5).max(30),
-  classNumber: z.string().trim().min(1).max(40),
+  classNumber: z.string().trim().max(40).default(''),
   email: z.string().trim().email().max(200),
 });
 
@@ -34,7 +34,7 @@ export const enrollStaff = createServerFn({ method: 'POST' })
     }
     const userId = created.data.user.id;
 
-    const fields = { full_name: data.fullName, phone: data.phone, email, lnp_class_number: data.classNumber, user_id: userId };
+    const fields = { full_name: data.fullName, phone: data.phone, email, lnp_class_number: data.classNumber || null, user_id: userId };
     const officer = existing.data
       ? await supabaseAdmin.from('officers').update(fields).eq('id', existing.data.id).select('id').single()
       : await supabaseAdmin.from('officers').insert({ ...fields, service_number: lnpId, rank: 'Officer' }).select('id').single();

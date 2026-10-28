@@ -3409,10 +3409,12 @@ export type Database = {
       officers: {
         Row: {
           address: string | null
+          archived_at: string | null
           blood_group: string | null
           commendations: string | null
           county: string | null
           created_at: string
+          created_by: string | null
           current_assignment: string | null
           date_joined: string | null
           date_of_birth: string | null
@@ -3420,10 +3422,16 @@ export type Database = {
           disciplinary_actions: string | null
           education: string | null
           email: string | null
+          email_notes: string | null
+          email_sent_at: string | null
+          email_sent_by: string | null
+          email_status: string
           emergency_contact: string | null
           employee_number: string | null
           employment_status: string
           employment_type: string
+          enrollment_profile: Json
+          enrollment_status: string
           establishment_post_id: string | null
           first_name: string | null
           full_name: string
@@ -3438,6 +3446,7 @@ export type Database = {
           next_of_kin: string | null
           next_of_kin_phone: string | null
           office_id: string | null
+          personnel_category: string | null
           phone: string | null
           photo_url: string | null
           position: string | null
@@ -3450,14 +3459,17 @@ export type Database = {
           supervisor_id: string | null
           training_history: string | null
           updated_at: string
+          updated_by: string | null
           user_id: string | null
         }
         Insert: {
           address?: string | null
+          archived_at?: string | null
           blood_group?: string | null
           commendations?: string | null
           county?: string | null
           created_at?: string
+          created_by?: string | null
           current_assignment?: string | null
           date_joined?: string | null
           date_of_birth?: string | null
@@ -3465,10 +3477,16 @@ export type Database = {
           disciplinary_actions?: string | null
           education?: string | null
           email?: string | null
+          email_notes?: string | null
+          email_sent_at?: string | null
+          email_sent_by?: string | null
+          email_status?: string
           emergency_contact?: string | null
           employee_number?: string | null
           employment_status?: string
           employment_type?: string
+          enrollment_profile?: Json
+          enrollment_status?: string
           establishment_post_id?: string | null
           first_name?: string | null
           full_name: string
@@ -3483,6 +3501,7 @@ export type Database = {
           next_of_kin?: string | null
           next_of_kin_phone?: string | null
           office_id?: string | null
+          personnel_category?: string | null
           phone?: string | null
           photo_url?: string | null
           position?: string | null
@@ -3495,14 +3514,17 @@ export type Database = {
           supervisor_id?: string | null
           training_history?: string | null
           updated_at?: string
+          updated_by?: string | null
           user_id?: string | null
         }
         Update: {
           address?: string | null
+          archived_at?: string | null
           blood_group?: string | null
           commendations?: string | null
           county?: string | null
           created_at?: string
+          created_by?: string | null
           current_assignment?: string | null
           date_joined?: string | null
           date_of_birth?: string | null
@@ -3510,10 +3532,16 @@ export type Database = {
           disciplinary_actions?: string | null
           education?: string | null
           email?: string | null
+          email_notes?: string | null
+          email_sent_at?: string | null
+          email_sent_by?: string | null
+          email_status?: string
           emergency_contact?: string | null
           employee_number?: string | null
           employment_status?: string
           employment_type?: string
+          enrollment_profile?: Json
+          enrollment_status?: string
           establishment_post_id?: string | null
           first_name?: string | null
           full_name?: string
@@ -3528,6 +3556,7 @@ export type Database = {
           next_of_kin?: string | null
           next_of_kin_phone?: string | null
           office_id?: string | null
+          personnel_category?: string | null
           phone?: string | null
           photo_url?: string | null
           position?: string | null
@@ -3540,6 +3569,7 @@ export type Database = {
           supervisor_id?: string | null
           training_history?: string | null
           updated_at?: string
+          updated_by?: string | null
           user_id?: string | null
         }
         Relationships: [
