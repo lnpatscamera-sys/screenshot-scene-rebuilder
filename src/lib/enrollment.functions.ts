@@ -107,3 +107,17 @@ export const requestPasswordReset = createServerFn({ method: 'POST' })
     if (r.error) console.error('password reset failed', r.error.message);
     return ok;
   });
+
+// Completes a password reset using the recovery token from the email link.
+// Verified server-side so a wrong device clock cannot break the reset.
+export const completePasswordReset = createServerFn({ method: 'POST' })
+  .inputValidator((input: unknown) => z.object({ accessToken: z.string().min(20).max(4000), password: z.string().min(8).max(200) }).parse(input))
+  .handler(async ({ data }) => {
+    const { supabaseAdmin } = await import('@/integrations/supabase/client.server');
+    const u = await supabaseAdmin.auth.getUser(data.accessToken);
+    if (u.error || !u.data.user) throw new Error('This reset link has expired. Choose "Forgot password?" again.');
+    const meta = { ...(u.data.user.user_metadata ?? {}), must_change_password: false };
+    const r = await supabaseAdmin.auth.admin.updateUserById(u.data.user.id, { password: data.password, user_metadata: meta });
+    if (r.error) throw new Error(r.error.message);
+    return { ok: true } as const;
+  });

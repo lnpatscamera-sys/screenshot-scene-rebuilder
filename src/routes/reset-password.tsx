@@ -7,6 +7,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Logo } from "@/components/Logo";
 import { passwordProblem } from "@/lib/enrollment";
+import { completePasswordReset } from "@/lib/enrollment.functions";
+
+const TOKEN_KEY = "lnpats-recovery-token";
 
 export const Route = createFileRoute("/reset-password")({
   head: () => ({
@@ -29,6 +32,7 @@ function ResetPassword() {
 
   useEffect(() => {
     const { data } = supabase.auth.onAuthStateChange((event) => { if (event === "PASSWORD_RECOVERY" || event === "SIGNED_IN") setReady(true); });
+    try { if (sessionStorage.getItem(TOKEN_KEY)) setReady(true); } catch { /* ignore */ }
     supabase.auth.getSession().then(({ data: s }) => { if (s.session) setReady(true); });
     return () => data.subscription.unsubscribe();
   }, []);
@@ -40,11 +44,18 @@ function ResetPassword() {
     if (problem) { toast.error(problem); return; }
     if (v.password !== v.confirm) { toast.error("The passwords do not match."); return; }
     setBusy(true);
-    const { error } = await supabase.auth.updateUser({ password: v.password, data: { must_change_password: false } });
+    let token: string | null = null;
+    try { token = sessionStorage.getItem(TOKEN_KEY); } catch { /* ignore */ }
+    if (!token) token = (await supabase.auth.getSession()).data.session?.access_token ?? null;
+    if (!token) { setBusy(false); toast.error('This reset link has expired. Choose "Forgot password?" again.'); return; }
+    try {
+      await completePasswordReset({ data: { accessToken: token, password: v.password } });
+    } catch (err) { setBusy(false); toast.error(err instanceof Error ? err.message : "Could not change the password."); return; }
+    try { sessionStorage.removeItem(TOKEN_KEY); } catch { /* ignore */ }
+    await supabase.auth.signOut({ scope: "local" }).catch(() => {});
     setBusy(false);
-    if (error) { toast.error(error.message); return; }
-    toast.success("Password changed. You are now signed in.");
-    nav({ to: "/dashboard", replace: true });
+    toast.success("Password changed. Sign in with your new password.");
+    nav({ to: "/auth", replace: true });
   };
 
   return (

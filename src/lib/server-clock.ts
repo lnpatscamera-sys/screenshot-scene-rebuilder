@@ -34,3 +34,9 @@ if (typeof window !== "undefined" && !(window as { __clockFixed?: boolean }).__c
 }
 
 export const clockOffset = () => offset;
+
+// Capture the recovery token from a reset link before the auth client consumes the URL.
+if (typeof window !== "undefined" && window.location.hash.includes("type=recovery")) {
+  const t = new URLSearchParams(window.location.hash.slice(1)).get("access_token");
+  if (t) try { sessionStorage.setItem("lnpats-recovery-token", t); } catch { /* ignore */ }
+}
