@@ -33,6 +33,14 @@ function AuthPage() {
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
 
+  const [clockOff, setClockOff] = useState(0);
+  useEffect(() => {
+    fetch(window.location.href, { method: "HEAD", cache: "no-store" }).then((r) => {
+      const server = Date.parse(r.headers.get("date") ?? "");
+      if (!Number.isNaN(server)) setClockOff(Math.round((Date.now() - server) / 60000));
+    }).catch(() => {});
+  }, []);
+
   useEffect(() => {
     if (session) nav({ to: "/dashboard", replace: true });
   }, [session, nav]);
@@ -67,6 +75,7 @@ function AuthPage() {
         <form onSubmit={submit} className="w-full max-w-sm space-y-4">
           <div className="md:hidden flex justify-center"><Logo className="h-20 w-20" /></div>
           <h1 className="text-2xl font-bold">Staff sign in</h1>
+          {Math.abs(clockOff) >= 5 && <p role="alert" className="text-sm border-l-4 border-destructive pl-3 py-1">This device's clock is about {Math.abs(clockOff) >= 60 ? `${Math.round(Math.abs(clockOff) / 60)} hour(s)` : `${Math.abs(clockOff)} minutes`} {clockOff > 0 ? "ahead" : "behind"}. Sign-in will not work until you set the correct date, time and time zone (Liberia: GMT) in your device settings, then reload this page.</p>}
           <div className="space-y-1"><Label htmlFor="auth-user">User name (LNP ID Number)</Label><Input id="auth-user" required autoComplete="username" value={username} onChange={(e) => setUsername(e.target.value)} /></div>
           <div className="space-y-1"><Label htmlFor="auth-pass">Password</Label><Input id="auth-pass" type="password" required autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} /></div>
           <Button className="w-full" disabled={busy}>{busy ? "Signing in…" : "Sign in"}</Button>
