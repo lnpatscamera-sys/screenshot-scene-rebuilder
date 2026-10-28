@@ -46,12 +46,14 @@ function AuthPage() {
       if (looksLikeEmail(username)) {
         const { error } = await supabase.auth.signInWithPassword({ email: username.trim(), password });
         if (error) toast.error(error.message);
+        else { nav({ to: "/dashboard", replace: true }); }
       } else {
         const r = await lnpSignIn({ data: { lnpId: username, password } });
         if ("error" in r) toast.error(r.error);
         else {
           const { error } = await supabase.auth.setSession(r);
           if (error) toast.error(error.message);
+          else { nav({ to: "/dashboard", replace: true }); }
         }
       }
     } catch { toast.error("Sign-in failed. Try again."); }
