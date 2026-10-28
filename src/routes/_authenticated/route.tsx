@@ -6,7 +6,10 @@ export const Route = createFileRoute("/_authenticated")({
   ssr: false,
   beforeLoad: async () => {
     const { data } = await supabase.auth.getUser();
-    if (!data.user) throw redirect({ to: "/auth" });
+    if (data.user) return;
+    // Fall back to the stored session so a just-saved sign-in isn't bounced back.
+    const { data: s } = await supabase.auth.getSession();
+    if (!s.session) throw redirect({ to: "/auth" });
   },
   component: AppShell,
 });
