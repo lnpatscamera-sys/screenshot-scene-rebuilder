@@ -30,8 +30,8 @@ export function OfficialMailButton({ variant = "outline", className }: { variant
   const { data } = useOfficialEmail();
   return (
     <Button asChild variant={variant} className={className}>
-      <a href={outlookUrl(data)} target="_blank" rel="noopener noreferrer" title={data ?? "Open Outlook webmail"}>
-        <Mail className="h-4 w-4" /> Official Mail
+      <a href={outlookUrl(data)} target="_blank" rel="noopener noreferrer" title={data ? `Open ${data} in classic Outlook` : "Open classic Outlook"}>
+        <Mail className="h-4 w-4" /> Official Mail (classic Outlook)
       </a>
     </Button>
   );
@@ -42,7 +42,7 @@ export function OfficialMailNavLink() {
   return (
     <a href={outlookUrl(data)} target="_blank" rel="noopener noreferrer"
       className="flex items-center gap-3 rounded-md px-2 py-2 text-sidebar-foreground/85 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground">
-      <Mail className="h-4 w-4" /> Official Mail (Outlook)
+      <Mail className="h-4 w-4" /> Official Mail (Outlook classic)
     </a>
   );
 }

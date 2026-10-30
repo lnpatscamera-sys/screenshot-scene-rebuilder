@@ -101,7 +101,7 @@ function OfficerPage() {
                 <Row l="County" v={o.county} />
                 <Row l="Phone" v={o.phone} />
                 <Row l="Email" v={o.email} />
-                {o.official_email && <div className="flex items-center justify-between gap-2 text-sm"><span className="text-muted-foreground">Official email</span><span className="flex items-center gap-2 break-all">{o.official_email}<a className="text-primary underline text-xs whitespace-nowrap" href={outlookUrl(o.official_email)} target="_blank" rel="noopener noreferrer">Open mailbox</a></span></div>}
+                {o.official_email && <div className="flex items-center justify-between gap-2 text-sm"><span className="text-muted-foreground">Official email</span><span className="flex items-center gap-2 break-all">{o.official_email}<a className="text-primary underline text-xs whitespace-nowrap" href={outlookUrl(o.official_email)} target="_blank" rel="noopener noreferrer">Open in Outlook classic</a></span></div>}
                 <Row l="Date joined LNP" v={o.date_joined} />
                 <Row l="Office" v={o.offices?.name} />
                 <Row l="Section" v={o.sections?.name} />
