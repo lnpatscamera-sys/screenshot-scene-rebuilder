@@ -67,7 +67,7 @@ function OfficerPage() {
       />
       <div className="grid lg:grid-cols-3 gap-4">
         <div className="space-y-4">
-          <StaffIdCard e={{ ...o, department: o.offices?.name }} />
+          <StaffIdCard e={{ ...o, department: o.offices?.name ?? null }} />
           {(() => { const r = retirementSummary(o.date_of_birth, liberiaDate()); return r && <div className="no-print text-sm text-center"><div>Age <strong>{r.age}</strong> · <strong>{r.remaining}</strong> years to retirement</div><div className="text-xs text-muted-foreground">Retirement eligibility: {r.date}</div></div>; })()}
           {canPhoto && (
             <div className="no-print">
