@@ -132,3 +132,9 @@
   .no-print { display: none !important; }
   body { background: white; }
 }
+
+@media print {
+  body:has(.id-card-print) * { visibility: hidden; }
+  body:has(.id-card-print) .id-card-print, body:has(.id-card-print) .id-card-print * { visibility: visible; }
+  body:has(.id-card-print) .id-card-print { position: fixed; left: 0; top: 0; }
+}
