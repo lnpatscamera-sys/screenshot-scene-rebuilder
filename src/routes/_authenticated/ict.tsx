@@ -8,6 +8,8 @@ import { ICTTickets } from "@/components/ICTTickets";
 import { ICTRecords, type ICTKind } from "@/components/ICTRecords";
 import { ICTAssets } from "@/components/ICTAssets";
 import { ICTOverview, ICTReports } from "@/components/ICTOverview";
+import { ICTContacts } from "@/components/ICTContacts";
+import { useAuth } from "@/lib/auth";
 export const Route = createFileRoute("/_authenticated/ict")({
   head: () =>
     phaseHead(
@@ -19,6 +21,8 @@ export const Route = createFileRoute("/_authenticated/ict")({
 });
 function ICTPage() {
   const { data: d } = useSuspenseQuery(ictOptions);
+  const { hasAny } = useAuth();
+  const contacts = hasAny(["ict_admin"]);
   const kinds: { id: ICTKind; label: string }[] = [
     { id: "requests", label: "Service requests" },
     { id: "incidents", label: "Incidents" },
@@ -41,6 +45,7 @@ function ICTPage() {
             ))}
             <TabsTrigger value="assets">ICT assets</TabsTrigger>
             <TabsTrigger value="maintenance">Maintenance</TabsTrigger>
+            {contacts && <TabsTrigger value="contacts">Staff contacts</TabsTrigger>}
             <TabsTrigger value="reports">Reports</TabsTrigger>
           </TabsList>
         </div>
@@ -61,6 +66,7 @@ function ICTPage() {
         <TabsContent value="maintenance">
           <ICTAssets d={d} maintenance />
         </TabsContent>
+        {contacts && <TabsContent value="contacts"><ICTContacts /></TabsContent>}
         <TabsContent value="reports">
           <ICTReports d={d} />
         </TabsContent>
