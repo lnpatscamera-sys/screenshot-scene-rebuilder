@@ -32,10 +32,12 @@ export async function uploadOfficerPhoto(officerId: string, blob: Blob) {
   return path;
 }
 
-/** Choose, preview, crop/zoom and confirm a passport photo. Calls onChange with the cropped JPEG. */
-export function PassportPhotoPicker({ currentPath, onChange, required }: { currentPath?: string | null; onChange: (b: Blob | null) => void; required?: boolean }) {
+/** Choose, preview, crop/zoom and confirm a passport photo. Calls onChange with the cropped JPEG. When officerId is given, the photo can be uploaded immediately without saving the whole form. */
+export function PassportPhotoPicker({ currentPath, onChange, required, officerId, onUploaded }: { currentPath?: string | null; onChange: (b: Blob | null) => void; required?: boolean; officerId?: string; onUploaded?: (path: string) => void }) {
   const current = useOfficerPhoto(currentPath);
   const [img, setImg] = useState<HTMLImageElement | null>(null);
+  const [blob, setBlob] = useState<Blob | null>(null);
+  const [busy, setBusy] = useState(false);
   const [zoom, setZoom] = useState(1); const [x, setX] = useState(50); const [y, setY] = useState(50);
   const canvas = useRef<HTMLCanvasElement>(null);
 
@@ -43,6 +45,18 @@ export function PassportPhotoPicker({ currentPath, onChange, required }: { curre
     if (!f) return;
     const err = photoError(f); if (err) { toast.error(err); return; }
     const i = new Image(); i.onload = () => { setImg(i); setZoom(1); setX(50); setY(50); }; i.src = URL.createObjectURL(f);
+  };
+
+  const uploadNow = async () => {
+    if (!officerId || !blob) return;
+    setBusy(true);
+    try {
+      const path = await uploadOfficerPhoto(officerId, blob);
+      toast.success('Passport photo uploaded');
+      setImg(null); setBlob(null); onChange(null);
+      onUploaded?.(path);
+    } catch (e) { toast.error((e as Error).message); }
+    finally { setBusy(false); }
   };
 
   useEffect(() => {
