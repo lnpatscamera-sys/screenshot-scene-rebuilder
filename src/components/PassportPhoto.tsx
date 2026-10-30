@@ -32,10 +32,12 @@ export async function uploadOfficerPhoto(officerId: string, blob: Blob) {
   return path;
 }
 
-/** Choose, preview, crop/zoom and confirm a passport photo. Calls onChange with the cropped JPEG. */
-export function PassportPhotoPicker({ currentPath, onChange, required }: { currentPath?: string | null; onChange: (b: Blob | null) => void; required?: boolean }) {
+/** Choose, preview, crop/zoom and confirm a passport photo. Calls onChange with the cropped JPEG. When officerId is given, the photo can be uploaded immediately without saving the whole form. */
+export function PassportPhotoPicker({ currentPath, onChange, required, officerId, onUploaded }: { currentPath?: string | null; onChange: (b: Blob | null) => void; required?: boolean; officerId?: string | undefined; onUploaded?: (path: string) => void }) {
   const current = useOfficerPhoto(currentPath);
   const [img, setImg] = useState<HTMLImageElement | null>(null);
+  const [blob, setBlob] = useState<Blob | null>(null);
+  const [busy, setBusy] = useState(false);
   const [zoom, setZoom] = useState(1); const [x, setX] = useState(50); const [y, setY] = useState(50);
   const canvas = useRef<HTMLCanvasElement>(null);
 
@@ -45,13 +47,25 @@ export function PassportPhotoPicker({ currentPath, onChange, required }: { curre
     const i = new Image(); i.onload = () => { setImg(i); setZoom(1); setX(50); setY(50); }; i.src = URL.createObjectURL(f);
   };
 
+  const uploadNow = async () => {
+    if (!officerId || !blob) return;
+    setBusy(true);
+    try {
+      const path = await uploadOfficerPhoto(officerId, blob);
+      toast.success('Passport photo uploaded');
+      setImg(null); setBlob(null); onChange(null);
+      onUploaded?.(path);
+    } catch (e) { toast.error((e as Error).message); }
+    finally { setBusy(false); }
+  };
+
   useEffect(() => {
     const c = canvas.current; if (!img || !c) return;
     const ctx = c.getContext('2d')!; const base = Math.max(W / img.width, H / img.height) * zoom;
     const dw = img.width * base, dh = img.height * base;
     const dx = -(dw - W) * (x / 100), dy = -(dh - H) * (y / 100);
     ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, W, H); ctx.drawImage(img, dx, dy, dw, dh);
-    const t = setTimeout(() => c.toBlob(b => onChange(b), 'image/jpeg', 0.9), 150);
+    const t = setTimeout(() => c.toBlob(b => { setBlob(b); onChange(b); }, 'image/jpeg', 0.9), 150);
     return () => clearTimeout(t);
   }, [img, zoom, x, y, onChange]);
 
@@ -65,7 +79,11 @@ export function PassportPhotoPicker({ currentPath, onChange, required }: { curre
         <p className="text-xs text-muted-foreground">JPG, JPEG or PNG, up to 5 MB.</p>
         {img && <div className="space-y-1">
           {([['Zoom', zoom, setZoom, 1, 3, 0.05], ['Left / right', x, setX, 0, 100, 1], ['Up / down', y, setY, 0, 100, 1]] as const).map(([l, v, set, min, max, step]) => <div key={l} className="flex items-center gap-2"><Label className="w-24 text-xs">{l}</Label><input type="range" aria-label={l} min={min} max={max} step={step} value={v} onChange={e => (set as (n: number) => void)(Number(e.target.value))} className="flex-1" /></div>)}
-          <Button type="button" size="sm" variant="ghost" onClick={() => { setImg(null); onChange(null); }}>Remove new photo</Button>
+          <div className="flex gap-2">
+            {officerId && <Button type="button" size="sm" disabled={busy || !blob} onClick={uploadNow}>{busy ? 'Uploading…' : 'Upload photo now'}</Button>}
+            <Button type="button" size="sm" variant="ghost" onClick={() => { setImg(null); setBlob(null); onChange(null); }}>Remove new photo</Button>
+          </div>
+          {officerId && <p className="text-xs text-muted-foreground">"Upload photo now" saves just the photo. Otherwise it is saved together with the record.</p>}
         </div>}
       </div>
     </div></fieldset>;
