@@ -33,7 +33,7 @@ export async function uploadOfficerPhoto(officerId: string, blob: Blob) {
 }
 
 /** Choose, preview, crop/zoom and confirm a passport photo. Calls onChange with the cropped JPEG. When officerId is given, the photo can be uploaded immediately without saving the whole form. */
-export function PassportPhotoPicker({ currentPath, onChange, required, officerId, onUploaded }: { currentPath?: string | null; onChange: (b: Blob | null) => void; required?: boolean; officerId?: string; onUploaded?: (path: string) => void }) {
+export function PassportPhotoPicker({ currentPath, onChange, required, officerId, onUploaded }: { currentPath?: string | null; onChange: (b: Blob | null) => void; required?: boolean; officerId?: string | undefined; onUploaded?: (path: string) => void }) {
   const current = useOfficerPhoto(currentPath);
   const [img, setImg] = useState<HTMLImageElement | null>(null);
   const [blob, setBlob] = useState<Blob | null>(null);
