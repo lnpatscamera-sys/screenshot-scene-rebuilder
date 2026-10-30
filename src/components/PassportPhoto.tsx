@@ -40,11 +40,16 @@ export function PassportPhotoPicker({ currentPath, onChange, required, officerId
   const [busy, setBusy] = useState(false);
   const [zoom, setZoom] = useState(1); const [x, setX] = useState(50); const [y, setY] = useState(50);
   const canvas = useRef<HTMLCanvasElement>(null);
+  const fileInput = useRef<HTMLInputElement>(null);
+  const [fileName, setFileName] = useState('');
 
   const pick = (f: File | undefined) => {
     if (!f) return;
     const err = photoError(f); if (err) { toast.error(err); return; }
-    const i = new Image(); i.onload = () => { setImg(i); setZoom(1); setX(50); setY(50); }; i.src = URL.createObjectURL(f);
+    const i = new Image();
+    i.onload = () => { setImg(i); setFileName(f.name); setZoom(1); setX(50); setY(50); };
+    i.onerror = () => toast.error('This photo could not be opened. Please save it as JPG or PNG and try again.');
+    i.src = URL.createObjectURL(f);
   };
 
   const uploadNow = async () => {
@@ -75,8 +80,11 @@ export function PassportPhotoPicker({ currentPath, onChange, required, officerId
         {img ? <canvas ref={canvas} width={W} height={H} className="w-full h-full" /> : current ? <img src={current} alt="Current photo" className="w-full h-full object-cover" /> : 'No photo'}
       </div>
       <div className="space-y-2 text-sm flex-1 min-w-[200px]">
-        <label className="inline-block"><span className="sr-only">Choose photo</span><input type="file" accept="image/jpeg,image/png" aria-label="Passport photo" className="text-sm" onChange={e => pick(e.target.files?.[0])} /></label>
+        <input ref={fileInput} type="file" accept="image/jpeg,image/png,.jpg,.jpeg,.jfif,.png" aria-label="Passport photo" className="sr-only" onChange={e => { pick(e.target.files?.[0]); e.target.value = ''; }} />
+        <Button type="button" variant="outline" onClick={() => fileInput.current?.click()}><Upload className="h-4 w-4 mr-2" />{img || current ? 'Change passport photo' : 'Upload passport photo'}</Button>
+        {fileName && <p className="text-xs">Selected: <span className="font-medium">{fileName}</span></p>}
         <p className="text-xs text-muted-foreground">JPG, JPEG or PNG, up to 5 MB.</p>
+        {img && !officerId && <p className="text-xs text-muted-foreground">The photo will be saved when you click "Save record".</p>}
         {img && <div className="space-y-1">
           {([['Zoom', zoom, setZoom, 1, 3, 0.05], ['Left / right', x, setX, 0, 100, 1], ['Up / down', y, setY, 0, 100, 1]] as const).map(([l, v, set, min, max, step]) => <div key={l} className="flex items-center gap-2"><Label className="w-24 text-xs">{l}</Label><input type="range" aria-label={l} min={min} max={max} step={step} value={v} onChange={e => (set as (n: number) => void)(Number(e.target.value))} className="flex-1" /></div>)}
           <div className="flex gap-2">
