@@ -3,7 +3,7 @@ import { Mail } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { Button } from "./ui/button";
-import { outlookUrl } from "@/lib/official-mail";
+import { openOutlookApp } from "@/lib/official-mail";
 
 export function useOfficialEmail() {
   const { session } = useAuth();
@@ -21,10 +21,13 @@ export function useOfficialEmail() {
 export function OfficialMailButton({ variant = "outline", className }: { variant?: "outline" | "default" | "ghost"; className?: string }) {
   const { data } = useOfficialEmail();
   return (
-    <Button asChild variant={variant} className={className}>
-      <a href={outlookUrl(data)} target="_blank" rel="noopener noreferrer" title={data ? `Open ${data} in classic Outlook` : "Open classic Outlook"}>
-        <Mail className="h-4 w-4" /> Official Mail (classic Outlook)
-      </a>
+    <Button
+      variant={variant}
+      className={className}
+      onClick={() => openOutlookApp(data)}
+      title={data ? `Open ${data} in Outlook on this computer` : "Open Outlook on this computer"}
+    >
+      <Mail className="h-4 w-4" /> Official Mail (Outlook app)
     </Button>
   );
 }
@@ -32,9 +35,13 @@ export function OfficialMailButton({ variant = "outline", className }: { variant
 export function OfficialMailNavLink() {
   const { data } = useOfficialEmail();
   return (
-    <a href={outlookUrl(data)} target="_blank" rel="noopener noreferrer"
-      className="flex items-center gap-3 rounded-md px-2 py-2 text-sidebar-foreground/85 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground">
-      <Mail className="h-4 w-4" /> Official Mail (Outlook classic)
-    </a>
+    <button
+      type="button"
+      onClick={() => openOutlookApp(data)}
+      title={data ? `Open ${data} in Outlook on this computer` : "Open Outlook on this computer"}
+      className="flex w-full items-center gap-3 rounded-md px-2 py-2 text-left text-sidebar-foreground/85 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+    >
+      <Mail className="h-4 w-4" /> Official Mail (Outlook app)
+    </button>
   );
 }
