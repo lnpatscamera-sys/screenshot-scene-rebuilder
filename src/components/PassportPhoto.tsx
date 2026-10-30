@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
+import { Upload } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { photoError } from '@/lib/hr-enrollment';
 
@@ -58,7 +59,7 @@ export function PassportPhotoPicker({ currentPath, onChange, required, officerId
     try {
       const path = await uploadOfficerPhoto(officerId, blob);
       toast.success('Passport photo uploaded');
-      setImg(null); setBlob(null); onChange(null);
+      setImg(null); setBlob(null); setFileName(''); onChange(null);
       onUploaded?.(path);
     } catch (e) { toast.error((e as Error).message); }
     finally { setBusy(false); }
@@ -89,7 +90,7 @@ export function PassportPhotoPicker({ currentPath, onChange, required, officerId
           {([['Zoom', zoom, setZoom, 1, 3, 0.05], ['Left / right', x, setX, 0, 100, 1], ['Up / down', y, setY, 0, 100, 1]] as const).map(([l, v, set, min, max, step]) => <div key={l} className="flex items-center gap-2"><Label className="w-24 text-xs">{l}</Label><input type="range" aria-label={l} min={min} max={max} step={step} value={v} onChange={e => (set as (n: number) => void)(Number(e.target.value))} className="flex-1" /></div>)}
           <div className="flex gap-2">
             {officerId && <Button type="button" size="sm" disabled={busy || !blob} onClick={uploadNow}>{busy ? 'Uploading…' : 'Upload photo now'}</Button>}
-            <Button type="button" size="sm" variant="ghost" onClick={() => { setImg(null); setBlob(null); onChange(null); }}>Remove new photo</Button>
+            <Button type="button" size="sm" variant="ghost" onClick={() => { setImg(null); setBlob(null); setFileName(''); onChange(null); }}>Remove new photo</Button>
           </div>
           {officerId && <p className="text-xs text-muted-foreground">"Upload photo now" saves just the photo. Otherwise it is saved together with the record.</p>}
         </div>}
