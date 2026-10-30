@@ -34,3 +34,4 @@
 - Facility work orders change state only via `facility_action`; ISS records are iss_officer-writable, command-readable. Why: no self-completed work; restricted security logs.
 - Only HR opens accounts via `enrollStaff` (signup disabled); `signInWithLnpId` resolves email server-side, never returning it; `must_change_password` metadata gates the app. Why: HR-controlled enrollment without exposing emails.
 - Biometric devices push to /api/public/attendance/hikvision/$deviceId with a hashed per-device token; punches are immutable, roster status derives from src/lib/attendance.ts. Why: cloud can't poll LAN; no manual edits.
+- Personnel form numbers, official emails (assigned addresses only, no mailbox provisioning) and retirement dates are set by the hr_personnel_derive trigger; retirementDateFor in src/lib/hr-enrollment.ts mirrors it. Why: users cannot edit derived identity fields.

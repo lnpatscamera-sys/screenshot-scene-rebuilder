@@ -47,3 +47,28 @@ export function nearingRetirement(retirement: string | null | undefined, now = n
   const r = new Date(retirement).getTime();
   return r >= now.getTime() && r - now.getTime() <= 365 * 86400000;
 }
+
+export const RETIREMENT_AGE = 65;
+
+/** Retirement eligibility = date of birth + 65 years (mirrors the database trigger). */
+export function retirementDateFor(dob: string | null | undefined) {
+  if (!dob || !/^\d{4}-\d{2}-\d{2}$/.test(dob)) return '';
+  const [y, m, d] = dob.split('-').map(Number) as [number, number, number];
+  const r = new Date(Date.UTC(y + RETIREMENT_AGE, m - 1, d));
+  return r.toISOString().slice(0, 10);
+}
+
+/** Current age and whole years left until retirement eligibility. */
+export function retirementSummary(dob: string | null | undefined, today: string) {
+  const age = yearsBetween(dob, new Date(`${today}T12:00:00Z`));
+  if (age == null) return null;
+  return { age, remaining: Math.max(0, RETIREMENT_AGE - age), date: retirementDateFor(dob) };
+}
+
+export const PHOTO_TYPES = ['image/jpeg', 'image/png'];
+export const PHOTO_MAX_BYTES = 5 * 1024 * 1024;
+export function photoError(file: { type: string; size: number }) {
+  if (!PHOTO_TYPES.includes(file.type)) return 'Photo must be JPG, JPEG or PNG.';
+  if (file.size > PHOTO_MAX_BYTES) return 'Photo must be 5 MB or smaller.';
+  return null;
+}

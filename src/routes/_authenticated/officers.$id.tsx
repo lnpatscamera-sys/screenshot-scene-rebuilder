@@ -3,7 +3,6 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
-import { QRCodeSVG } from "qrcode.react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -11,7 +10,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { PageHeader, StatusBadge } from "@/components/AppShell";
-import { Logo } from "@/components/Logo";
+import { StaffIdCard } from "@/components/StaffIdCard";
+import { PassportPhotoPicker, uploadOfficerPhoto } from "@/components/PassportPhoto";
+import { retirementSummary } from "@/lib/hr-enrollment";
+import { liberiaDate } from "@/lib/time";
 import { useAuth } from "@/lib/auth";
 import { policeRankOptions } from "@/lib/police-ranks";
 
@@ -35,14 +37,10 @@ function OfficerPage() {
     queryKey: ["officer", id],
     queryFn: async () => (await supabase.from("officers").select("*, sections(name), offices(name)").eq("id", id).single()).data,
   });
-  const { data: photoUrl } = useQuery({
-    queryKey: ["officer-photo", o?.photo_url],
-    enabled: !!o?.photo_url,
-    queryFn: async () => (await supabase.storage.from("officer-files").createSignedUrl(o!.photo_url!, 3600)).data?.signedUrl ?? null,
-  });
+  const [photoBlob, setPhotoBlob] = useState<Blob | null>(null);
   if (!o) return <p className="text-muted-foreground">Loading…</p>;
   const canEdit = hasAny(["hr_officer", "commandant"]);
-  const photo = photoUrl;
+  const canPhoto = hasAny(["hr_admin", "hr_officer"]);
 
   const save = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -51,14 +49,6 @@ function OfficerPage() {
     if (error) { toast.error(error.message); return; }
     toast.success("Profile updated");
     setEdit(false);
-    qc.invalidateQueries({ queryKey: ["officer", id] });
-  };
-
-  const uploadPhoto = async (file: File) => {
-    const path = `${id}/${Date.now()}-${file.name}`;
-    const up = await supabase.storage.from("officer-files").upload(path, file);
-    if (up.error) { toast.error(up.error.message); return; }
-    await supabase.from("officers").update({ photo_url: path }).eq("id", id);
     qc.invalidateQueries({ queryKey: ["officer", id] });
   };
 
@@ -77,37 +67,12 @@ function OfficerPage() {
       />
       <div className="grid lg:grid-cols-3 gap-4">
         <div className="space-y-4">
-          {/* ID card */}
-          <div className="mx-auto w-[340px] rounded-xl overflow-hidden shadow-lg border bg-card">
-            <div className="bg-sidebar text-sidebar-foreground px-4 py-3 flex items-center gap-3">
-              <Logo className="h-12 w-12" />
-              <div className="leading-tight">
-                <div className="text-[10px] tracking-widest text-sidebar-primary">REPUBLIC OF LIBERIA</div>
-                <div className="text-xs font-bold">LIBERIA NATIONAL POLICE ACADEMY & TRAINING SCHOOL</div>
-              </div>
-            </div>
-            <div className="stripe-band" />
-            <div className="p-4 flex gap-4">
-              <div className="h-28 w-24 bg-muted rounded-md overflow-hidden grid place-items-center text-xs text-muted-foreground">
-                {photo ? <img src={photo} alt={o.full_name} className="h-full w-full object-cover" /> : "Photo"}
-              </div>
-              <div className="text-xs space-y-1 flex-1">
-                <div className="font-bold text-sm">{o.full_name}</div>
-                <div><span className="text-muted-foreground">Rank:</span> {o.rank}</div>
-                <div><span className="text-muted-foreground">Service #:</span> {o.service_number}</div>
-                <div><span className="text-muted-foreground">Section:</span> {o.sections?.name ?? "—"}</div>
-                <div><span className="text-muted-foreground">Position:</span> {o.position ?? "—"}</div>
-              </div>
-            </div>
-            <div className="px-4 pb-4 flex items-end justify-between">
-              <div className="text-[10px] text-muted-foreground">If found, return to LNPATS, Paynesville, Liberia</div>
-              <QRCodeSVG value={`LNPATS:${o.service_number}`} size={56} />
-            </div>
-          </div>
-          {canEdit && (
-            <div className="no-print text-center">
-              <Label className="text-xs text-muted-foreground">Upload photo</Label>
-              <Input type="file" accept="image/*" className="mt-1" onChange={(e) => e.target.files?.[0] && uploadPhoto(e.target.files[0])} />
+          <StaffIdCard e={{ ...o, department: o.offices?.name ?? null }} />
+          {(() => { const r = retirementSummary(o.date_of_birth, liberiaDate()); return r && <div className="no-print text-sm text-center"><div>Age <strong>{r.age}</strong> · <strong>{r.remaining}</strong> years to retirement</div><div className="text-xs text-muted-foreground">Retirement eligibility: {r.date}</div></div>; })()}
+          {canPhoto && (
+            <div className="no-print">
+              <PassportPhotoPicker currentPath={o.photo_url} onChange={setPhotoBlob} />
+              {photoBlob && <Button size="sm" className="mt-2" onClick={() => uploadOfficerPhoto(id, photoBlob).then(() => { setPhotoBlob(null); toast.success('Photo saved'); qc.invalidateQueries({ queryKey: ['officer', id] }); }).catch(err => toast.error(err.message))}>Save photo</Button>}
             </div>
           )}
         </div>
