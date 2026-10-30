@@ -4,7 +4,7 @@ import { requestPasswordReset, signInWithLnpId } from "@/lib/enrollment.function
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { alignClockToToken } from "@/lib/server-clock";
+import { alignClockTo } from "@/lib/server-clock";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -52,8 +52,8 @@ function AuthPage() {
         const r = await lnpSignIn({ data: { lnpId: username, password } });
         if ("error" in r) toast.error(r.error);
         else {
-          alignClockToToken(r.access_token);
-          const { error } = await supabase.auth.setSession(r);
+          alignClockTo(r.server_now);
+          const { error } = await supabase.auth.setSession({ access_token: r.access_token, refresh_token: r.refresh_token });
           if (error) toast.error(error.message);
           else { nav({ to: "/dashboard", replace: true }); }
         }

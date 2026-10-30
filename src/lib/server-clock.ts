@@ -41,17 +41,11 @@ if (typeof window !== "undefined" && window.location.hash.includes("type=recover
   if (t) try { sessionStorage.setItem("lnpats-recovery-token", t); } catch { /* ignore */ }
 }
 
-// Align the clock with the moment the server issued a sign-in token (its "iat" claim).
-// Runs before the session is saved so the auth client never sees a fresh token as expired.
-export function alignClockToToken(accessToken: string) {
-  if (typeof window === "undefined") return;
-  try {
-    const part = accessToken.split(".")[1].replace(/-/g, "+").replace(/_/g, "/");
-    const iat = Number(JSON.parse(atob(part)).iat);
-    if (!iat) return;
-    const real = Date.now() - offset;
-    const diff = iat * 1000 - real;
-    offset = Math.abs(diff) < 5000 ? 0 : diff;
-    localStorage.setItem(KEY, String(offset));
-  } catch { /* ignore */ }
+// Align the clock with the server time returned by sign-in, before the session is saved,
+// so the auth client never treats a fresh token as expired on a device with a wrong clock.
+export function alignClockTo(serverNow: number) {
+  if (typeof window === "undefined" || !serverNow) return;
+  const diff = serverNow - (Date.now() - offset);
+  offset = Math.abs(diff) < 5000 ? 0 : diff;
+  try { localStorage.setItem(KEY, String(offset)); } catch { /* ignore */ }
 }
