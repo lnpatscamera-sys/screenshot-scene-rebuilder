@@ -16,7 +16,7 @@ import { retirementSummary } from "@/lib/hr-enrollment";
 import { liberiaDate } from "@/lib/time";
 import { useAuth } from "@/lib/auth";
 import { policeRankOptions } from "@/lib/police-ranks";
-import { outlookUrl } from "@/lib/official-mail";
+import { openOutlookApp } from "@/lib/official-mail";
 
 export const Route = createFileRoute("/_authenticated/officers/$id")({
   head: () => ({ meta: [{ title: "Officer Profile — LNPATS ERP" }, { name: "description", content: "View an LNPATS officer profile, service details, and identification card." }, { property: "og:title", content: "Officer Profile — LNPATS ERP" }, { property: "og:description", content: "View an LNPATS officer profile, service details, and identification card." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
@@ -34,11 +34,21 @@ function OfficerPage() {
   const { hasAny } = useAuth();
   const qc = useQueryClient();
   const [edit, setEdit] = useState(false);
-  const { data: o } = useQuery({
+  const { data: o, error } = useQuery({
     queryKey: ["officer", id],
-    queryFn: async () => (await supabase.from("officers").select("*, sections(name), offices(name)").eq("id", id).single()).data,
+    // sections also points back at officers (section head), so both embeds must name their relation.
+    queryFn: async () => {
+      const r = await supabase
+        .from("officers")
+        .select("*, sections!officers_section_id_fkey(name), offices!officers_office_id_fkey(name)")
+        .eq("id", id)
+        .single();
+      if (r.error) throw r.error;
+      return r.data;
+    },
   });
   const [photoBlob, setPhotoBlob] = useState<Blob | null>(null);
+  if (error) return <p className="text-muted-foreground">This officer profile could not be loaded. Please try again, or contact ICT if it keeps happening.</p>;
   if (!o) return <p className="text-muted-foreground">Loading…</p>;
   const canEdit = hasAny(["hr_officer", "commandant"]);
   const canPhoto = hasAny(["hr_admin", "hr_officer"]);
@@ -101,7 +111,7 @@ function OfficerPage() {
                 <Row l="County" v={o.county} />
                 <Row l="Phone" v={o.phone} />
                 <Row l="Email" v={o.email} />
-                {o.official_email && <div className="flex items-center justify-between gap-2 text-sm"><span className="text-muted-foreground">Official email</span><span className="flex items-center gap-2 break-all">{o.official_email}<a className="text-primary underline text-xs whitespace-nowrap" href={outlookUrl(o.official_email)} target="_blank" rel="noopener noreferrer">Open in Outlook classic</a></span></div>}
+                {o.official_email && <div className="flex items-center justify-between gap-2 text-sm"><span className="text-muted-foreground">Official email</span><span className="flex items-center gap-2 break-all">{o.official_email}<button type="button" className="text-primary underline text-xs whitespace-nowrap" onClick={() => openOutlookApp(o.official_email)} title="Open Outlook on this computer">Open in Outlook app</button></span></div>}
                 <Row l="Date joined LNP" v={o.date_joined} />
                 <Row l="Office" v={o.offices?.name} />
                 <Row l="Section" v={o.sections?.name} />

@@ -29,7 +29,7 @@ function Officers() {
     queryKey: ["officers"],
     queryFn: async () => {
       const [o, s, of] = await Promise.all([
-        supabase.from("officers").select("*, sections(name), offices(name)").order("service_number"),
+        supabase.from("officers").select("*, sections!officers_section_id_fkey(name), offices!officers_office_id_fkey(name)").order("service_number"),
         supabase.from("sections").select("id,name").order("name"),
         supabase.from("offices").select("id,name").order("rank_order"),
       ]);
