@@ -16,7 +16,7 @@ import { retirementSummary } from "@/lib/hr-enrollment";
 import { liberiaDate } from "@/lib/time";
 import { useAuth } from "@/lib/auth";
 import { policeRankOptions } from "@/lib/police-ranks";
-import { outlookUrl } from "@/components/OfficialMail";
+import { outlookUrl } from "@/lib/official-mail";
 
 export const Route = createFileRoute("/_authenticated/officers/$id")({
   head: () => ({ meta: [{ title: "Officer Profile — LNPATS ERP" }, { name: "description", content: "View an LNPATS officer profile, service details, and identification card." }, { property: "og:title", content: "Officer Profile — LNPATS ERP" }, { property: "og:description", content: "View an LNPATS officer profile, service details, and identification card." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),

@@ -3,7 +3,6 @@ import { Mail } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { Button } from "./ui/button";
-export { outlookUrl } from "@/lib/official-mail";
 import { outlookUrl } from "@/lib/official-mail";
 
 export function useOfficialEmail() {
