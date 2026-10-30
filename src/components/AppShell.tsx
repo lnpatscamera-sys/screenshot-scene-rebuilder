@@ -12,6 +12,7 @@ import { Logo } from "./Logo";
 import { Button } from "./ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
+import { OfficialMailNavLink } from "./OfficialMail";
 
 type NavItem = { to: string; label: string; icon: typeof Users; params?: Record<string, string> };
 const NAV: { group: string; items: NavItem[] }[] = [
@@ -87,6 +88,7 @@ function SideNav({ onNav }: { onNav?: () => void }) {
           ))}
         </div>
       ))}
+      <div><div className="px-2 mb-1 text-[10px] uppercase tracking-widest text-sidebar-foreground/50">Email</div><OfficialMailNavLink /></div>
     </nav>
   );
 }
