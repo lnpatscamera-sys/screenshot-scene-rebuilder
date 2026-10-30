@@ -34,11 +34,21 @@ function OfficerPage() {
   const { hasAny } = useAuth();
   const qc = useQueryClient();
   const [edit, setEdit] = useState(false);
-  const { data: o } = useQuery({
+  const { data: o, error } = useQuery({
     queryKey: ["officer", id],
-    queryFn: async () => (await supabase.from("officers").select("*, sections(name), offices(name)").eq("id", id).single()).data,
+    // sections also points back at officers (section head), so both embeds must name their relation.
+    queryFn: async () => {
+      const r = await supabase
+        .from("officers")
+        .select("*, sections!officers_section_id_fkey(name), offices!officers_office_id_fkey(name)")
+        .eq("id", id)
+        .single();
+      if (r.error) throw r.error;
+      return r.data;
+    },
   });
   const [photoBlob, setPhotoBlob] = useState<Blob | null>(null);
+  if (error) return <p className="text-muted-foreground">This officer profile could not be loaded. Please try again, or contact ICT if it keeps happening.</p>;
   if (!o) return <p className="text-muted-foreground">Loading…</p>;
   const canEdit = hasAny(["hr_officer", "commandant"]);
   const canPhoto = hasAny(["hr_admin", "hr_officer"]);
