@@ -47,16 +47,19 @@ export const enrollStaff = createServerFn({ method: 'POST' })
       details: { lnp_id: lnpId, email, class_number: data.classNumber },
     } as never);
 
+    const off = await supabaseAdmin.from('officers').select('official_email').eq('id', officer.data.id).single();
+    const officialEmail = off.data?.official_email ?? null;
     let emailed = false;
     try {
       const { sendTemplateEmail } = await import('@/lib/email-templates/send-email');
       const r = await sendTemplateEmail('staff-account', email, {
         idempotencyKey: `staff-account-${userId}`,
-        templateData: { name: data.fullName, username: lnpId, password, loginUrl: 'https://lnpats-erp.lovable.app/auth' },
+        templateData: { name: data.fullName, username: lnpId, password, officialEmail, loginUrl: 'https://lnpats-erp.lovable.app/auth' },
       });
       emailed = r.sent;
     } catch (e) { console.error('staff-account email failed', e); }
-    return { emailed, lnpId, email, password: emailed ? null : password };
+    await supabaseAdmin.from('officers').update({ email_notes: emailed ? `Login details emailed ${new Date().toISOString().slice(0, 10)}` : 'Login email failed — give details privately' }).eq('id', officer.data.id);
+    return { emailed, officialEmail, lnpId, email, password: emailed ? null : password };
   });
 
 /** Resolves an LNP ID to its account email server-side, then signs in; never returns the email. */
