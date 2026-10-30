@@ -67,8 +67,10 @@ export function retirementSummary(dob: string | null | undefined, today: string)
 
 export const PHOTO_TYPES = ['image/jpeg', 'image/png'];
 export const PHOTO_MAX_BYTES = 5 * 1024 * 1024;
-export function photoError(file: { type: string; size: number }) {
-  if (!PHOTO_TYPES.includes(file.type)) return 'Photo must be JPG, JPEG or PNG.';
+export function photoError(file: { type: string; size: number; name?: string }) {
+  // Some computers report no type (or image/pjpeg) for JPG files, so fall back to the file extension.
+  const okType = PHOTO_TYPES.includes(file.type) || file.type === 'image/pjpeg' || (!file.type && /\.(jpe?g|jfif|png)$/i.test(file.name ?? ''));
+  if (!okType) return 'Photo must be JPG, JPEG or PNG.';
   if (file.size > PHOTO_MAX_BYTES) return 'Photo must be 5 MB or smaller.';
   return null;
 }
