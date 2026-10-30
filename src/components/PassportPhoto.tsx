@@ -65,7 +65,7 @@ export function PassportPhotoPicker({ currentPath, onChange, required, officerId
     const dw = img.width * base, dh = img.height * base;
     const dx = -(dw - W) * (x / 100), dy = -(dh - H) * (y / 100);
     ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, W, H); ctx.drawImage(img, dx, dy, dw, dh);
-    const t = setTimeout(() => c.toBlob(b => onChange(b), 'image/jpeg', 0.9), 150);
+    const t = setTimeout(() => c.toBlob(b => { setBlob(b); onChange(b); }, 'image/jpeg', 0.9), 150);
     return () => clearTimeout(t);
   }, [img, zoom, x, y, onChange]);
 
@@ -79,7 +79,11 @@ export function PassportPhotoPicker({ currentPath, onChange, required, officerId
         <p className="text-xs text-muted-foreground">JPG, JPEG or PNG, up to 5 MB.</p>
         {img && <div className="space-y-1">
           {([['Zoom', zoom, setZoom, 1, 3, 0.05], ['Left / right', x, setX, 0, 100, 1], ['Up / down', y, setY, 0, 100, 1]] as const).map(([l, v, set, min, max, step]) => <div key={l} className="flex items-center gap-2"><Label className="w-24 text-xs">{l}</Label><input type="range" aria-label={l} min={min} max={max} step={step} value={v} onChange={e => (set as (n: number) => void)(Number(e.target.value))} className="flex-1" /></div>)}
-          <Button type="button" size="sm" variant="ghost" onClick={() => { setImg(null); onChange(null); }}>Remove new photo</Button>
+          <div className="flex gap-2">
+            {officerId && <Button type="button" size="sm" disabled={busy || !blob} onClick={uploadNow}>{busy ? 'Uploading…' : 'Upload photo now'}</Button>}
+            <Button type="button" size="sm" variant="ghost" onClick={() => { setImg(null); setBlob(null); onChange(null); }}>Remove new photo</Button>
+          </div>
+          {officerId && <p className="text-xs text-muted-foreground">"Upload photo now" saves just the photo. Otherwise it is saved together with the record.</p>}
         </div>}
       </div>
     </div></fieldset>;
