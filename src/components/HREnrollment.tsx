@@ -128,7 +128,7 @@ export function HREnrollment({ d }: { d: HRData }) {
     </tbody></table></div>
 
     <Dialog open={!!editing} onOpenChange={o => !o && setEditing(null)}><DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto"><DialogHeader><DialogTitle>{editing === 'new' ? 'Enroll personnel' : `Edit ${rec['full_name'] ?? ''}`}</DialogTitle></DialogHeader>
-      <form key={editing === 'new' ? 'new' : editing?.id} onSubmit={save} onChange={ev => { const t = ev.target as HTMLInputElement; if (t.name === 'date_of_birth') setDob(t.value); }} className="space-y-4">
+      <form key={editing === 'new' ? 'new' : editing?.id} onSubmit={save} onChange={ev => { const t = ev.target as unknown as HTMLInputElement; if (t.name === 'date_of_birth') setDob(t.value); }} className="space-y-4">
         <div className="space-y-1"><Label htmlFor="he-cat">Personnel category *</Label><select id="he-cat" value={category} onChange={e => setCategory(e.target.value)} required className="w-full h-9 rounded-md border bg-background px-2 text-sm"><option value="">Select…</option>{PERSONNEL_CATEGORIES.map(c => <option key={c}>{c}</option>)}</select></div>
         <div className="grid sm:grid-cols-3 gap-3">
           <div className="space-y-1"><Label htmlFor="he-form-no">Form number</Label><Input id="he-form-no" readOnly value={rec['form_number'] || 'Assigned automatically on save'} className="bg-muted" /></div>
