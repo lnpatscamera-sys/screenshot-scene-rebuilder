@@ -40,3 +40,12 @@ if (typeof window !== "undefined" && window.location.hash.includes("type=recover
   const t = new URLSearchParams(window.location.hash.slice(1)).get("access_token");
   if (t) try { sessionStorage.setItem("lnpats-recovery-token", t); } catch { /* ignore */ }
 }
+
+// Align the clock with the server time returned by sign-in, before the session is saved,
+// so the auth client never treats a fresh token as expired on a device with a wrong clock.
+export function alignClockTo(serverNow: number) {
+  if (typeof window === "undefined" || !serverNow) return;
+  const diff = serverNow - (Date.now() - offset);
+  offset = Math.abs(diff) < 5000 ? 0 : diff;
+  try { localStorage.setItem(KEY, String(offset)); } catch { /* ignore */ }
+}

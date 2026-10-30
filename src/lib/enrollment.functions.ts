@@ -78,7 +78,7 @@ export const signInWithLnpId = createServerFn({ method: 'POST' })
     });
     const s = await client.auth.signInWithPassword({ email, password: data.password });
     if (s.error || !s.data.session) return fail;
-    return { access_token: s.data.session.access_token, refresh_token: s.data.session.refresh_token };
+    return { access_token: s.data.session.access_token, refresh_token: s.data.session.refresh_token, server_now: Date.now() };
   });
 
 const RESET_ORIGINS = /^(https:\/\/([a-z0-9-]+\.)*lovable\.app|https:\/\/([a-z0-9-]+\.)*lnpats\.net|http:\/\/localhost(:\d+)?)$/;
