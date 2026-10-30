@@ -3,15 +3,8 @@ import { Mail } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { Button } from "./ui/button";
-
-/**
- * Official mail opens in the classic Outlook web app (OWA).
- * `outlook.office.com/owa/` is the classic client; `outlook.office.com/mail/` is the new Outlook.
- */
-export function outlookUrl(email?: string | null) {
-  const base = "https://outlook.office.com/owa/";
-  return email ? `${base}?login_hint=${encodeURIComponent(email)}` : base;
-}
+export { outlookUrl } from "@/lib/official-mail";
+import { outlookUrl } from "@/lib/official-mail";
 
 export function useOfficialEmail() {
   const { session } = useAuth();
