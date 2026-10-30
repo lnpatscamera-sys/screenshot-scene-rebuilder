@@ -2532,6 +2532,21 @@ export type Database = {
           },
         ]
       }
+      hr_form_counters: {
+        Row: {
+          last_value: number
+          year: number
+        }
+        Insert: {
+          last_value?: number
+          year: number
+        }
+        Update: {
+          last_value?: number
+          year?: number
+        }
+        Relationships: []
+      }
       hr_reports: {
         Row: {
           attachments: Json
@@ -3648,6 +3663,7 @@ export type Database = {
           enrollment_status: string
           establishment_post_id: string | null
           first_name: string | null
+          form_number: string | null
           full_name: string
           gender: string | null
           id: string
@@ -3660,6 +3676,7 @@ export type Database = {
           next_of_kin: string | null
           next_of_kin_phone: string | null
           office_id: string | null
+          official_email: string | null
           personnel_category: string | null
           phone: string | null
           photo_url: string | null
@@ -3703,6 +3720,7 @@ export type Database = {
           enrollment_status?: string
           establishment_post_id?: string | null
           first_name?: string | null
+          form_number?: string | null
           full_name: string
           gender?: string | null
           id?: string
@@ -3715,6 +3733,7 @@ export type Database = {
           next_of_kin?: string | null
           next_of_kin_phone?: string | null
           office_id?: string | null
+          official_email?: string | null
           personnel_category?: string | null
           phone?: string | null
           photo_url?: string | null
@@ -3758,6 +3777,7 @@ export type Database = {
           enrollment_status?: string
           establishment_post_id?: string | null
           first_name?: string | null
+          form_number?: string | null
           full_name?: string
           gender?: string | null
           id?: string
@@ -3770,6 +3790,7 @@ export type Database = {
           next_of_kin?: string | null
           next_of_kin_phone?: string | null
           office_id?: string | null
+          official_email?: string | null
           personnel_category?: string | null
           phone?: string | null
           photo_url?: string | null
@@ -6880,7 +6901,12 @@ export type Database = {
         }[]
       }
       my_section: { Args: never; Returns: string }
+      next_hr_form_number: { Args: never; Returns: string }
       next_registry_reference: { Args: { _direction: string }; Returns: string }
+      official_email_for: {
+        Args: { _first: string; _full: string; _last: string; _self: string }
+        Returns: string
+      }
       phase2_admin: { Args: never; Returns: boolean }
       phase2_workflow: {
         Args: { _action: string; _id: string; _module: string; _payload?: Json }
