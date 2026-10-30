@@ -16,6 +16,7 @@ import { commandOptions } from '@/lib/command';
 import { reportAlertHour } from '@/lib/command-rules';
 import { liberiaDateOnly } from '@/lib/time';
 import { OfficialMailButton } from '@/components/OfficialMail';
+import { POLICE_RANKS } from '@/lib/police-ranks';
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({ meta: [{ title: "Dashboard — LNPATS ERP" }, { name: "description", content: "Command overview of LNPATS officers, leave, supply requests, and inventory." }, { property: "og:title", content: "Dashboard — LNPATS ERP" }, { property: "og:description", content: "Command overview of LNPATS officers, leave, supply requests, and inventory." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
@@ -23,6 +24,7 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
 });
 
 const COLORS = ["var(--chart-1)", "var(--chart-2)", "var(--chart-3)", "var(--chart-4)", "var(--chart-5)"];
+const LEGEND_COLORS = ['bg-chart-1', 'bg-chart-2', 'bg-chart-3', 'bg-chart-4', 'bg-chart-5'];
 
 function Dashboard() {
   const { hasAny } = useAuth();
@@ -33,7 +35,7 @@ function Dashboard() {
     queryKey: ["dashboard"],
     queryFn: async () => {
       const [o, l, s, i, a] = await Promise.all([
-        supabase.from("officers").select("id, rank, employment_status, sections(name)"),
+        supabase.from("officers").select("id, rank, employment_status"),
         supabase.from("leave_requests").select("id, leave_type, status, stage, created_at, officers!officer_id(full_name)").order("created_at", { ascending: false }),
         supabase.from("supply_requests").select("id, request_number, item_name, stage, approval_status, collection_status, priority, created_at").order("created_at", { ascending: false }),
         supabase.from("inventory_items").select("id, name, quantity, reorder_level, is_asset"),
@@ -105,17 +107,22 @@ function Dashboard() {
             </ResponsiveContainer>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="min-w-0">
           <CardHeader><CardTitle className="text-base">Leave by type</CardTitle></CardHeader>
-          <CardContent className="h-64">
-            <ResponsiveContainer>
+          <CardContent>
+            <div className="h-48 w-full">
+            <ResponsiveContainer width="100%" height="100%">
               <PieChart>
-                <Pie data={byLeaveType} dataKey="value" nameKey="name" innerRadius={45} outerRadius={80} label={({ name }) => name} fontSize={11}>
+                <Pie data={byLeaveType} dataKey="value" nameKey="name" innerRadius={45} outerRadius={70}>
                   {byLeaveType.map((_, i) => <Cell key={i} fill={COLORS[i % 5]} />)}
                 </Pie>
                 <Tooltip />
               </PieChart>
             </ResponsiveContainer>
+            </div>
+            {byLeaveType.length === 0 ? <p className="text-sm text-muted-foreground">No leave records.</p> : <ul className="space-y-2 text-sm">
+              {byLeaveType.map((entry, i) => <li key={entry.name} className="flex items-start gap-2"><span className={`mt-1 h-3 w-3 shrink-0 rounded-sm ${LEGEND_COLORS[i % LEGEND_COLORS.length]}`} /><span className="min-w-0 flex-1 break-words">{entry.name}</span><span className="shrink-0 tabular-nums">{entry.value}</span></li>)}
+            </ul>}
           </CardContent>
         </Card>
       </div>
@@ -137,17 +144,19 @@ function Dashboard() {
             ))}
           </CardContent>
         </Card>
-        <Card>
+        <Card className="min-w-0">
           <CardHeader><CardTitle className="text-base">Officers by rank</CardTitle></CardHeader>
-          <CardContent className="h-56">
-            <ResponsiveContainer>
-              <BarChart data={byRank} layout="vertical">
+          <CardContent>
+            {byRank.length === 0 ? <p className="text-sm text-muted-foreground">No officer records available.</p> : <div className="h-80 w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={byRank} layout="vertical" margin={{ left: 8, right: 16 }}>
                 <XAxis type="number" fontSize={11} allowDecimals={false} />
-                <YAxis type="category" dataKey="name" fontSize={11} width={80} />
+                <YAxis type="category" dataKey="name" fontSize={11} width={85} interval={0} tickFormatter={(name: string) => POLICE_RANKS.find(rank => rank.name === name)?.abbreviation ?? name} />
                 <Tooltip />
                 <Bar dataKey="value" fill="var(--chart-3)" radius={[0, 4, 4, 0]} />
               </BarChart>
             </ResponsiveContainer>
+            </div>}
           </CardContent>
         </Card>
         <Card>

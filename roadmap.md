@@ -1,6 +1,7 @@
 # LNPATS ERP Roadmap
 
 ## Phase 1 (now)
+- [ ] Restore dashboard rank counts and prevent clipped leave-type labels; verify signed-in desktop and narrow layouts.
 - [x] Fix login session request loop and verify signed-in access.
 - [x] Logo, theme (LNP navy/gold), favicon
 - [x] Sign-in, roles table, offices & sections
