@@ -14,7 +14,7 @@
 - AuthProvider owns the single auth-state listener and notifies the router only on identity changes or user updates; repeated SIGNED_IN events must not invalidate routes. Why: protected route validation can emit SIGNED_IN and otherwise cause a request loop.
 - Approval workflows (leave, supply) advance only via SECURITY DEFINER functions `act_on_leave`/`act_on_supply`; stage→role maps are mirrored in `src/lib/workflow.ts` — keep both in sync. Why: clients cannot update workflow rows directly.
 - Attach `audit_trigger` to every business table. Why: all actions must be audited.
-- Roles live in `user_roles`; `system_admin` passes every `has_any_role` check.
+- Roles live in `user_roles`; `system_admin` passes every `has_any_role` check. Officer-only pages/queries share `officer-access`/`personal-data`, with restrictive RLS and RPC guards; additional roles retain permissions. Why: menus cannot protect records.
 - Keep existing identity, names, inventory, and workflow columns canonical; alternate uploaded SQL names are generated read-only columns or security-invoker views. Why: no duplicate state/bypasses.
 - Newly staged ERP modules are system-admin-only with RLS, explicit grants, and audit triggers until module-specific permissions are implemented. Why: schema preparation must not expose personnel, financial, or disciplinary records.
 - Preserve full names without automatic splitting. Why: no invented data.
@@ -34,4 +34,4 @@
 - Biometric devices push to /api/public/attendance/hikvision/$deviceId with a hashed per-device token; punches are immutable, roster status derives from src/lib/attendance.ts. Why: cloud can't poll LAN; no manual edits.
 - Staff file numbers (stored in canonical form_number), official emails (assigned addresses only, no mailbox provisioning) and retirement dates are set by the hr_personnel_derive trigger; retirementDateFor in src/lib/hr-enrollment.ts mirrors it. Why: users cannot edit derived identity fields.
 - Officer queries that embed office or section names must name the relation (`sections!officers_section_id_fkey`, `offices!officers_office_id_fkey`) because sections.section_head also references officers. Why: an ambiguous embed makes the read fail, leaving officer screens stuck loading or empty.
-- Official Mail inbox talks IMAP/SMTP to the cPanel host over node:tls via src/lib/mail.server.ts; mailbox passwords are AES-GCM encrypted (MAIL_ENCRYPTION_KEY) in owner-only mail_accounts, and HTML mail renders in a script-less sandboxed iframe. Why: per-officer privacy and safe display of untrusted email.
+- Official Mail uses cPanel IMAP/SMTP via mail.server.ts; passwords are AES-GCM encrypted (MAIL_ENCRYPTION_KEY) in owner-only mail_accounts; HTML uses a script-less sandbox. Why: private accounts and safe mail.
