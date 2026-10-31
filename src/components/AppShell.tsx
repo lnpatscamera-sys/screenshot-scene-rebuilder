@@ -5,6 +5,7 @@ import { useState } from "react";
 import {
   LayoutDashboard, Users, CalendarDays, PackageSearch, Boxes, GraduationCap, Wallet, ShoppingCart,
     Truck, Briefcase, LifeBuoy, FileText, ShieldCheck, ScrollText, Bell, Moon, Sun, LogOut, Menu, Building2, Search,
+  Inbox as InboxIcon,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth, ROLE_LABELS } from "@/lib/auth";
@@ -88,7 +89,7 @@ function SideNav({ onNav }: { onNav?: () => void }) {
           ))}
         </div>
       ))}
-      <div><div className="px-2 mb-1 text-[10px] uppercase tracking-widest text-sidebar-foreground/50">Email</div><OfficialMailNavLink /></div>
+      <div><div className="px-2 mb-1 text-[10px] uppercase tracking-widest text-sidebar-foreground/50">Email</div><Link to="/mail" onClick={onNav} className="flex items-center gap-3 rounded-md px-2 py-2 text-sidebar-foreground/85 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground" activeProps={{ className: "bg-sidebar-accent text-sidebar-primary font-medium" }}><InboxIcon className="h-4 w-4" /> Inbox (in ERP)</Link><OfficialMailNavLink /></div>
     </nav>
   );
 }
