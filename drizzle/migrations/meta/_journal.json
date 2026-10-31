@@ -337,6 +337,13 @@
       "when": 1793400262822,
       "tag": "0047_hr_form_number_backfill",
       "breakpoints": true
+    },
+    {
+      "idx": 48,
+      "version": "7",
+      "when": 1793435274323,
+      "tag": "0048_mail_accounts",
+      "breakpoints": true
     }
   ]
 }
