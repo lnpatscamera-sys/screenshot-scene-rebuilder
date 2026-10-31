@@ -1,3 +1,4 @@
+import {isPersonalAccount} from '@/lib/officer-access';
 import { formValues } from "@/lib/export";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -22,7 +23,7 @@ export const Route = createFileRoute("/_authenticated/supplies")({
 });
 
 export function Supplies() {
-  const { session, hasAny } = useAuth();
+  const { session, hasAny, roles } = useAuth();
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
   const [filter, setFilter] = useState<"all" | "mine" | "open">("all");
@@ -70,6 +71,7 @@ export function Supplies() {
   if (filter === "mine") reqs = reqs.filter((r) => r.approval_status !== "Rejected" && r.stage < 8 && hasAny(SUPPLY_STAGE_ROLES[r.stage] ?? []));
   if (filter === "open") reqs = reqs.filter((r) => r.approval_status !== "Rejected" && r.stage < 8);
 
+  if(isPersonalAccount(roles)) return <div><PageHeader title="Request for Supply"/><CommandSupplies requests={commandRequests.filter(r=>r.requested_by===session?.user.id)}/>{reqs.filter(r=>r.requested_by===session?.user.id).map(r=><p key={r.id} className="border-b py-3">{r.request_number} · {r.item_name} · {r.approval_status}</p>)}</div>;
   return (
     <div>
       <PageHeader

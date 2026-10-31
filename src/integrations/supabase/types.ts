@@ -6933,6 +6933,12 @@ export type Database = {
       my_section: { Args: never; Returns: string }
       next_hr_form_number: { Args: never; Returns: string }
       next_registry_reference: { Args: { _direction: string }; Returns: string }
+      officer_owns: { Args: { _id: string }; Returns: boolean }
+      officer_personal_file_reader: {
+        Args: { _bucket: string; _path: string }
+        Returns: boolean
+      }
+      officer_personal_only: { Args: never; Returns: boolean }
       official_email_for: {
         Args: { _first: string; _full: string; _last: string; _self: string }
         Returns: string
