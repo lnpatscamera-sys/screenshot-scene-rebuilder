@@ -26,7 +26,7 @@ export async function exportPdf(title: string, rows: Record<string, unknown>[]) 
   const [left, right, writer] = await Promise.all([imageDataUrl(crestUrls.left).catch(() => null), imageDataUrl(crestUrls.right).catch(() => null), currentWriter().catch(() => null)]);
   if (left) doc.addImage(left, "JPEG", 14, 8, 24, 24);
   if (right) doc.addImage(right, "JPEG", w - 38, 8, 24, 23);
-  [[17, 14, "bold"], [14, 20, "normal"], [13, 26, "normal"], [11, 32, "normal"]].forEach(([size, y, style], i) => { doc.setFont("helvetica", style as string); doc.setFontSize(size as number); doc.text(LETTERHEAD_LINES[i], w / 2, y as number, { align: "center" }); });
+  [[17, 14, "bold"], [14, 20, "normal"], [13, 26, "normal"], [11, 32, "normal"]].forEach(([size, y, style], i) => { doc.setFont("helvetica", style as string); doc.setFontSize(size as number); doc.text(LETTERHEAD_LINES[i] ?? "", w / 2, y as number, { align: "center" }); });
   doc.setLineWidth(0.6); doc.line(14, 36, w - 14, 36);
   doc.setFont("helvetica", "bold"); doc.setFontSize(13); doc.text(title, w / 2, 43, { align: "center" });
   doc.setFont("helvetica", "normal"); doc.setFontSize(9);
