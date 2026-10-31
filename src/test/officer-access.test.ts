@@ -16,6 +16,10 @@ beforeAll(async()=>{
  // Run the exact helper and policy section from the shipped migration against deliberately broad permissive policies.
  const sql=readFileSync('drizzle/migrations/0049_officer_personal_access.sql','utf8').split('CREATE OR REPLACE FUNCTION public.command_directory()')[0] ?? '';
  await db.exec(sql);
+ await db.exec(`alter table officers add photo_url text;alter table officer_documents add bucket_id text,add file_url text;alter table training_records add attachments jsonb default '[]';alter table daily_reports add attachments jsonb default '[]';alter table supply_requests add attachments jsonb default '[]';create table erp_documents(id uuid,author_id uuid);create table document_versions(document_id uuid,file_path text);create schema storage;create table storage.objects(bucket_id text,name text);alter table storage.objects enable row level security;grant usage on schema storage to authenticated;grant select on storage.objects to authenticated;create policy broad_file_read on storage.objects for select to authenticated using(true);
+ insert into officer_documents values('${me}','${me}','officer-files','own.pdf'),('${other}','${other}','officer-files','other.pdf');insert into storage.objects values('officer-files','own.pdf'),('officer-files','other.pdf');`);
+ const fileSql=readFileSync('drizzle/migrations/0051_officer_private_file_scope.sql','utf8').split('DO $$')[0] ?? '';
+ await db.exec(fileSql);
  for(const table of ['user_roles','officers','supply_requests','daily_reports','tickets','audit_logs'])await db.exec(`create policy broad_read on ${table} for select to authenticated using(true)`);
  await db.exec(`set role authenticated;set test.uid='${me}';`);
 },30000);
@@ -27,3 +31,4 @@ it.each(['supply_requests','daily_reports','tickets','officers'])('reads only ow
 it('does not expose audit logs even when the officer is the actor',async()=>expect((await db.query('select * from audit_logs')).rows).toEqual([]));
 it('retains higher-role record visibility',async()=>{await db.exec(`set test.uid='${other}'`);expect((await db.query('select * from supply_requests')).rows).toHaveLength(2);await db.exec(`set test.uid='${me}'`)});
 it('prevents direct edits to other request records',async()=>{await db.exec('reset role; grant update on supply_requests to authenticated;create policy broad_write on supply_requests for update to authenticated using(true) with check(true);set role authenticated');expect((await db.query(`update supply_requests set requested_by=$1 where id=$2 returning id`,[me,other])).rows).toEqual([])});
+it('allows own private files but blocks another officer file despite broad storage policy',async()=>{expect((await db.query<{name:string}>('select name from storage.objects')).rows.map(r=>r.name)).toEqual(['own.pdf'])});
