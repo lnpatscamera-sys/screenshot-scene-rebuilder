@@ -184,7 +184,7 @@ export async function encryptSecret(plain: string) {
   return `${Buffer.from(iv).toString("base64")}:${Buffer.from(ct).toString("base64")}`;
 }
 export async function decryptSecret(stored: string) {
-  const [iv, ct] = stored.split(":");
+  const [iv = "", ct = ""] = stored.split(":");
   const pt = await crypto.subtle.decrypt({ name: "AES-GCM", iv: Buffer.from(iv, "base64") }, await key(), Buffer.from(ct, "base64"));
   return new TextDecoder().decode(pt);
 }
