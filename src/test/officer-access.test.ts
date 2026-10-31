@@ -14,7 +14,7 @@ beforeAll(async()=>{
  grant select on all tables in schema public to authenticated;grant usage on schema auth to authenticated;grant execute on function auth.uid() to authenticated;
  `);
  // Run the exact helper and policy section from the shipped migration against deliberately broad permissive policies.
- const sql=readFileSync('drizzle/migrations/0049_officer_personal_access.sql','utf8').split('CREATE OR REPLACE FUNCTION public.command_directory()')[0];
+ const sql=readFileSync('drizzle/migrations/0049_officer_personal_access.sql','utf8').split('CREATE OR REPLACE FUNCTION public.command_directory()')[0] ?? '';
  await db.exec(sql);
  for(const table of ['user_roles','officers','supply_requests','daily_reports','tickets','audit_logs'])await db.exec(`create policy broad_read on ${table} for select to authenticated using(true)`);
  await db.exec(`set role authenticated;set test.uid='${me}';`);

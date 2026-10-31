@@ -50,7 +50,7 @@ function ErrorComponent({ error, reset }: ErrorComponentProps) {
     reportLovableError(error, { boundary: "tanstack_root_error_component" });
   }, [error]);
 
-  if(error.message==='Access Denied') return <div className="min-h-screen bg-background p-8" role="alert"><h1 className="text-2xl font-semibold">Access Denied</h1><p className="mt-3 text-muted-foreground">Your account is not authorized to access this page.</p><Link to="/dashboard" className="inline-block mt-5 text-primary">Dashboard</Link></div>;
+  if(error instanceof Error && error.message==='Access Denied') return <div className="min-h-screen bg-background p-8" role="alert"><h1 className="text-2xl font-semibold">Access Denied</h1><p className="mt-3 text-muted-foreground">Your account is not authorized to access this page.</p><Link to="/dashboard" className="inline-block mt-5 text-primary">Dashboard</Link></div>;
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
@@ -85,7 +85,7 @@ function ErrorComponent({ error, reset }: ErrorComponentProps) {
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   beforeLoad: async ({location}) => {
-    const path=location.pathname.replace(/\/$/,'');
+    const path=location.pathname.replace(/\/$/,'') || '/';
     if(['/','/auth','/reset-password'].includes(path) || path.startsWith('/api/') || path.startsWith('/lovable/') || OFFICER_PATHS.some(p=>p===path)) return;
     const {data}=await supabase.auth.getSession();
     if(!data.session) return;
