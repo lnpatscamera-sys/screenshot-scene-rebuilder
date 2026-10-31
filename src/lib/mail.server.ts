@@ -45,14 +45,14 @@ class Imap {
     this.c.write(`${tag} ${line}\r\n`);
     const re = new RegExp(`(^|\\r\\n)${tag} (OK|NO|BAD)[^\\r\\n]*\\r\\n$`);
     const out = await this.c.until((b) => re.test(b));
-    const m = out.match(re)!;
-    if (m[2] !== "OK") throw new Error(failMsg ?? "Mail server refused the request");
+    const m = out.match(re);
+    if (m?.[2] !== "OK") throw new Error(failMsg ?? "Mail server refused the request");
     return out;
   }
   async folders() {
     const out = await this.cmd(`LIST "" "*"`);
     return [...out.matchAll(/^\* LIST \(([^)]*)\) (?:"[^"]*"|NIL) (.+)$/gm)].map((m) => ({
-      flags: m[1], name: m[2].trim().replace(/^"(.*)"$/, "$1"),
+      flags: m[1] ?? "", name: (m[2] ?? "").trim().replace(/^"(.*)"$/, "$1"),
     }));
   }
   close() { this.cmd("LOGOUT").catch(() => {}).finally(() => this.c.end()); }
@@ -87,9 +87,9 @@ export async function listMessages(user: string, pass: string, box: "inbox" | "s
     const re = /\* \d+ FETCH \(([^{]*)\{(\d+)\}\r\n/g;
     let m: RegExpExecArray | null;
     while ((m = re.exec(out))) {
-      const meta = m[1];
-      const header = out.substr(m.index + m[0].length, Number(m[2]));
-      re.lastIndex = m.index + m[0].length + Number(m[2]);
+      const meta = m[1] ?? "";
+      const header = out.substr(m.index + m[0].length, Number(m[2] ?? 0));
+      re.lastIndex = m.index + m[0].length + Number(m[2] ?? 0);
       const uid = Number(meta.match(/UID (\d+)/)?.[1] ?? 0);
       const p = await PostalMime.parse(Buffer.from(header + "\r\n", "latin1"));
       items.push({
@@ -113,7 +113,7 @@ export async function readMessage(user: string, pass: string, box: "inbox" | "se
     const out = await i.cmd(`UID FETCH ${uid} (BODY[])`);
     const m = out.match(/\{(\d+)\}\r\n/);
     if (!m || m.index === undefined) throw new Error("Message not found");
-    const raw = out.substr(m.index + m[0].length, Number(m[1]));
+    const raw = out.substr(m.index + m[0].length, Number(m[1] ?? 0));
     const p = await PostalMime.parse(Buffer.from(raw, "latin1"));
     return {
       uid,
@@ -133,7 +133,7 @@ export async function readMessage(user: string, pass: string, box: "inbox" | "se
 
 const encWord = (s: string) => (/^[\x20-\x7e]*$/.test(s) ? s : `=?UTF-8?B?${Buffer.from(s, "utf8").toString("base64")}?=`);
 
-export async function sendMessage(user: string, pass: string, msg: { to: string[]; cc: string[]; subject: string; body: string; inReplyTo?: string | null }) {
+export async function sendMessage(user: string, pass: string, msg: { to: string[]; cc: string[]; subject: string; body: string; inReplyTo?: string | null | undefined }) {
   const id = `<${crypto.randomUUID()}@${MAIL_HOST}>`;
   const headers = [
     `From: ${user}`, `To: ${msg.to.join(", ")}`, ...(msg.cc.length ? [`Cc: ${msg.cc.join(", ")}`] : []),
@@ -185,7 +185,7 @@ export async function encryptSecret(plain: string) {
 }
 export async function decryptSecret(stored: string) {
   const [iv = "", ct = ""] = stored.split(":");
-  const pt = await crypto.subtle.decrypt({ name: "AES-GCM", iv: Buffer.from(iv, "base64") }, await key(), Buffer.from(ct, "base64"));
+  const pt = await crypto.subtle.decrypt({ name: "AES-GCM", iv: new Uint8Array(Buffer.from(iv, "base64")) }, await key(), new Uint8Array(Buffer.from(ct, "base64")));
   return new TextDecoder().decode(pt);
 }
 export { latin1ToUtf8 };
