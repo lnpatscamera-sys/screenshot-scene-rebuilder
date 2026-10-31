@@ -27,7 +27,7 @@ export function OfficialMailButton({ variant = "outline", className }: { variant
       onClick={() => openOutlookApp(data)}
       title={data ? `Open ${data} in Outlook on this computer` : "Open Outlook on this computer"}
     >
-      <Mail className="h-4 w-4" /> Official Mail (Outlook app)
+      <Mail className="h-4 w-4" /> Official Mail
     </Button>
   );
 }
@@ -41,7 +41,7 @@ export function OfficialMailNavLink() {
       title={data ? `Open ${data} in Outlook on this computer` : "Open Outlook on this computer"}
       className="flex w-full items-center gap-3 rounded-md px-2 py-2 text-left text-sidebar-foreground/85 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
     >
-      <Mail className="h-4 w-4" /> Official Mail (Outlook app)
+      <Mail className="h-4 w-4" /> Official Mail
     </button>
   );
 }
