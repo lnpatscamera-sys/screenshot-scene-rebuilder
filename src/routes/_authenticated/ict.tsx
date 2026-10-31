@@ -1,3 +1,4 @@
+import {isPersonalAccount} from '@/lib/officer-access';
 import { createFileRoute } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { PageHeader } from "@/components/AppShell";
@@ -21,7 +22,8 @@ export const Route = createFileRoute("/_authenticated/ict")({
 });
 function ICTPage() {
   const { data: d } = useSuspenseQuery(ictOptions);
-  const { hasAny } = useAuth();
+  const { hasAny, roles } = useAuth();
+  if(isPersonalAccount(roles)) return <div><PageHeader title="ICT Helpdesk"/><ICTTickets d={d}/></div>;
   const contacts = hasAny(["ict_admin"]);
   const kinds: { id: ICTKind; label: string }[] = [
     { id: "requests", label: "Service requests" },

@@ -1,5 +1,5 @@
 import { ForcePasswordChange } from "@/components/ForcePasswordChange";
-import { Link, Outlet, useNavigate } from "@tanstack/react-router";
+import { Link, Outlet, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import {
@@ -14,6 +14,7 @@ import { Button } from "./ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { OfficialMailNavLink } from "./OfficialMail";
+import { canOpenOfficerPath, isPersonalAccount } from "@/lib/officer-access";
 
 type NavItem = { to: string; label: string; icon: typeof Users; params?: Record<string, string> };
 const NAV: { group: string; items: NavItem[] }[] = [
@@ -62,7 +63,14 @@ const NAV: { group: string; items: NavItem[] }[] = [
 ];
 
 function SideNav({ onNav }: { onNav?: () => void }) {
-  const { hasAny } = useAuth();
+  const { hasAny, roles } = useAuth();
+  const personal=isPersonalAccount(roles);
+  const groups: typeof NAV = personal ? [{group:'My workspace',items:[
+    {to:'/dashboard',label:'Dashboard',icon:LayoutDashboard}, {to:'/command',label:'Daily Reports',icon:FileText},
+    {to:'/ict',label:'ICT Helpdesk',icon:LifeBuoy}, {to:'/supplies',label:'Request for Supply',icon:PackageSearch},
+    {to:'/manual',label:'User Manual',icon:FileText}, {to:'/mail',label:'Official Email',icon:InboxIcon},
+    {to:'/my-activities',label:'My Activities',icon:ScrollText},
+  ]}] : NAV;
   return (
     <nav className="flex flex-col gap-6 p-4 text-sm">
       <div className="flex items-center gap-3 px-2">
@@ -72,7 +80,7 @@ function SideNav({ onNav }: { onNav?: () => void }) {
           <div className="text-[11px] text-sidebar-foreground/60">Police Academy & Training</div>
         </div>
       </div>
-      {NAV.map((g) => (
+      {groups.map((g) => (
         <div key={g.group}>
           <div className="px-2 mb-1 text-[10px] uppercase tracking-widest text-sidebar-foreground/50">{g.group}</div>
           {g.items.filter(i => i.to !== '/command-inventory' || hasAny(['commandant','dc_admin','storekeeper'])).map((i) => (
@@ -89,17 +97,19 @@ function SideNav({ onNav }: { onNav?: () => void }) {
           ))}
         </div>
       ))}
-      <div><div className="px-2 mb-1 text-[10px] uppercase tracking-widest text-sidebar-foreground/50">Email</div><Link to="/mail" onClick={onNav} className="flex items-center gap-3 rounded-md px-2 py-2 text-sidebar-foreground/85 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground" activeProps={{ className: "bg-sidebar-accent text-sidebar-primary font-medium" }}><InboxIcon className="h-4 w-4" /> Inbox (in ERP)</Link><OfficialMailNavLink /></div>
+      {!personal && <div><div className="px-2 mb-1 text-[10px] uppercase tracking-widest text-sidebar-foreground/50">Email</div><Link to="/mail" onClick={onNav} className="flex items-center gap-3 rounded-md px-2 py-2 text-sidebar-foreground/85 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground" activeProps={{ className: "bg-sidebar-accent text-sidebar-primary font-medium" }}><InboxIcon className="h-4 w-4" /> Inbox (in ERP)</Link><OfficialMailNavLink /></div>}
     </nav>
   );
 }
 
 function Notifications() {
+  const {session,roles}=useAuth();
   const qc = useQueryClient();
   const { data } = useQuery({
-    queryKey: ["notifications"],
-    queryFn: async () => (await supabase.from("notifications").select("*").order("created_at", { ascending: false }).limit(20)).data ?? [],
+    queryKey: ["notifications",session?.user.id],
+    queryFn: async () => (await supabase.from("notifications").select("*").eq("user_id",session?.user.id??"").order("created_at", { ascending: false }).limit(20)).data ?? [],
     refetchInterval: 30000,
+    enabled:!!session,
   });
   const unread = (data ?? []).filter((n) => !n.read);
   const markAll = async () => {
@@ -116,7 +126,7 @@ function Notifications() {
         </Button>
       </PopoverTrigger>
       <PopoverContent align="end" className="w-80 p-0">
-        <div className="px-4 py-2 border-b font-medium text-sm"><Link to="/notifications">Notification Center</Link></div>
+        <div className="px-4 py-2 border-b font-medium text-sm"><Link to={isPersonalAccount(roles)?"/my-activities":"/notifications"}>Notifications</Link></div>
         <div className="max-h-80 overflow-auto">
           {(data ?? []).length === 0 && <p className="p-4 text-sm text-muted-foreground">No notifications yet.</p>}
           {(data ?? []).map((n) => (
@@ -132,7 +142,8 @@ function Notifications() {
 }
 
 export function AppShell() {
-  const { session, roles } = useAuth();
+  const { session, roles, loading } = useAuth();
+  const pathname=useRouterState({select:s=>s.location.pathname});
   const nav = useNavigate();
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
@@ -178,7 +189,7 @@ export function AppShell() {
           <Button variant="ghost" size="icon" onClick={signOut} aria-label="Sign out"><LogOut className="h-5 w-5" /></Button>
         </header>
         <main className="flex-1 p-4 md:p-6 lg:p-8 max-w-[1400px] w-full mx-auto">
-          <Outlet />
+          {loading ? <p>Loading account…</p> : canOpenOfficerPath(roles,pathname) ? <Outlet /> : <div role="alert"><PageHeader title="Access Denied"/><p className="text-muted-foreground">Your account is not authorized to access this page.</p></div>}
         </main>
       </div>
     </div>

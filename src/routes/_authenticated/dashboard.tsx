@@ -1,3 +1,5 @@
+import {isPersonalAccount} from '@/lib/officer-access';
+import {PersonalDashboard} from '@/components/PersonalDashboard';
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
@@ -27,6 +29,10 @@ const COLORS = ["var(--chart-1)", "var(--chart-2)", "var(--chart-3)", "var(--cha
 const LEGEND_COLORS = ['bg-chart-1', 'bg-chart-2', 'bg-chart-3', 'bg-chart-4', 'bg-chart-5'];
 
 function Dashboard() {
+ const {roles,loading}=useAuth(); if(loading)return <p>Loading dashboard…</p>;
+ return isPersonalAccount(roles)?<PersonalDashboard/>:<CommandDashboard/>;
+}
+function CommandDashboard() {
   const { hasAny } = useAuth();
   const qc = useQueryClient();
   const phase = useQuery(phase2Options);
