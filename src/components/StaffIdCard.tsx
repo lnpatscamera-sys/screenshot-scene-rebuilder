@@ -22,7 +22,7 @@ export function StaffIdCard({ e }: P) {
           <div className="font-bold text-[9px] leading-tight">{e.full_name}</div>
           <div><span className="text-muted-foreground">Rank:</span> {e.rank}</div>
           <div><span className="text-muted-foreground">LNP ID:</span> {e.service_number}</div>
-          <div><span className="text-muted-foreground">Form No.:</span> {e.form_number ?? '—'}</div>
+          <div><span className="text-muted-foreground">Staff File Number:</span> {e.form_number ?? '—'}</div>
           <div className="truncate"><span className="text-muted-foreground">Dept:</span> {e.department || '—'}</div>
           <div><span className="text-muted-foreground">Blood group:</span> {e.blood_group || '—'}</div>
         </div>
