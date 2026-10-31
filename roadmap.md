@@ -12,6 +12,7 @@
 - [x] Audit log
 
 ## Later phases
+- [ ] Built-in private per-officer official inbox with reading and replies — awaiting mail-host details and an authorized connection to the existing cPanel mailboxes.
 - [ ] Connect ICT Helpdesk to real network monitoring and service-account actions — LNPATS uses TP-Link equipment, a "Mikcrotech" router (exact brand/model unconfirmed), Starlink, HP computers, Hikvision cameras/NVR and Canon printers. Waiting for exact device models, authorized management access and confirmation of an always-on on-site monitoring computer. Staff use personal email; an organizational account service must first be selected/provisioned and authorized. Verify real outcomes before marking resolved.
 - [ ] Certified signing for command reports and supply approvals — waiting for the organization's signing provider/certificate authority and required certification standard; approvals must bind verified signatures to the exact record revision.
 - [x] Command chain: reporting assignments/account linking, daily activity reports and source-report compilation, PDF/Word/print summaries, weekday 3–6 PM Liberia-time in-app alerts, five-step staff supply approvals/corrections, signed pickup with atomic stock deduction, draft shortage procurement links and inventory mapping, restricted command inventory and decision evidence. Signed-in report approval → compilation → Word download and supply shortage → stock mapping → signed collection verified; 150 tests pass; temporary records removed and stock restored.
