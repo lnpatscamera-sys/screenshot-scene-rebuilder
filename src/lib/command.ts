@@ -22,7 +22,13 @@ export async function supplyCommandAction(id: string | null, action: string, pay
 export async function uploadCommandFile(file: File, userId: string) { const path = `${userId}/${crypto.randomUUID()}/${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`; const r = await supabase.storage.from('command-files').upload(path, file); if (r.error) throw r.error; return { path, name: file.name }; }
 export async function openCommandFile(path: string) { const r = await supabase.storage.from('command-files').createSignedUrl(path, 300); if (r.error) throw r.error; window.open(r.data.signedUrl, '_blank', 'noopener,noreferrer'); }
 export async function exportCommandWord(title: string, rows: Record<string, unknown>[]) {
-  const { Document, Packer, Paragraph, HeadingLevel } = await import('docx');
-  const doc = new Document({ sections: [{ children: [new Paragraph({ text: `LNPATS — ${title}`, heading: HeadingLevel.TITLE }), ...rows.flatMap(r => Object.entries(r).map(([k, v]) => new Paragraph({ text: `${k}: ${String(v ?? '')}` }))) ] }] });
+  const { Document, Packer, Paragraph, TextRun, ImageRun, AlignmentType, Header, BorderStyle } = await import('docx');
+  const { LETTERHEAD_LINES, crestUrls, imageBytes, currentWriter, writerLines } = await import('./letterhead');
+  const [left, right, writer] = await Promise.all([imageBytes(crestUrls.left).catch(() => null), imageBytes(crestUrls.right).catch(() => null), currentWriter().catch(() => null)]);
+  const crest = (data: Uint8Array, x: number) => new ImageRun({ type: 'jpg', data, transformation: { width: 80, height: 78 }, floating: { horizontalPosition: { offset: x }, verticalPosition: { offset: 300000 }, wrap: { type: 0 } } });
+  const sizes = [34, 28, 26, 22];
+  const header = new Header({ children: LETTERHEAD_LINES.map((t, i) => new Paragraph({ alignment: AlignmentType.CENTER, border: i === 3 ? { bottom: { style: BorderStyle.SINGLE, size: 8, color: '000000', space: 4 } } : undefined, children: [...(i === 0 && left ? [crest(left, 600000)] : []), ...(i === 0 && right ? [crest(right, 5900000)] : []), new TextRun({ text: t, bold: i === 0, size: sizes[i] })] })) });
+  const writerParas = writer ? writerLines(writer).map((l, i) => new Paragraph({ children: [new TextRun({ text: l, bold: i === 0 })] })) : [];
+  const doc = new Document({ sections: [{ headers: { default: header }, children: [new Paragraph({ alignment: AlignmentType.CENTER, spacing: { after: 200 }, children: [new TextRun({ text: title, bold: true, size: 28 })] }), ...writerParas, new Paragraph({ text: '' }), ...rows.flatMap(r => Object.entries(r).map(([k, v]) => new Paragraph({ children: [new TextRun({ text: `${k}: `, bold: true }), new TextRun(String(v ?? ''))] }))) ] }] });
   const blob = await Packer.toBlob(doc); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = `${title}.docx`; a.click(); setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
