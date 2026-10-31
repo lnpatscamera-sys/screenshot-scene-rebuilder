@@ -5,6 +5,7 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
+  useRouterState,
   HeadContent,
   Scripts,
   type ErrorComponentProps,
@@ -14,7 +15,10 @@ import type { AuthChangeEvent } from "@supabase/supabase-js";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
-import { AuthProvider } from "@/lib/auth";
+import { AuthProvider, useAuth } from "@/lib/auth";
+import { canOpenOfficerPath, OFFICER_PATHS } from '@/lib/officer-access';
+import { AppShell } from '@/components/AppShell';
+import { supabase } from '@/integrations/supabase/client';
 import { Toaster } from "@/components/ui/sonner";
 
 function NotFoundComponent() {
@@ -78,6 +82,14 @@ function ErrorComponent({ error, reset }: ErrorComponentProps) {
 }
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
+  beforeLoad: async ({location}) => {
+    const path=location.pathname.replace(/\/$/,'');
+    if(['/','/auth','/reset-password'].includes(path) || path.startsWith('/api/') || path.startsWith('/lovable/') || OFFICER_PATHS.some(p=>p===path)) return;
+    const {data}=await supabase.auth.getSession();
+    if(!data.session) return;
+    const result=await supabase.from('user_roles').select('role').eq('user_id',data.session.user.id);
+    if(result.error || !canOpenOfficerPath((result.data??[]).map(r=>r.role),path)) throw new Error('Access Denied');
+  },
   head: () => ({
     meta: [
       { charSet: "utf-8" },
@@ -128,9 +140,17 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider onIdentityChange={onIdentityChange}>
-        <Outlet />
+        <AuthorizedOutlet />
         <Toaster richColors />
       </AuthProvider>
     </QueryClientProvider>
   );
+}
+
+function AuthorizedOutlet() {
+  const {roles,loading,session}=useAuth();
+  const path=useRouterState({select:s=>s.location.pathname});
+  const protectedPath=!['/','/auth','/reset-password'].includes(path)&&!path.startsWith('/api/')&&!path.startsWith('/lovable/');
+  if(protectedPath&&session&&!loading&&!canOpenOfficerPath(roles,path)) return <AppShell/>;
+  return <Outlet/>;
 }
