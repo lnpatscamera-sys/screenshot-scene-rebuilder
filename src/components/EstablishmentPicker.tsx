@@ -19,7 +19,7 @@ async function load() {
 }
 
 /** Unit/Section and establishment position selector; submits establishment_post_id and position. */
-export function EstablishmentPicker({ officerId, postId, position }: { officerId?: string; postId?: string; position?: string }) {
+export function EstablishmentPicker({ officerId, postId, position }: { officerId?: string | undefined; postId?: string | undefined; position?: string | undefined }) {
   const { data } = useQuery({ queryKey: ['establishment'], queryFn: load });
   const [unit, setUnit] = useState('');
   const [post, setPost] = useState(postId ?? '');
