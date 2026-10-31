@@ -351,6 +351,13 @@
       "when": 1793439429032,
       "tag": "0049_officer_personal_access",
       "breakpoints": true
+    },
+    {
+      "idx": 50,
+      "version": "7",
+      "when": 1793439571730,
+      "tag": "0050_officer_rpc_guards",
+      "breakpoints": true
     }
   ]
 }
