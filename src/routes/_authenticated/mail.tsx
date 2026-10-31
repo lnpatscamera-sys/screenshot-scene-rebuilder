@@ -10,7 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { getMailAccount, connectMailbox, disconnectMailbox, listMail, readMail, sendMail } from "@/lib/mail.functions";
-import { formatDateTime } from "@/lib/time";
+import { liberiaDateTime as formatDateTime } from "@/lib/time";
 
 export const Route = createFileRoute("/_authenticated/mail")({
   head: () => ({ meta: [

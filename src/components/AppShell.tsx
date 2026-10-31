@@ -88,7 +88,7 @@ function SideNav({ onNav }: { onNav?: () => void }) {
           ))}
         </div>
       ))}
-      <div><div className="px-2 mb-1 text-[10px] uppercase tracking-widest text-sidebar-foreground/50">Email</div><OfficialMailNavLink /></div>
+      <div><div className="px-2 mb-1 text-[10px] uppercase tracking-widest text-sidebar-foreground/50">Email</div><Link to="/mail" onClick={onNav} className="flex items-center gap-3 rounded-md px-2 py-2 text-sidebar-foreground/85 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground" activeProps={{ className: "bg-sidebar-accent text-sidebar-primary font-medium" }}><Inbox className="h-4 w-4" /> Inbox (in ERP)</Link><OfficialMailNavLink /></div>
     </nav>
   );
 }

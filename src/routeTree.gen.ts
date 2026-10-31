@@ -27,6 +27,7 @@ import { Route as AuthenticatedIctRouteImport } from './routes/_authenticated/ic
 import { Route as AuthenticatedInventoryRouteImport } from './routes/_authenticated/inventory'
 import { Route as AuthenticatedIssuesRouteImport } from './routes/_authenticated/issues'
 import { Route as AuthenticatedLeaveRouteImport } from './routes/_authenticated/leave'
+import { Route as AuthenticatedMailRouteImport } from './routes/_authenticated/mail'
 import { Route as AuthenticatedManualRouteImport } from './routes/_authenticated/manual'
 import { Route as AuthenticatedNotificationsRouteImport } from './routes/_authenticated/notifications'
 import { Route as AuthenticatedOrganizationRouteImport } from './routes/_authenticated/organization'
@@ -136,6 +137,11 @@ const AuthenticatedIssuesRoute = AuthenticatedIssuesRouteImport.update({
 const AuthenticatedLeaveRoute = AuthenticatedLeaveRouteImport.update({
   id: '/leave',
   path: '/leave',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedMailRoute = AuthenticatedMailRouteImport.update({
+  id: '/mail',
+  path: '/mail',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedManualRoute = AuthenticatedManualRouteImport.update({
@@ -261,6 +267,7 @@ export interface FileRoutesByFullPath {
   '/inventory': typeof AuthenticatedInventoryRoute
   '/issues': typeof AuthenticatedIssuesRoute
   '/leave': typeof AuthenticatedLeaveRoute
+  '/mail': typeof AuthenticatedMailRoute
   '/manual': typeof AuthenticatedManualRoute
   '/notifications': typeof AuthenticatedNotificationsRoute
   '/organization': typeof AuthenticatedOrganizationRoute
@@ -299,6 +306,7 @@ export interface FileRoutesByTo {
   '/inventory': typeof AuthenticatedInventoryRoute
   '/issues': typeof AuthenticatedIssuesRoute
   '/leave': typeof AuthenticatedLeaveRoute
+  '/mail': typeof AuthenticatedMailRoute
   '/manual': typeof AuthenticatedManualRoute
   '/notifications': typeof AuthenticatedNotificationsRoute
   '/organization': typeof AuthenticatedOrganizationRoute
@@ -339,6 +347,7 @@ export interface FileRoutesById {
   '/_authenticated/inventory': typeof AuthenticatedInventoryRoute
   '/_authenticated/issues': typeof AuthenticatedIssuesRoute
   '/_authenticated/leave': typeof AuthenticatedLeaveRoute
+  '/_authenticated/mail': typeof AuthenticatedMailRoute
   '/_authenticated/manual': typeof AuthenticatedManualRoute
   '/_authenticated/notifications': typeof AuthenticatedNotificationsRoute
   '/_authenticated/organization': typeof AuthenticatedOrganizationRoute
@@ -379,6 +388,7 @@ export interface FileRouteTypes {
     | '/inventory'
     | '/issues'
     | '/leave'
+    | '/mail'
     | '/manual'
     | '/notifications'
     | '/organization'
@@ -417,6 +427,7 @@ export interface FileRouteTypes {
     | '/inventory'
     | '/issues'
     | '/leave'
+    | '/mail'
     | '/manual'
     | '/notifications'
     | '/organization'
@@ -456,6 +467,7 @@ export interface FileRouteTypes {
     | '/_authenticated/inventory'
     | '/_authenticated/issues'
     | '/_authenticated/leave'
+    | '/_authenticated/mail'
     | '/_authenticated/manual'
     | '/_authenticated/notifications'
     | '/_authenticated/organization'
@@ -614,6 +626,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedLeaveRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/mail': {
+      id: '/_authenticated/mail'
+      path: '/mail'
+      fullPath: '/mail'
+      preLoaderRoute: typeof AuthenticatedMailRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/manual': {
       id: '/_authenticated/manual'
       path: '/manual'
@@ -765,6 +784,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedInventoryRoute: typeof AuthenticatedInventoryRoute
   AuthenticatedIssuesRoute: typeof AuthenticatedIssuesRoute
   AuthenticatedLeaveRoute: typeof AuthenticatedLeaveRoute
+  AuthenticatedMailRoute: typeof AuthenticatedMailRoute
   AuthenticatedManualRoute: typeof AuthenticatedManualRoute
   AuthenticatedNotificationsRoute: typeof AuthenticatedNotificationsRoute
   AuthenticatedOrganizationRoute: typeof AuthenticatedOrganizationRoute
@@ -799,6 +819,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedInventoryRoute: AuthenticatedInventoryRoute,
   AuthenticatedIssuesRoute: AuthenticatedIssuesRoute,
   AuthenticatedLeaveRoute: AuthenticatedLeaveRoute,
+  AuthenticatedMailRoute: AuthenticatedMailRoute,
   AuthenticatedManualRoute: AuthenticatedManualRoute,
   AuthenticatedNotificationsRoute: AuthenticatedNotificationsRoute,
   AuthenticatedOrganizationRoute: AuthenticatedOrganizationRoute,
